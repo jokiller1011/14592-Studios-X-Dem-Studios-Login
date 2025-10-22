@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Scanner</title>
+    <title>Secure Login | 14592 Studios X Dem Studios</title>
     <style>
         * {
             margin: 0;
@@ -13,59 +13,133 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background: linear-gradient(135deg, #0f1a30 0%, #1e3a5f 100%);
             color: #fff;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
+            justify-content: center;
             padding: 20px;
         }
         
-        .container {
-            max-width: 800px;
+        .login-container {
+            display: flex;
+            max-width: 1000px;
             width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        
+        .brand-section {
+            flex: 1;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
         }
         
-        header {
-            margin-bottom: 30px;
-            padding: 20px;
-        }
-        
-        h1 {
+        .logo {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
             font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
-        .subtitle {
-            font-size: 1.2rem;
+        .company-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .company-tagline {
+            font-size: 1rem;
             opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .features {
+            text-align: left;
+            margin-top: 30px;
+        }
+        
+        .features h3 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .features ul {
+            list-style-type: none;
+        }
+        
+        .features li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .features li:before {
+            content: "✓";
+            color: #4cd964;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .login-section {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .login-header {
+            margin-bottom: 30px;
+        }
+        
+        .login-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #fdbb2d;
+        }
+        
+        .login-header p {
+            opacity: 0.8;
         }
         
         .scanner-container {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
             padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         #video-container {
             position: relative;
             width: 100%;
-            max-width: 500px;
             margin: 0 auto;
-            border-radius: 15px;
+            border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            min-height: 300px;
+            min-height: 250px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #000;
+            background: #000;
         }
         
         #video {
@@ -82,7 +156,7 @@
             transform: translate(-50%, -50%);
             width: 70%;
             height: 70%;
-            border: 2px solid #fff;
+            border: 2px solid #fdbb2d;
             border-radius: 10px;
             box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
         }
@@ -93,7 +167,7 @@
             left: 0;
             width: 100%;
             height: 3px;
-            background: linear-gradient(to right, transparent, #4cd964, transparent);
+            background: linear-gradient(to right, transparent, #fdbb2d, transparent);
             animation: scan 2s linear infinite;
         }
         
@@ -106,27 +180,26 @@
         .controls {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
         }
         
         button {
-            background: #4cd964;
-            color: white;
+            background: #fdbb2d;
+            color: #0f1a30;
             border: none;
-            padding: 12px 25px;
+            padding: 10px 20px;
             border-radius: 50px;
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            min-width: 150px;
+            flex: 1;
         }
         
         button:hover {
-            background: #3cb054;
+            background: #ffcc44;
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
         }
@@ -137,90 +210,28 @@
         
         button:disabled {
             background: #cccccc;
+            color: #666;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
         
         button#stop-btn {
-            background: #ff3b30;
+            background: #b21f1f;
+            color: white;
         }
         
         button#stop-btn:hover:not(:disabled) {
-            background: #e0352b;
-        }
-        
-        button#switch-camera {
-            background: #007AFF;
-        }
-        
-        button#switch-camera:hover:not(:disabled) {
-            background: #0056CC;
-        }
-        
-        .result-container {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            width: 100%;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .result-title {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: #4cd964;
-        }
-        
-        #result {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            word-break: break-all;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-        }
-        
-        .instructions {
-            margin-top: 30px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .instructions h3 {
-            margin-bottom: 15px;
-            color: #4cd964;
-        }
-        
-        .instructions ol {
-            text-align: left;
-            padding-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 10px;
-            line-height: 1.5;
+            background: #c12f2f;
         }
         
         .status {
             margin-top: 15px;
             font-style: italic;
-            color: #ffcc00;
+            color: #fdbb2d;
             min-height: 24px;
+            text-align: center;
+            font-size: 0.9rem;
         }
         
         .error {
@@ -229,120 +240,130 @@
             padding: 10px;
             border-radius: 8px;
             margin-top: 10px;
-        }
-        
-        .permission-help {
-            margin-top: 15px;
-            text-align: left;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
+            font-size: 0.9rem;
             display: none;
         }
         
-        .permission-help h4 {
-            margin-bottom: 10px;
-            color: #4cd964;
+        .alternative-login {
+            margin-top: 20px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        footer {
-            margin-top: 30px;
-            font-size: 0.9rem;
-            opacity: 0.7;
+        .alternative-login p {
+            margin-bottom: 15px;
+            opacity: 0.8;
         }
         
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .subtitle {
-                font-size: 1rem;
-            }
-            
-            .scanner-container, .result-container, .instructions {
-                padding: 15px;
-            }
-            
-            button {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-                min-width: 120px;
-            }
+        .manual-login-btn {
+            background: transparent;
+            border: 1px solid #fdbb2d;
+            color: #fdbb2d;
+        }
+        
+        .manual-login-btn:hover {
+            background: rgba(253, 187, 45, 0.1);
         }
         
         .camera-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
+            font-size: 3rem;
+            margin-bottom: 15px;
             opacity: 0.7;
         }
         
         .placeholder-text {
             padding: 20px;
             text-align: center;
+            color: #aaa;
+        }
+        
+        .powered-by {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            opacity: 0.6;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+            }
+            
+            .brand-section {
+                padding: 30px 20px;
+            }
+            
+            .login-section {
+                padding: 30px 20px;
+            }
+            
+            .logo {
+                width: 80px;
+                height: 80px;
+                font-size: 1.8rem;
+            }
+            
+            .company-name {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>QR Code Scanner</h1>
-            <p class="subtitle">Scan any QR code with your device's camera</p>
-        </header>
+    <div class="login-container">
+        <div class="brand-section">
+            <div class="logo">14592X</div>
+            <h1 class="company-name">14592 Studios X Dem Studios</h1>
+            <p class="company-tagline">Innovation Through Collaboration</p>
+            
+            <div class="features">
+                <h3>Secure Employee Access</h3>
+                <ul>
+                    <li>QR Code Authentication</li>
+                    <li>Multi-factor Security</li>
+                    <li>Enterprise-grade Encryption</li>
+                    <li>Real-time Access Monitoring</li>
+                </ul>
+            </div>
+        </div>
         
-        <div class="scanner-container">
-            <div id="video-container">
-                <div class="placeholder-text" id="placeholder">
-                    <div class="camera-icon">📷</div>
-                    <p>Camera feed will appear here</p>
+        <div class="login-section">
+            <div class="login-header">
+                <h2>Secure Login</h2>
+                <p>Scan your employee QR code for quick access</p>
+            </div>
+            
+            <div class="scanner-container">
+                <div id="video-container">
+                    <div class="placeholder-text" id="placeholder">
+                        <div class="camera-icon">📷</div>
+                        <p>Camera feed will appear here</p>
+                    </div>
+                    <video id="video" playsinline></video>
+                    <div id="scan-region" style="display: none;">
+                        <div class="scan-line"></div>
+                    </div>
                 </div>
-                <video id="video" playsinline></video>
-                <div id="scan-region" style="display: none;">
-                    <div class="scan-line"></div>
+                
+                <div class="controls">
+                    <button id="start-btn">Start Scanner</button>
+                    <button id="stop-btn" disabled>Stop Scanner</button>
                 </div>
+                
+                <p class="status" id="status">Click "Start Scanner" to begin</p>
+                <div class="error" id="error"></div>
             </div>
             
-            <div class="controls">
-                <button id="start-btn">Start Scanner</button>
-                <button id="stop-btn" disabled>Stop Scanner</button>
-                <button id="switch-camera" disabled>Switch Camera</button>
+            <div class="alternative-login">
+                <p>Don't have a QR code?</p>
+                <button class="manual-login-btn">Use Manual Login</button>
             </div>
             
-            <p class="status" id="status">Click "Start Scanner" to begin</p>
-            <div class="error" id="error" style="display: none;"></div>
-            
-            <div class="permission-help" id="permission-help">
-                <h4>Camera Permission Help</h4>
-                <p>If you've denied camera access, please:</p>
-                <ol>
-                    <li>Look for a camera icon in your browser's address bar and click it</li>
-                    <li>Select "Allow" for camera access</li>
-                    <li>Refresh the page and try again</li>
-                    <li>Alternatively, check your browser settings to reset permissions for this site</li>
-                </ol>
+            <div class="powered-by">
+                <p>Powered by 14592 Security Systems</p>
             </div>
         </div>
-        
-        <div class="result-container">
-            <h2 class="result-title">Scan Result</h2>
-            <div id="result">No QR code scanned yet</div>
-        </div>
-        
-        <div class="instructions">
-            <h3>How to use:</h3>
-            <ol>
-                <li>Click "Start Scanner" to activate your camera</li>
-                <li>Allow camera access when prompted</li>
-                <li>Point your camera at a QR code</li>
-                <li>The scanner will automatically detect and decode the QR code</li>
-                <li>Click "Stop Scanner" to turn off the camera</li>
-                <li>Use "Switch Camera" to toggle between front and rear cameras</li>
-            </ol>
-        </div>
-        
-        <footer>
-            <p>QR Code Scanner &copy; 2023 | Works on most modern browsers</p>
-        </footer>
     </div>
 
     <!-- Include the QR code scanning library -->
@@ -353,28 +374,22 @@
         const video = document.getElementById('video');
         const startBtn = document.getElementById('start-btn');
         const stopBtn = document.getElementById('stop-btn');
-        const switchCameraBtn = document.getElementById('switch-camera');
         const status = document.getElementById('status');
-        const result = document.getElementById('result');
         const errorDiv = document.getElementById('error');
-        const permissionHelp = document.getElementById('permission-help');
         const placeholder = document.getElementById('placeholder');
         const scanRegion = document.getElementById('scan-region');
+        const manualLoginBtn = document.querySelector('.manual-login-btn');
         
         // Variables for video stream and scanning
         let stream = null;
         let scanning = false;
         let animationFrameId = null;
-        let currentFacingMode = 'environment'; // Start with rear camera
-        let cameras = [];
-        let currentCameraIndex = 0;
         
         // Start the scanner
         startBtn.addEventListener('click', async () => {
             try {
-                status.textContent = "Requesting camera...";
+                status.textContent = "Initializing camera...";
                 errorDiv.style.display = 'none';
-                permissionHelp.style.display = 'none';
                 
                 // Stop any existing stream
                 if (stream) {
@@ -384,7 +399,7 @@
                 // Request camera access
                 stream = await navigator.mediaDevices.getUserMedia({ 
                     video: { 
-                        facingMode: currentFacingMode,
+                        facingMode: 'environment',
                         width: { ideal: 1280 },
                         height: { ideal: 720 }
                     } 
@@ -407,12 +422,7 @@
                 // Update UI
                 startBtn.disabled = true;
                 stopBtn.disabled = false;
-                switchCameraBtn.disabled = false;
-                status.textContent = "Scanner active - point at a QR code";
-                result.textContent = "No QR code scanned yet";
-                
-                // Get available cameras
-                await getCameras();
+                status.textContent = "Scanner active - position QR code in frame";
                 
             } catch (err) {
                 console.error("Error accessing camera:", err);
@@ -434,7 +444,6 @@
             // Update UI
             startBtn.disabled = false;
             stopBtn.disabled = true;
-            switchCameraBtn.disabled = true;
             status.textContent = "Scanner is not active";
             
             // Show placeholder and hide video
@@ -443,62 +452,21 @@
             scanRegion.style.display = 'none';
         });
         
-        // Switch between cameras
-        switchCameraBtn.addEventListener('click', async () => {
-            if (!stream || cameras.length < 2) return;
-            
-            // Stop current stream
-            stream.getTracks().forEach(track => track.stop());
-            
-            // Switch to next camera
-            currentCameraIndex = (currentCameraIndex + 1) % cameras.length;
-            const deviceId = cameras[currentCameraIndex].deviceId;
-            
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
-                        deviceId: { exact: deviceId },
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    } 
-                });
-                
-                video.srcObject = stream;
-                
-                // Update status based on camera type
-                const cameraLabel = cameras[currentCameraIndex].label.toLowerCase();
-                if (cameraLabel.includes('back') || cameraLabel.includes('rear')) {
-                    status.textContent = "Using rear camera - point at a QR code";
-                } else {
-                    status.textContent = "Using front camera - point at a QR code";
-                }
-                
-            } catch (err) {
-                console.error("Error switching camera:", err);
-                status.textContent = "Error switching camera";
-            }
+        // Manual login button
+        manualLoginBtn.addEventListener('click', () => {
+            status.textContent = "Redirecting to manual login...";
+            // In a real implementation, this would redirect to a manual login form
+            setTimeout(() => {
+                alert("Manual login would open here in a production environment");
+            }, 500);
         });
-        
-        // Get available cameras
-        async function getCameras() {
-            try {
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                cameras = devices.filter(device => device.kind === 'videoinput');
-                
-                // Enable switch button only if multiple cameras are available
-                switchCameraBtn.disabled = cameras.length < 2;
-            } catch (err) {
-                console.error("Error enumerating cameras:", err);
-            }
-        }
         
         // Handle camera errors
         function handleCameraError(err) {
             let errorMessage = "Could not access camera. ";
             
             if (err.name === 'NotAllowedError') {
-                errorMessage += "Camera permission was denied. ";
-                permissionHelp.style.display = 'block';
+                errorMessage += "Camera permission was denied. Please allow camera access to use QR login.";
             } else if (err.name === 'NotFoundError') {
                 errorMessage += "No camera found on your device.";
             } else if (err.name === 'NotSupportedError') {
@@ -516,7 +484,6 @@
             // Reset UI
             startBtn.disabled = false;
             stopBtn.disabled = true;
-            switchCameraBtn.disabled = true;
         }
         
         // Start scanning for QR codes
@@ -558,36 +525,10 @@
                 
                 if (code) {
                     // QR code found!
-                    result.textContent = code.data;
-                    status.textContent = "QR code detected!";
+                    status.textContent = "Employee credentials detected!";
                     
-                    // Try to open URL if it's a valid URL
-                    if (isValidUrl(code.data)) {
-                        setTimeout(() => {
-                            if (confirm(`Open: ${code.data}?`)) {
-                                window.open(code.data, '_blank');
-                            }
-                        }, 500);
-                    }
-                    
-                    // Stop scanning after successful detection
-                    setTimeout(() => {
-                        stopScanning();
-                        if (stream) {
-                            stream.getTracks().forEach(track => track.stop());
-                            stream = null;
-                        }
-                        video.srcObject = null;
-                        startBtn.disabled = false;
-                        stopBtn.disabled = true;
-                        switchCameraBtn.disabled = true;
-                        status.textContent = "QR code scanned successfully!";
-                        
-                        // Show placeholder
-                        video.style.display = 'none';
-                        placeholder.style.display = 'block';
-                        scanRegion.style.display = 'none';
-                    }, 2000);
+                    // Simulate login process
+                    simulateLogin(code.data);
                     
                     return;
                 }
@@ -597,14 +538,42 @@
             animationFrameId = requestAnimationFrame(scanFrame);
         }
         
-        // Check if string is a valid URL
-        function isValidUrl(string) {
-            try {
-                new URL(string);
-                return true;
-            } catch (_) {
-                return false;
-            }
+        // Simulate login process
+        function simulateLogin(qrData) {
+            // Stop scanning
+            stopScanning();
+            
+            // Show loading state
+            status.textContent = "Authenticating...";
+            startBtn.disabled = true;
+            stopBtn.disabled = true;
+            
+            // Simulate API call to backend
+            setTimeout(() => {
+                // In a real implementation, this would validate with a backend
+                if (qrData.includes("14592") || qrData.includes("employee")) {
+                    status.textContent = "Login successful! Redirecting...";
+                    status.style.color = "#4cd964";
+                    
+                    // Simulate redirect to dashboard
+                    setTimeout(() => {
+                        alert("Login successful! Welcome to 14592 Studios X Dem Studios portal.");
+                        // In a real implementation: window.location.href = "/dashboard";
+                    }, 1500);
+                } else {
+                    status.textContent = "Invalid QR code. Please try again.";
+                    status.style.color = "#ff3b30";
+                    
+                    // Reset after error
+                    setTimeout(() => {
+                        status.textContent = "Scanner ready - position QR code in frame";
+                        status.style.color = "#fdbb2d";
+                        startBtn.disabled = true;
+                        stopBtn.disabled = false;
+                        startScanning();
+                    }, 3000);
+                }
+            }, 2000);
         }
         
         // Handle page visibility change
@@ -618,7 +587,6 @@
                 video.srcObject = null;
                 startBtn.disabled = false;
                 stopBtn.disabled = true;
-                switchCameraBtn.disabled = true;
                 status.textContent = "Scanner paused - page not visible";
                 
                 // Show placeholder
