@@ -1,4 +1,4 @@
-<!-- Line 778 is the site list -->
+<!-- Line 772 is the site list -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -654,19 +654,12 @@
             <div class="settings-options">
                 <div class="setting-option">
                     <div class="setting-info">
-                        <div class="setting-name">Preferred Authentication Method</div>
-                        <div class="setting-description">Choose how you want to sign in to your portal</div>
-                    </div>
-                </div>
-                
-                <div class="setting-option">
-                    <div class="setting-info">
                         <div class="setting-name">PIN Authentication</div>
                         <div class="setting-description">Use a 4-digit PIN to access your portal</div>
                     </div>
                     <div class="toggle-switch">
-                        <input type="radio" name="auth-method" id="pin-method" class="toggle-checkbox" value="pin" checked>
-                        <label for="pin-method" class="toggle-label"></label>
+                        <input type="checkbox" id="pin-toggle" class="toggle-checkbox" checked>
+                        <label for="pin-toggle" class="toggle-label"></label>
                     </div>
                 </div>
                 
@@ -676,8 +669,8 @@
                         <div class="setting-description">Use facial recognition to access your portal</div>
                     </div>
                     <div class="toggle-switch">
-                        <input type="radio" name="auth-method" id="faceid-method" class="toggle-checkbox" value="faceid">
-                        <label for="faceid-method" class="toggle-label"></label>
+                        <input type="checkbox" id="faceid-toggle" class="toggle-checkbox">
+                        <label for="faceid-toggle" class="toggle-label"></label>
                     </div>
                 </div>
             </div>
@@ -749,8 +742,8 @@
         const useFaceidBtn = document.getElementById('use-faceid-btn');
         
         const settingsBtn = document.getElementById('settings-btn');
-        const pinMethod = document.getElementById('pin-method');
-        const faceidMethod = document.getElementById('faceid-method');
+        const pinToggle = document.getElementById('pin-toggle');
+        const faceidToggle = document.getElementById('faceid-toggle');
         const saveSettings = document.getElementById('save-settings');
         const cancelSettings = document.getElementById('cancel-settings');
         
@@ -769,7 +762,8 @@
         // User authentication data
         let userPin = localStorage.getItem('memberPortalPin');
         let userFaceDescriptor = localStorage.getItem('memberPortalFaceDescriptor');
-        let preferredAuthMethod = localStorage.getItem('memberPortalPreferredAuthMethod') || 'pin';
+        let usePinAuth = localStorage.getItem('memberPortalUsePin') !== 'false';
+        let useFaceIDAuth = localStorage.getItem('memberPortalUseFaceID') === 'true';
         let isFirstTimeSetup = false;
         let currentFaceDescriptor = null;
         
@@ -1164,7 +1158,7 @@
                 userPin = pin;
                 pinSection.style.display = 'none';
                 
-                // Show Face ID setup option
+                // Show authentication choice
                 authChoiceSection.style.display = 'block';
             } else {
                 // Verify existing PIN
@@ -1193,8 +1187,10 @@
         // Use PIN button handler
         usePinBtn.addEventListener('click', () => {
             authChoiceSection.style.display = 'none';
-            preferredAuthMethod = 'pin';
-            localStorage.setItem('memberPortalPreferredAuthMethod', 'pin');
+            usePinAuth = true;
+            useFaceIDAuth = false;
+            localStorage.setItem('memberPortalUsePin', 'true');
+            localStorage.setItem('memberPortalUseFaceID', 'false');
             loadingContainer.style.display = 'flex';
             setTimeout(showPortal, 1500);
         });
@@ -1214,8 +1210,10 @@
                 if (currentFaceDescriptor) {
                     localStorage.setItem('memberPortalFaceDescriptor', currentFaceDescriptor);
                     userFaceDescriptor = currentFaceDescriptor;
-                    preferredAuthMethod = 'faceid';
-                    localStorage.setItem('memberPortalPreferredAuthMethod', 'faceid');
+                    usePinAuth = false;
+                    useFaceIDAuth = true;
+                    localStorage.setItem('memberPortalUsePin', 'false');
+                    localStorage.setItem('memberPortalUseFaceID', 'true');
                     
                     clearInterval(saveInterval);
                     faceMatchIndicator.textContent = "✓ Face registered successfully";
@@ -1236,15 +1234,23 @@
             settingsSection.style.display = 'block';
             
             // Set current settings
-            pinMethod.checked = preferredAuthMethod === 'pin';
-            faceidMethod.checked = preferredAuthMethod === 'faceid';
+            pinToggle.checked = usePinAuth;
+            faceidToggle.checked = useFaceIDAuth;
         });
         
         // Save settings handler
         saveSettings.addEventListener('click', () => {
-            const selectedMethod = document.querySelector('input[name="auth-method"]:checked').value;
-            preferredAuthMethod = selectedMethod;
-            localStorage.setItem('memberPortalPreferredAuthMethod', selectedMethod);
+            usePinAuth = pinToggle.checked;
+            useFaceIDAuth = faceidToggle.checked;
+            
+            // Ensure at least one method is selected
+            if (!usePinAuth && !useFaceIDAuth) {
+                usePinAuth = true;
+                pinToggle.checked = true;
+            }
+            
+            localStorage.setItem('memberPortalUsePin', usePinAuth.toString());
+            localStorage.setItem('memberPortalUseFaceID', useFaceIDAuth.toString());
             
             settingsSection.style.display = 'none';
             portalContainer.style.display = 'block';
@@ -1384,19 +1390,31 @@
             }, 1500);
         }
         
-        // Handle authentication for existing users
+        // Handle authentication for existing users - FIXED LOGIC
         async function handleExistingUserAuth() {
             loadingContainer.style.display = 'none';
             
-            if (preferredAuthMethod === 'faceid' && userFaceDescriptor) {
+            console.log('Auth settings:', { usePinAuth, useFaceIDAuth, hasFace: !!userFaceDescriptor });
+            
+            // FIXED: Check Face ID first if it's enabled and user has face registered
+            if (useFaceIDAuth && userFaceDescriptor) {
+                console.log('Using Face ID authentication');
                 // Use Face ID authentication
                 faceidSection.style.display = 'block';
                 faceidTitle.textContent = "Face ID Verification";
                 faceidInstructions.textContent = "Position your face in the frame to verify your identity";
                 await startFaceID();
                 startFaceVerification();
-            } else {
+            } else if (usePinAuth) {
+                console.log('Using PIN authentication');
                 // Use PIN authentication
+                pinSection.style.display = 'block';
+                pinTitle.textContent = "Enter Your PIN";
+                pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
+                initializePinInputs();
+            } else {
+                // Fallback to PIN if no method is selected
+                console.log('Fallback to PIN authentication');
                 pinSection.style.display = 'block';
                 pinTitle.textContent = "Enter Your PIN";
                 pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
