@@ -1,4 +1,4 @@
-<!-- Line 441 is the site list -->
+<!-- Line 445 is the site list -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -211,8 +211,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 30px;
+            padding: 50px;
             text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .loading-spinner {
@@ -395,15 +399,16 @@
                 <div class="success" id="success"></div>
             </div>
             
-            <div class="loading-container" id="loading-container">
-                <div class="loading-spinner"></div>
-                <p class="loading-text">Verifying Access</p>
-                <p class="loading-subtext">Checking credentials and loading your portal...</p>
-            </div>
-            
             <div class="safe-sites-info">
                 <p><strong>Note:</strong> Only QR codes from approved sources will grant access to the member portal.</p>
             </div>
+        </div>
+        
+        <!-- Moved loading container outside scanner section -->
+        <div class="loading-container" id="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Verifying Access</p>
+            <p class="loading-subtext">Checking credentials and loading your portal...</p>
         </div>
         
         <div class="portal-container" id="portal-container">
@@ -460,7 +465,7 @@
                 name: "Bulk Unblocker v6 Alpha",
                 url: "https://jokiller1011.github.io/Bulk-Unblocker-v6-Alpha/",
                 description: "Our Best Unblocker Tool Yet",
-                icon: "👥"
+                icon: "🔓"
             },
             {
                 name: "Bulk Unblocker DevPortal",
