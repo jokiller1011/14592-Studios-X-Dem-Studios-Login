@@ -1,4 +1,4 @@
-<!-- Line 914 is the site list -->
+<!-- Line 971 is the site list -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -120,6 +120,11 @@
             border-radius: 10px;
             background: rgba(76, 217, 100, 0.1);
             display: none;
+        }
+        
+        .face-overlay.unknown {
+            border-color: #ff3b30;
+            background: rgba(255, 59, 48, 0.1);
         }
         
         .scan-line {
@@ -541,6 +546,12 @@
             color: #4cd964;
         }
 
+        .face-match-indicator.unknown {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid #ff3b30;
+            color: #ff3b30;
+        }
+
         .auth-choice {
             text-align: center;
             margin: 20px 0;
@@ -617,6 +628,23 @@
             0%, 100% { opacity: 0.3; transform: scale(0.8); }
             50% { opacity: 1; transform: scale(1.2); }
         }
+
+        .face-instructions {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(253, 187, 45, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(253, 187, 45, 0.3);
+        }
+
+        .detection-stats {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -682,6 +710,13 @@
             <h2 class="section-title">Face ID Setup</h2>
             <p class="faceid-instructions">Position your face in the frame to register your Face ID</p>
             
+            <div class="face-instructions">
+                <p>💡 <strong>Tips for better detection:</strong></p>
+                <p>• Make sure your face is well-lit</p>
+                <p>• Look directly at the camera</p>
+                <p>• Remove sunglasses or hats</p>
+            </div>
+            
             <div class="faceid-container">
                 <div id="faceid-registration-video-container">
                     <div class="placeholder-text" id="faceid-registration-placeholder">
@@ -693,7 +728,7 @@
                 </div>
                 
                 <div class="face-scanning" id="face-registration-scanning">
-                    <div>Scanning for face...</div>
+                    <div>Looking for your face...</div>
                     <div class="face-scanning-dots">
                         <div class="face-scanning-dot"></div>
                         <div class="face-scanning-dot"></div>
@@ -701,8 +736,12 @@
                     </div>
                 </div>
                 
+                <div class="detection-stats" id="face-registration-stats">
+                    Face detected: <span id="registration-confidence">0%</span> confidence
+                </div>
+                
                 <div class="face-match-indicator" id="face-registration-indicator">
-                    ✓ Face detected and registered
+                    ✓ Face detected! Click "Register Face" to save
                 </div>
                 
                 <div class="faceid-buttons">
@@ -719,6 +758,11 @@
             <h2 class="section-title">Face ID Verification</h2>
             <p class="faceid-instructions">Position your face in the frame to verify your identity</p>
             
+            <div class="face-instructions">
+                <p>💡 <strong>Look directly at the camera</strong></p>
+                <p>Make sure your face is clearly visible</p>
+            </div>
+            
             <div class="faceid-container">
                 <div id="faceid-verification-video-container">
                     <div class="placeholder-text" id="faceid-verification-placeholder">
@@ -730,7 +774,7 @@
                 </div>
                 
                 <div class="face-scanning" id="face-verification-scanning">
-                    <div>Verifying your face...</div>
+                    <div>Verifying your identity...</div>
                     <div class="face-scanning-dots">
                         <div class="face-scanning-dot"></div>
                         <div class="face-scanning-dot"></div>
@@ -738,8 +782,16 @@
                     </div>
                 </div>
                 
+                <div class="detection-stats" id="face-verification-stats">
+                    Match confidence: <span id="verification-confidence">0%</span>
+                </div>
+                
                 <div class="face-match-indicator" id="face-verification-indicator">
                     ✓ Face verified successfully
+                </div>
+                
+                <div class="face-match-indicator unknown" id="face-verification-failed">
+                    ✗ Face not recognized. Please try again or use PIN.
                 </div>
                 
                 <div class="faceid-buttons">
@@ -827,9 +879,8 @@
 
     <!-- Include the QR code scanning library -->
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-    <!-- Include TensorFlow.js and Face API -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection@2.0.1/dist/face-landmarks-detection.min.js"></script>
+    <!-- Include FaceAPI.js for real face detection and recognition -->
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
     
     <script>
         // Get DOM elements
@@ -849,8 +900,13 @@
         const faceVerificationOverlay = document.getElementById('face-verification-overlay');
         const faceRegistrationIndicator = document.getElementById('face-registration-indicator');
         const faceVerificationIndicator = document.getElementById('face-verification-indicator');
+        const faceVerificationFailed = document.getElementById('face-verification-failed');
         const faceRegistrationScanning = document.getElementById('face-registration-scanning');
         const faceVerificationScanning = document.getElementById('face-verification-scanning');
+        const faceRegistrationStats = document.getElementById('face-registration-stats');
+        const faceVerificationStats = document.getElementById('face-verification-stats');
+        const registrationConfidence = document.getElementById('registration-confidence');
+        const verificationConfidence = document.getElementById('verification-confidence');
         
         const scannerSection = document.getElementById('scanner-section');
         const pinSection = document.getElementById('pin-section');
@@ -908,9 +964,9 @@
         let isRegisteringFace = false;
         let currentFaceDescriptor = null;
         
-        // Face detection model
-        let faceModel = null;
-        let isFaceModelLoaded = false;
+        // Face detection state
+        let faceDetectionEnabled = false;
+        let faceapiLoaded = false;
         
         // SAFE SITES LIST - Only these sites will be accepted
         const safeSites = [
@@ -970,77 +1026,97 @@
             }
         }
         
-        // Initialize Face Detection
+        // Initialize FaceAPI.js
         async function initializeFaceDetection() {
             try {
-                // Load face detection model
-                faceModel = await faceLandmarksDetection.load(
-                    faceLandmarksDetection.SupportedPackages.mediapipeFacemesh,
-                    { 
-                        maxFaces: 1,
-                        shouldLoadIrisModel: false
-                    }
-                );
-                isFaceModelLoaded = true;
-                console.log('Face detection model loaded successfully');
+                // Load face detection models
+                await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
+                await faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
+                await faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
+                
+                faceapiLoaded = true;
+                console.log('FaceAPI.js loaded successfully');
                 return true;
             } catch (error) {
-                console.error('Error loading face detection model:', error);
-                isFaceModelLoaded = false;
+                console.error('Error loading FaceAPI.js:', error);
+                faceapiLoaded = false;
                 return false;
             }
         }
         
+        // Detect faces using FaceAPI.js
+        async function detectFaces(videoElement) {
+            if (!faceapiLoaded) return null;
+            
+            try {
+                const detection = await faceapi
+                    .detectSingleFace(videoElement, new faceapi.TinyFaceDetectorOptions())
+                    .withFaceLandmarks()
+                    .withFaceDescriptor();
+                
+                return detection;
+            } catch (error) {
+                console.error('Error detecting face:', error);
+                return null;
+            }
+        }
+        
+        // Calculate face descriptor distance (for matching)
+        function calculateFaceDistance(descriptor1, descriptor2) {
+            if (!descriptor1 || !descriptor2) return 1;
+            
+            let distance = 0;
+            for (let i = 0; i < descriptor1.length; i++) {
+                distance += Math.pow(descriptor1[i] - descriptor2[i], 2);
+            }
+            return Math.sqrt(distance);
+        }
+        
         // Start Face Detection for registration
         async function startFaceRegistrationDetection() {
-            if (!isFaceModelLoaded) {
-                console.error('Face model not loaded');
+            if (!faceapiLoaded) {
+                faceidRegistrationError.textContent = "Face detection not available. Please try PIN authentication.";
+                faceidRegistrationError.style.display = 'block';
                 return;
             }
             
             faceRegistrationScanning.style.display = 'flex';
+            faceRegistrationStats.style.display = 'block';
+            
             faceRegistrationDetectionInterval = setInterval(async () => {
                 if (faceidRegistrationVideo.readyState === faceidRegistrationVideo.HAVE_ENOUGH_DATA) {
-                    try {
-                        const faces = await faceModel.estimateFaces({
-                            input: faceidRegistrationVideo,
-                            returnTensors: false,
-                            flipHorizontal: false,
-                            predictIrises: false
-                        });
+                    const detection = await detectFaces(faceidRegistrationVideo);
+                    
+                    if (detection) {
+                        const box = detection.detection.box;
                         
-                        if (faces.length > 0) {
-                            const face = faces[0];
-                            const box = face.boundingBox;
-                            
-                            // Show face overlay
-                            faceRegistrationOverlay.style.display = 'block';
-                            faceRegistrationOverlay.style.left = `${box.xMin * faceidRegistrationVideo.videoWidth}px`;
-                            faceRegistrationOverlay.style.top = `${box.yMin * faceidRegistrationVideo.videoHeight}px`;
-                            faceRegistrationOverlay.style.width = `${(box.xMax - box.xMin) * faceidRegistrationVideo.videoWidth}px`;
-                            faceRegistrationOverlay.style.height = `${(box.yMax - box.yMin) * faceidRegistrationVideo.videoHeight}px`;
-                            
-                            // Hide scanning indicator
-                            faceRegistrationScanning.style.display = 'none';
-                            
-                            // Show match indicator and enable submit button
-                            faceRegistrationIndicator.style.display = 'block';
-                            faceidRegistrationSubmit.disabled = false;
-                            
-                            // Store face data for registration
-                            currentFaceDescriptor = JSON.stringify({
-                                landmarks: face.scaledMesh,
-                                box: box
-                            });
-                        } else {
-                            faceRegistrationOverlay.style.display = 'none';
-                            faceRegistrationIndicator.style.display = 'none';
-                            faceidRegistrationSubmit.disabled = true;
-                            currentFaceDescriptor = null;
-                            faceRegistrationScanning.style.display = 'flex';
-                        }
-                    } catch (error) {
-                        console.error('Error detecting face:', error);
+                        // Show face overlay
+                        faceRegistrationOverlay.style.display = 'block';
+                        faceRegistrationOverlay.style.left = `${box.x}px`;
+                        faceRegistrationOverlay.style.top = `${box.y}px`;
+                        faceRegistrationOverlay.style.width = `${box.width}px`;
+                        faceRegistrationOverlay.style.height = `${box.height}px`;
+                        
+                        // Calculate confidence (inverse of detection score)
+                        const confidence = Math.round((1 - detection.detection.score) * 100);
+                        registrationConfidence.textContent = `${confidence}%`;
+                        
+                        // Hide scanning indicator
+                        faceRegistrationScanning.style.display = 'none';
+                        
+                        // Show match indicator and enable submit button
+                        faceRegistrationIndicator.style.display = 'block';
+                        faceidRegistrationSubmit.disabled = false;
+                        
+                        // Store face descriptor for registration
+                        currentFaceDescriptor = Array.from(detection.descriptor);
+                    } else {
+                        faceRegistrationOverlay.style.display = 'none';
+                        faceRegistrationIndicator.style.display = 'none';
+                        faceidRegistrationSubmit.disabled = true;
+                        currentFaceDescriptor = null;
+                        faceRegistrationScanning.style.display = 'flex';
+                        registrationConfidence.textContent = '0%';
                     }
                 }
             }, 500);
@@ -1048,118 +1124,83 @@
         
         // Start Face Detection for verification
         async function startFaceVerificationDetection() {
-            if (!isFaceModelLoaded || !userFaceDescriptor) {
-                console.error('Face model not loaded or no face registered');
+            if (!faceapiLoaded || !userFaceDescriptor) {
+                faceidVerificationError.textContent = "Face verification not available. Please use PIN authentication.";
+                faceidVerificationError.style.display = 'block';
                 return;
             }
             
-            faceVerificationScanning.style.display = 'flex';
+            const storedDescriptor = JSON.parse(userFaceDescriptor);
             let verificationAttempts = 0;
-            const maxVerificationAttempts = 10;
+            const maxVerificationAttempts = 15;
+            
+            faceVerificationScanning.style.display = 'flex';
+            faceVerificationStats.style.display = 'block';
             
             faceVerificationDetectionInterval = setInterval(async () => {
                 if (faceidVerificationVideo.readyState === faceidVerificationVideo.HAVE_ENOUGH_DATA) {
-                    try {
-                        const faces = await faceModel.estimateFaces({
-                            input: faceidVerificationVideo,
-                            returnTensors: false,
-                            flipHorizontal: false,
-                            predictIrises: false
-                        });
+                    const detection = await detectFaces(faceidVerificationVideo);
+                    verificationAttempts++;
+                    
+                    if (detection) {
+                        const box = detection.detection.box;
+                        const currentDescriptor = Array.from(detection.descriptor);
                         
-                        if (faces.length > 0) {
-                            const face = faces[0];
-                            const box = face.boundingBox;
+                        // Show face overlay
+                        faceVerificationOverlay.style.display = 'block';
+                        faceVerificationOverlay.style.left = `${box.x}px`;
+                        faceVerificationOverlay.style.top = `${box.y}px`;
+                        faceVerificationOverlay.style.width = `${box.width}px`;
+                        faceVerificationOverlay.style.height = `${box.height}px`;
+                        
+                        // Calculate match distance and confidence
+                        const distance = calculateFaceDistance(currentDescriptor, storedDescriptor);
+                        const matchConfidence = Math.max(0, Math.round((1 - distance) * 100));
+                        verificationConfidence.textContent = `${matchConfidence}%`;
+                        
+                        // Check if face matches (distance threshold for match)
+                        const isMatch = distance < 0.6; // Lower distance = better match
+                        
+                        if (isMatch && matchConfidence >= 65) {
+                            // Face verified successfully
+                            clearInterval(faceVerificationDetectionInterval);
+                            faceVerificationScanning.style.display = 'none';
+                            faceVerificationStats.style.display = 'none';
+                            faceVerificationIndicator.style.display = 'block';
+                            faceVerificationOverlay.style.borderColor = '#4cd964';
                             
-                            // Show face overlay
-                            faceVerificationOverlay.style.display = 'block';
-                            faceVerificationOverlay.style.left = `${box.xMin * faceidVerificationVideo.videoWidth}px`;
-                            faceVerificationOverlay.style.top = `${box.yMin * faceidVerificationVideo.videoHeight}px`;
-                            faceVerificationOverlay.style.width = `${(box.xMax - box.xMin) * faceidVerificationVideo.videoWidth}px`;
-                            faceVerificationOverlay.style.height = `${(box.yMax - box.yMin) * faceidVerificationVideo.videoHeight}px`;
-                            
-                            // Verify face
-                            const currentFace = JSON.stringify({
-                                landmarks: face.scaledMesh,
-                                box: box
-                            });
-                            
-                            const isMatch = await verifyFace(currentFace);
-                            verificationAttempts++;
-                            
-                            if (isMatch) {
-                                // Face verified successfully
-                                clearInterval(faceVerificationDetectionInterval);
-                                faceVerificationScanning.style.display = 'none';
-                                faceVerificationIndicator.style.display = 'block';
-                                faceVerificationIndicator.textContent = "✓ Face verified successfully";
-                                
-                                setTimeout(() => {
-                                    faceidVerificationSection.style.display = 'none';
-                                    stopFaceIDVerification();
-                                    loadingContainer.style.display = 'flex';
-                                    setTimeout(showPortal, 1000);
-                                }, 1000);
-                            } else if (verificationAttempts >= maxVerificationAttempts) {
-                                // Too many failed attempts
-                                clearInterval(faceVerificationDetectionInterval);
-                                faceVerificationScanning.style.display = 'none';
-                                faceidVerificationError.textContent = "Face verification failed. Please try PIN authentication.";
-                                faceidVerificationError.style.display = 'block';
-                            }
-                        } else {
-                            faceVerificationOverlay.style.display = 'none';
-                            faceVerificationIndicator.style.display = 'none';
-                            faceVerificationScanning.style.display = 'flex';
+                            setTimeout(() => {
+                                faceidVerificationSection.style.display = 'none';
+                                stopFaceIDVerification();
+                                loadingContainer.style.display = 'flex';
+                                setTimeout(showPortal, 1000);
+                            }, 1000);
+                        } else if (verificationAttempts >= maxVerificationAttempts) {
+                            // Too many failed attempts
+                            clearInterval(faceVerificationDetectionInterval);
+                            faceVerificationScanning.style.display = 'none';
+                            faceVerificationStats.style.display = 'none';
+                            faceVerificationFailed.style.display = 'block';
+                            faceVerificationOverlay.className = 'face-overlay unknown';
                         }
-                    } catch (error) {
-                        console.error('Error detecting face:', error);
+                    } else {
+                        faceVerificationOverlay.style.display = 'none';
+                        faceVerificationIndicator.style.display = 'none';
+                        faceVerificationFailed.style.display = 'none';
+                        faceVerificationScanning.style.display = 'flex';
+                        verificationConfidence.textContent = '0%';
+                        faceVerificationOverlay.className = 'face-overlay';
+                        
+                        if (verificationAttempts >= maxVerificationAttempts) {
+                            clearInterval(faceVerificationDetectionInterval);
+                            faceVerificationScanning.style.display = 'none';
+                            faceVerificationStats.style.display = 'none';
+                            faceidVerificationError.textContent = "No face detected. Please try PIN authentication.";
+                            faceidVerificationError.style.display = 'block';
+                        }
                     }
                 }
             }, 500);
-        }
-        
-        // Verify face against stored descriptor - IMPROVED SECURITY
-        async function verifyFace(currentFaceDescriptor) {
-            try {
-                const storedDescriptor = JSON.parse(userFaceDescriptor);
-                const currentDescriptor = JSON.parse(currentFaceDescriptor);
-                
-                // Calculate distance between multiple facial landmarks for better accuracy
-                const storedLandmarks = storedDescriptor.landmarks;
-                const currentLandmarks = currentDescriptor.landmarks;
-                
-                // Check multiple key facial points for better accuracy
-                const keyPoints = [10, 33, 61, 199, 263, 291]; // Key facial landmarks
-                let totalDistance = 0;
-                let validPoints = 0;
-                
-                for (const pointIndex of keyPoints) {
-                    if (storedLandmarks[pointIndex] && currentLandmarks[pointIndex]) {
-                        const storedPoint = storedLandmarks[pointIndex];
-                        const currentPoint = currentLandmarks[pointIndex];
-                        
-                        const distance = Math.sqrt(
-                            Math.pow(storedPoint[0] - currentPoint[0], 2) +
-                            Math.pow(storedPoint[1] - currentPoint[1], 2) +
-                            Math.pow(storedPoint[2] - currentPoint[2], 2)
-                        );
-                        
-                        totalDistance += distance;
-                        validPoints++;
-                    }
-                }
-                
-                if (validPoints === 0) return false;
-                
-                const averageDistance = totalDistance / validPoints;
-                
-                // Much stricter threshold for face matching
-                return averageDistance < 0.05; // Reduced from 0.2 to 0.05 for better security
-            } catch (error) {
-                console.error('Error verifying face:', error);
-                return false;
-            }
         }
         
         // Stop Face Detection
@@ -1176,10 +1217,14 @@
             faceVerificationOverlay.style.display = 'none';
             faceRegistrationIndicator.style.display = 'none';
             faceVerificationIndicator.style.display = 'none';
+            faceVerificationFailed.style.display = 'none';
             faceRegistrationScanning.style.display = 'none';
             faceVerificationScanning.style.display = 'none';
+            faceRegistrationStats.style.display = 'none';
+            faceVerificationStats.style.display = 'none';
         }
-        
+
+        // ... (rest of your existing code for PIN, QR scanning, etc. remains the same)
         // Initialize PIN input functionality
         function initializePinInputs() {
             pinInputs.forEach((input, index) => {
@@ -1449,8 +1494,8 @@
         // Face ID Registration Submit handler
         faceidRegistrationSubmit.addEventListener('click', () => {
             if (currentFaceDescriptor) {
-                localStorage.setItem('memberPortalFaceDescriptor', currentFaceDescriptor);
-                userFaceDescriptor = currentFaceDescriptor;
+                localStorage.setItem('memberPortalFaceDescriptor', JSON.stringify(currentFaceDescriptor));
+                userFaceDescriptor = JSON.stringify(currentFaceDescriptor);
                 
                 if (isRegisteringFace) {
                     // Coming from settings - return to settings
@@ -1631,17 +1676,17 @@
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
                 // Create canvas to draw video frame
                 const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
+                const ctx = canvas.getContext('2d');
                 
                 // Set canvas dimensions to match video
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 
                 // Draw video frame to canvas
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 
                 // Get image data from canvas
-                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 
                 // Try to decode QR code
                 const code = jsQR(imageData.data, imageData.width, imageData.height);
@@ -1705,13 +1750,13 @@
             }, 1500);
         }
         
-        // Handle authentication for existing users - FIXED LOGIC
+        // Handle authentication for existing users
         async function handleExistingUserAuth() {
             loadingContainer.style.display = 'none';
             
             console.log('Auth settings:', { usePinAuth, useFaceIDAuth, hasFace: !!userFaceDescriptor });
             
-            // FIXED: Check Face ID first if it's enabled and user has face registered
+            // Check Face ID first if it's enabled and user has face registered
             if (useFaceIDAuth && userFaceDescriptor) {
                 console.log('Using Face ID authentication - VERIFICATION');
                 // Use Face ID VERIFICATION (not registration)
