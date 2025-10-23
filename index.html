@@ -1,4 +1,4 @@
-<!-- Line 445 is the site list -->
+<!-- Line 537 is the site list -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,7 +59,7 @@
             opacity: 0.9;
         }
         
-        .scanner-section {
+        .scanner-section, .pin-section {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
             padding: 25px;
@@ -174,6 +174,67 @@
         }
         
         button#stop-btn:hover:not(:disabled) {
+            background: #c12f2f;
+        }
+        
+        .pin-input-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 25px 0;
+        }
+        
+        .pin-input {
+            width: 60px;
+            height: 70px;
+            border: 2px solid rgba(253, 187, 45, 0.5);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 2rem;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .pin-input:focus {
+            outline: none;
+            border-color: #fdbb2d;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 10px rgba(253, 187, 45, 0.3);
+        }
+        
+        .pin-input.filled {
+            border-color: #4cd964;
+            background: rgba(76, 217, 100, 0.1);
+        }
+        
+        .pin-instructions {
+            text-align: center;
+            margin-bottom: 20px;
+            opacity: 0.8;
+            font-size: 0.95rem;
+        }
+        
+        .pin-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .pin-submit {
+            background: #4cd964;
+        }
+        
+        .pin-submit:hover {
+            background: #3cb854;
+        }
+        
+        .pin-clear {
+            background: #b21f1f;
+        }
+        
+        .pin-clear:hover {
             background: #c12f2f;
         }
         
@@ -404,13 +465,34 @@
             </div>
         </div>
         
-        <!-- Moved loading container outside scanner section -->
+        <!-- PIN Entry Section -->
+        <div class="pin-section" id="pin-section" style="display: none;">
+            <h2 class="section-title" id="pin-title">Create Your PIN</h2>
+            <p class="pin-instructions" id="pin-instructions">Enter a 4-digit PIN to secure your account</p>
+            
+            <div class="pin-input-container">
+                <input type="password" class="pin-input" maxlength="1" data-index="0">
+                <input type="password" class="pin-input" maxlength="1" data-index="1">
+                <input type="password" class="pin-input" maxlength="1" data-index="2">
+                <input type="password" class="pin-input" maxlength="1" data-index="3">
+            </div>
+            
+            <div class="pin-buttons">
+                <button class="pin-submit" id="pin-submit">Submit PIN</button>
+                <button class="pin-clear" id="pin-clear">Clear</button>
+            </div>
+            
+            <div class="error" id="pin-error"></div>
+        </div>
+        
+        <!-- Loading Container -->
         <div class="loading-container" id="loading-container">
             <div class="loading-spinner"></div>
             <p class="loading-text">Verifying Access</p>
             <p class="loading-subtext">Checking credentials and loading your portal...</p>
         </div>
         
+        <!-- Portal Container -->
         <div class="portal-container" id="portal-container">
             <!-- Portal content will be loaded here -->
         </div>
@@ -434,6 +516,13 @@
         const placeholder = document.getElementById('placeholder');
         const scanRegion = document.getElementById('scan-region');
         const scannerSection = document.getElementById('scanner-section');
+        const pinSection = document.getElementById('pin-section');
+        const pinTitle = document.getElementById('pin-title');
+        const pinInstructions = document.getElementById('pin-instructions');
+        const pinInputs = document.querySelectorAll('.pin-input');
+        const pinSubmit = document.getElementById('pin-submit');
+        const pinClear = document.getElementById('pin-clear');
+        const pinError = document.getElementById('pin-error');
         const loadingContainer = document.getElementById('loading-container');
         const portalContainer = document.getElementById('portal-container');
         
@@ -441,11 +530,13 @@
         let stream = null;
         let scanning = false;
         let animationFrameId = null;
+        let userPin = localStorage.getItem('memberPortalPin');
+        let isCreatingPin = false;
+        let currentMemberId = null;
         
         // SAFE SITES LIST - Only these sites will be accepted
         const safeSites = [
-            "https://matrix.to/#/@jowilke77:matrix.org",
-            "https://popl.co/card/IgRPBGmi/1/dash"
+            "https://matrix.to/#/@jowilke77:matrix.org"
         ];
         
         // MEMBER PORTAL SITES - Edit these to customize the portal
@@ -465,7 +556,7 @@
             {
                 name: "Bulk Unblocker v6 Alpha",
                 url: "https://jokiller1011.github.io/Bulk-Unblocker-v6-Alpha/",
-                description: "Our 2nd Best Unblocker Tool Yet",
+                description: "Our Best Unblocker Tool Yet",
                 icon: "🔓"
             },
             {
@@ -475,9 +566,9 @@
                 icon: "💻"
             },
             {
-                name: "Bul Unblcoker v7 Endure",
-                url: "https://jokiller1011.github.io/Bulk-Unblocker-v7-Endure/",
-                description: "Our Best Unblocker Tool Yet",
+                name: "HR Portal",
+                url: "https://hr.14592studios.com",
+                description: "Access HR resources, benefits, and company policies",
                 icon: "👔"
             },
             {
@@ -487,6 +578,65 @@
                 icon: "📇"
             }
         ];
+        
+        // Initialize PIN input functionality
+        function initializePinInputs() {
+            pinInputs.forEach((input, index) => {
+                input.value = '';
+                input.classList.remove('filled');
+                
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    
+                    // Only allow numbers
+                    if (!/^\d*$/.test(value)) {
+                        e.target.value = '';
+                        return;
+                    }
+                    
+                    if (value.length === 1) {
+                        e.target.classList.add('filled');
+                        
+                        // Move to next input if available
+                        if (index < pinInputs.length - 1) {
+                            pinInputs[index + 1].focus();
+                        }
+                    } else {
+                        e.target.classList.remove('filled');
+                    }
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        // Move to previous input on backspace
+                        pinInputs[index - 1].focus();
+                    }
+                });
+            });
+            
+            // Focus first input
+            pinInputs[0].focus();
+        }
+        
+        // Get current PIN value
+        function getPinValue() {
+            return Array.from(pinInputs).map(input => input.value).join('');
+        }
+        
+        // Clear PIN inputs
+        function clearPinInputs() {
+            pinInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('filled');
+            });
+            pinInputs[0].focus();
+            pinError.style.display = 'none';
+        }
+        
+        // Validate PIN
+        function validatePin(pin) {
+            return /^\d{4}$/.test(pin);
+        }
         
         // Start the scanner
         startBtn.addEventListener('click', async () => {
@@ -555,6 +705,52 @@
             placeholder.style.display = 'block';
             scanRegion.style.display = 'none';
         });
+        
+        // PIN Submit handler
+        pinSubmit.addEventListener('click', () => {
+            const pin = getPinValue();
+            
+            if (!validatePin(pin)) {
+                pinError.textContent = "Please enter a valid 4-digit PIN";
+                pinError.style.display = 'block';
+                return;
+            }
+            
+            if (isCreatingPin) {
+                // Save new PIN
+                localStorage.setItem('memberPortalPin', pin);
+                userPin = pin;
+                pinSection.style.display = 'none';
+                loadingContainer.style.display = 'flex';
+                
+                // Show portal after delay
+                setTimeout(() => {
+                    loadingContainer.style.display = 'none';
+                    portalContainer.style.display = 'block';
+                    buildMemberPortal();
+                }, 1500);
+            } else {
+                // Verify existing PIN
+                if (pin === userPin) {
+                    pinSection.style.display = 'none';
+                    loadingContainer.style.display = 'flex';
+                    
+                    // Show portal after delay
+                    setTimeout(() => {
+                        loadingContainer.style.display = 'none';
+                        portalContainer.style.display = 'block';
+                        buildMemberPortal();
+                    }, 1500);
+                } else {
+                    pinError.textContent = "Incorrect PIN. Please try again.";
+                    pinError.style.display = 'block';
+                    clearPinInputs();
+                }
+            }
+        });
+        
+        // PIN Clear handler
+        pinClear.addEventListener('click', clearPinInputs);
         
         // Handle camera errors
         function handleCameraError(err) {
@@ -648,10 +844,24 @@
                 const isSafe = isUrlSafe(url);
                 
                 if (isSafe) {
-                    // Site is safe - show member portal
-                    loadingContainer.style.display = 'none';
-                    portalContainer.style.display = 'block';
-                    buildMemberPortal();
+                    // Site is safe - check if user has a PIN
+                    if (userPin) {
+                        // User has PIN - show PIN entry
+                        loadingContainer.style.display = 'none';
+                        pinSection.style.display = 'block';
+                        pinTitle.textContent = "Enter Your PIN";
+                        pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
+                        isCreatingPin = false;
+                        initializePinInputs();
+                    } else {
+                        // User doesn't have PIN - show PIN creation
+                        loadingContainer.style.display = 'none';
+                        pinSection.style.display = 'block';
+                        pinTitle.textContent = "Create Your PIN";
+                        pinInstructions.textContent = "Create a 4-digit PIN to secure your account";
+                        isCreatingPin = true;
+                        initializePinInputs();
+                    }
                 } else {
                     // Site is not safe - show error
                     loadingContainer.style.display = 'none';
@@ -664,7 +874,7 @@
                     startBtn.disabled = false;
                     stopBtn.disabled = true;
                 }
-            }, 2000); // Simulate verification delay
+            }, 1500); // Simulate verification delay
         }
         
         // Check if a URL is in the safe sites list
