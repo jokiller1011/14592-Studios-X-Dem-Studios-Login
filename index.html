@@ -1,4 +1,4 @@
-<!-- Line 1294 is the site list -->
+<!-- Line 976 is the site list -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -645,165 +645,6 @@
             font-size: 0.9rem;
             opacity: 0.8;
         }
-
-        /* New styles for security sections */
-        .security-banner {
-            background: linear-gradient(135deg, #b21f1f 0%, #c12f2f 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: bold;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .security-banner.spider {
-            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
-            border-left: 4px solid #b21f1f;
-        }
-
-        .settings-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid rgba(253, 187, 45, 0.3);
-            padding-bottom: 10px;
-        }
-
-        .settings-tab {
-            background: rgba(255, 255, 255, 0.08);
-            border: none;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .settings-tab.active {
-            background: #fdbb2d;
-            color: #0f1a30;
-        }
-
-        .settings-tab:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.12);
-        }
-
-        .settings-content {
-            display: none;
-        }
-
-        .settings-content.active {
-            display: block;
-        }
-
-        .qr-pin-list {
-            margin-top: 20px;
-        }
-
-        .qr-pin-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 4px solid #fdbb2d;
-        }
-
-        .qr-pin-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .qr-pin-name {
-            font-weight: bold;
-            color: #fdbb2d;
-        }
-
-        .qr-pin-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .small-btn {
-            padding: 8px 15px;
-            font-size: 0.9rem;
-        }
-
-        .danger-btn {
-            background: #b21f1f;
-            color: white;
-        }
-
-        .danger-btn:hover {
-            background: #c12f2f;
-        }
-
-        .authenticator-link {
-            display: inline-block;
-            background: rgba(0, 122, 255, 0.2);
-            color: #007AFF;
-            padding: 12px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            margin: 15px 0;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0, 122, 255, 0.3);
-        }
-
-        .authenticator-link:hover {
-            background: rgba(0, 122, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .security-note {
-            background: rgba(253, 187, 45, 0.1);
-            border: 1px solid rgba(253, 187, 45, 0.3);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-size: 0.9rem;
-        }
-
-        .verify-section {
-            display: none;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .qrcode-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .secret-key {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 5px;
-            font-family: monospace;
-            margin: 10px 0;
-            word-break: break-all;
-        }
-
-        .copy-btn {
-            background: #007AFF;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
     </style>
 </head>
 <body>
@@ -974,62 +815,19 @@
         
         <!-- Settings Section -->
         <div class="settings-section" id="settings-section" style="display: none;">
-            <div class="security-banner spider">
-                <span>🕷️ SECURITY CENTER - Verify your identity to modify sensitive settings</span>
-            </div>
+            <h2 class="section-title">Security Settings</h2>
             
-            <div class="settings-tabs">
-                <button class="settings-tab active" data-tab="security">Security</button>
-                <button class="settings-tab" data-tab="biometrics">Biometrics</button>
-                <button class="settings-tab" data-tab="2fa">2FA</button>
-                <button class="settings-tab" data-tab="general">General</button>
-            </div>
-            
-            <!-- Security Tab -->
-            <div class="settings-content active" id="security-tab">
-                <h2 class="section-title">Security Settings</h2>
-                
-                <div class="verify-section" id="security-verify-section">
-                    <h3>Verify Your Identity</h3>
-                    <p>To modify security settings, please verify your identity:</p>
-                    <div class="controls">
-                        <button id="verify-pin-btn">Verify with PIN</button>
-                        <button id="verify-face-btn">Verify with Face ID</button>
+            <div class="settings-options">
+                <div class="setting-option">
+                    <div class="setting-info">
+                        <div class="setting-name">PIN Authentication</div>
+                        <div class="setting-description">Use a 4-digit PIN to access your portal</div>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="pin-toggle" class="toggle-checkbox" checked>
+                        <label for="pin-toggle" class="toggle-label"></label>
                     </div>
                 </div>
-                
-                <div id="security-settings-content" style="display: none;">
-                    <div class="setting-option">
-                        <div class="setting-info">
-                            <div class="setting-name">PIN Protection</div>
-                            <div class="setting-description">Require PIN for QR code access</div>
-                        </div>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="pin-protection-toggle" class="toggle-checkbox" checked>
-                            <label for="pin-protection-toggle" class="toggle-label"></label>
-                        </div>
-                    </div>
-                    
-                    <div class="security-note">
-                        <strong>Note:</strong> When PIN protection is disabled, anyone with a valid QR code can access the portal without authentication.
-                    </div>
-                    
-                    <h3 style="margin-top: 30px;">QR Code PIN Management</h3>
-                    <p>Each QR code can have its own unique PIN for enhanced security.</p>
-                    
-                    <div class="qr-pin-list" id="qr-pin-list">
-                        <!-- QR PIN items will be dynamically added here -->
-                    </div>
-                    
-                    <div class="controls">
-                        <button id="add-qr-pin-btn">Add New QR PIN</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Biometrics Tab -->
-            <div class="settings-content" id="biometrics-tab">
-                <h2 class="section-title">Biometric Settings</h2>
                 
                 <div class="setting-option">
                     <div class="setting-info">
@@ -1052,93 +850,6 @@
                 </div>
                 <div class="face-status not-registered" id="face-status">
                     Face not registered. Click "Register Face" to set up Face ID.
-                </div>
-                
-                <div class="security-note">
-                    <strong>Biometric Data:</strong> Your facial data is stored securely on your device and is never transmitted to our servers.
-                </div>
-            </div>
-            
-            <!-- 2FA Tab -->
-            <div class="settings-content" id="2fa-tab">
-                <h2 class="section-title">Two-Factor Authentication</h2>
-                
-                <div class="setting-option">
-                    <div class="setting-info">
-                        <div class="setting-name">Enable 2FA</div>
-                        <div class="setting-description">Add an extra layer of security with time-based codes</div>
-                    </div>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="2fa-toggle" class="toggle-checkbox">
-                        <label for="2fa-toggle" class="toggle-label"></label>
-                    </div>
-                </div>
-                
-                <div id="2fa-setup-section" style="display: none;">
-                    <div class="security-note">
-                        <strong>We recommend using Alpha Authenticator</strong> for the best security experience.
-                    </div>
-                    
-                    <a href="https://jokiller1011.github.io/Alpha-Authenciator/" target="_blank" class="authenticator-link">
-                        🔐 Get Alpha Authenticator
-                    </a>
-                    
-                    <div id="2fa-qrcode-container" class="qrcode-container" style="display: none;">
-                        <h3>Scan this QR code with your authenticator app:</h3>
-                        <canvas id="2fa-qrcode"></canvas>
-                        <div class="secret-key" id="2fa-secret-display">
-                            Secret: <span id="2fa-secret-text"></span>
-                            <button class="copy-btn" onclick="copy2FASecret()">Copy</button>
-                        </div>
-                    </div>
-                    
-                    <div class="setting-option">
-                        <div class="setting-info">
-                            <div class="setting-name">2FA Status</div>
-                            <div class="setting-description" id="2fa-status-text">Not configured</div>
-                        </div>
-                        <button id="generate-2fa-btn">Setup 2FA</button>
-                    </div>
-                    
-                    <div class="pin-input-container">
-                        <input type="text" class="pin-input" maxlength="1" data-index="0" placeholder="0">
-                        <input type="text" class="pin-input" maxlength="1" data-index="1" placeholder="0">
-                        <input type="text" class="pin-input" maxlength="1" data-index="2" placeholder="0">
-                        <input type="text" class="pin-input" maxlength="1" data-index="3" placeholder="0">
-                        <input type="text" class="pin-input" maxlength="1" data-index="4" placeholder="0">
-                        <input type="text" class="pin-input" maxlength="1" data-index="5" placeholder="0">
-                    </div>
-                    
-                    <div class="controls">
-                        <button id="verify-2fa-btn">Verify Code</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- General Tab -->
-            <div class="settings-content" id="general-tab">
-                <h2 class="section-title">General Settings</h2>
-                
-                <div class="setting-option">
-                    <div class="setting-info">
-                        <div class="setting-name">PIN Authentication</div>
-                        <div class="setting-description">Use a 4-digit PIN to access your portal</div>
-                    </div>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="pin-toggle" class="toggle-checkbox" checked>
-                        <label for="pin-toggle" class="toggle-label"></label>
-                    </div>
-                </div>
-                
-                <div class="setting-option">
-                    <div class="setting-info">
-                        <div class="setting-name">Auto-Logout</div>
-                        <div class="setting-description">Automatically logout after 30 minutes of inactivity</div>
-                    </div>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="auto-logout-toggle" class="toggle-checkbox" checked>
-                        <label for="auto-logout-toggle" class="toggle-label"></label>
-                    </div>
                 </div>
             </div>
             
@@ -1170,10 +881,6 @@
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
     <!-- Include FaceAPI.js for real face detection and recognition -->
     <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
-    <!-- Include QR Code generator -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <!-- Include OTP library for 2FA -->
-    <script src="https://cdn.jsdelivr.net/npm/otpauth@9.1.3/dist/otpauth.umd.min.js"></script>
     
     <script>
         // Get DOM elements
@@ -1234,25 +941,6 @@
         const saveSettings = document.getElementById('save-settings');
         const cancelSettings = document.getElementById('cancel-settings');
         
-        // New security elements
-        const settingsTabs = document.querySelectorAll('.settings-tab');
-        const securityVerifySection = document.getElementById('security-verify-section');
-        const securitySettingsContent = document.getElementById('security-settings-content');
-        const pinProtectionToggle = document.getElementById('pin-protection-toggle');
-        const qrPinList = document.getElementById('qr-pin-list');
-        const addQrPinBtn = document.getElementById('add-qr-pin-btn');
-        const verifyPinBtn = document.getElementById('verify-pin-btn');
-        const verifyFaceBtn = document.getElementById('verify-face-btn');
-        const twofaToggle = document.getElementById('2fa-toggle');
-        const twofaSetupSection = document.getElementById('2fa-setup-section');
-        const generate2faBtn = document.getElementById('generate-2fa-btn');
-        const verify2faBtn = document.getElementById('verify-2fa-btn');
-        const twofaStatusText = document.getElementById('2fa-status-text');
-        const twofaInputs = document.querySelectorAll('#2fa-setup-section .pin-input');
-        const twofaQrcodeContainer = document.getElementById('2fa-qrcode-container');
-        const twofaSecretText = document.getElementById('2fa-secret-text');
-        const twofaQrcodeCanvas = document.getElementById('2fa-qrcode');
-        
         const loadingContainer = document.getElementById('loading-container');
         const portalContainer = document.getElementById('portal-container');
         
@@ -1276,20 +964,9 @@
         let isRegisteringFace = false;
         let currentFaceDescriptor = null;
         
-        // New security data
-        let qrPins = JSON.parse(localStorage.getItem('memberPortalQrPins') || '{}');
-        let pinProtectionEnabled = localStorage.getItem('memberPortalPinProtection') !== 'false';
-        let twofaEnabled = localStorage.getItem('memberPortal2FA') === 'true';
-        let twofaSecret = localStorage.getItem('memberPortal2FASecret');
-        let twofaVerified = localStorage.getItem('memberPortal2FAVerified') === 'true';
-        let isSecurityVerified = false;
-        
         // Face detection state
+        let faceDetectionEnabled = false;
         let faceapiLoaded = false;
-        let faceDetectionOptions = new faceapi.TinyFaceDetectorOptions({
-            inputSize: 320, // Smaller for faster detection
-            scoreThreshold: 0.3 // Lower threshold for better detection
-        });
         
         // SAFE SITES LIST - Only these sites will be accepted
         const safeSites = [
@@ -1336,215 +1013,6 @@
             }
         ];
         
-        // Initialize security features
-        function initializeSecurityFeatures() {
-            // Set initial toggle states
-            pinProtectionToggle.checked = pinProtectionEnabled;
-            twofaToggle.checked = twofaEnabled;
-            
-            // Show/hide 2FA setup section
-            twofaSetupSection.style.display = twofaEnabled ? 'block' : 'none';
-            
-            // Update 2FA status
-            update2FAStatus();
-            
-            // Load QR PINs
-            updateQrPinList();
-            
-            // Setup security verification
-            if (!isSecurityVerified) {
-                securityVerifySection.style.display = 'block';
-                securitySettingsContent.style.display = 'none';
-            }
-        }
-        
-        // Update 2FA status display
-        function update2FAStatus() {
-            if (twofaVerified && twofaSecret) {
-                twofaStatusText.textContent = '✓ 2FA is active';
-                twofaQrcodeContainer.style.display = 'none';
-            } else if (twofaSecret) {
-                twofaStatusText.textContent = '2FA setup in progress';
-            } else {
-                twofaStatusText.textContent = 'Not configured';
-            }
-        }
-        
-        // Update QR PIN list display
-        function updateQrPinList() {
-            qrPinList.innerHTML = '';
-            
-            if (Object.keys(qrPins).length === 0) {
-                qrPinList.innerHTML = '<p>No QR PINs configured. Add your first QR PIN to get started.</p>';
-                return;
-            }
-            
-            for (const [qrUrl, pinData] of Object.entries(qrPins)) {
-                const qrPinItem = document.createElement('div');
-                qrPinItem.className = 'qr-pin-item';
-                qrPinItem.innerHTML = `
-                    <div class="qr-pin-header">
-                        <div class="qr-pin-name">${pinData.name || 'Unnamed QR'}</div>
-                        <div class="qr-pin-actions">
-                            <button class="small-btn" onclick="editQrPin('${qrUrl}')">Edit</button>
-                            <button class="small-btn danger-btn" onclick="deleteQrPin('${qrUrl}')">Delete</button>
-                        </div>
-                    </div>
-                    <div>URL: ${qrUrl}</div>
-                    <div>PIN: ${'•'.repeat(pinData.pin.length)}</div>
-                `;
-                qrPinList.appendChild(qrPinItem);
-            }
-        }
-        
-        // Add new QR PIN
-        function addNewQrPin() {
-            const qrUrl = prompt('Enter the QR code URL:');
-            if (!qrUrl) return;
-            
-            const pinName = prompt('Enter a name for this QR code:') || 'Unnamed QR';
-            const pin = prompt('Enter a 4-digit PIN for this QR code:');
-            
-            if (!pin || !/^\d{4}$/.test(pin)) {
-                alert('Please enter a valid 4-digit PIN.');
-                return;
-            }
-            
-            qrPins[qrUrl] = {
-                name: pinName,
-                pin: pin,
-                created: new Date().toISOString()
-            };
-            
-            localStorage.setItem('memberPortalQrPins', JSON.stringify(qrPins));
-            updateQrPinList();
-        }
-        
-        // Edit QR PIN
-        function editQrPin(qrUrl) {
-            const pinData = qrPins[qrUrl];
-            const newName = prompt('Enter new name:', pinData.name) || pinData.name;
-            const newPin = prompt('Enter new 4-digit PIN:', pinData.pin);
-            
-            if (newPin && /^\d{4}$/.test(newPin)) {
-                qrPins[qrUrl] = {
-                    ...pinData,
-                    name: newName,
-                    pin: newPin
-                };
-                localStorage.setItem('memberPortalQrPins', JSON.stringify(qrPins));
-                updateQrPinList();
-            } else if (newPin) {
-                alert('Please enter a valid 4-digit PIN.');
-            }
-        }
-        
-        // Delete QR PIN
-        function deleteQrPin(qrUrl) {
-            if (confirm('Are you sure you want to delete this QR PIN?')) {
-                delete qrPins[qrUrl];
-                localStorage.setItem('memberPortalQrPins', JSON.stringify(qrPins));
-                updateQrPinList();
-            }
-        }
-        
-        // Verify security access
-        function verifySecurityAccess() {
-            isSecurityVerified = true;
-            securityVerifySection.style.display = 'none';
-            securitySettingsContent.style.display = 'block';
-        }
-        
-        // Generate 2FA secret and QR code
-        function generate2FASecret() {
-            // Generate a random base32 secret
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-            let secret = '';
-            for (let i = 0; i < 32; i++) {
-                secret += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            
-            twofaSecret = secret;
-            twofaSecretText.textContent = secret;
-            localStorage.setItem('memberPortal2FASecret', secret);
-            localStorage.setItem('memberPortal2FAVerified', 'false');
-            twofaVerified = false;
-            
-            // Generate QR code
-            const otpauth = `otpauth://totp/14592Studios:MemberPortal?secret=${secret}&issuer=14592Studios&algorithm=SHA1&digits=6&period=30`;
-            
-            QRCode.toCanvas(twofaQrcodeCanvas, otpauth, {
-                width: 200,
-                height: 200,
-                colorDark: '#000000',
-                colorLight: '#ffffff'
-            }, function(error) {
-                if (error) {
-                    console.error('Error generating QR code:', error);
-                    alert('Error generating QR code. Please try again.');
-                } else {
-                    twofaQrcodeContainer.style.display = 'block';
-                    update2FAStatus();
-                    alert('Scan the QR code with your authenticator app or manually enter the secret key.');
-                }
-            });
-        }
-        
-        // Verify 2FA code
-        function verify2FACode() {
-            const code = Array.from(twofaInputs).map(input => input.value).join('');
-            
-            if (code.length !== 6 || !/^\d+$/.test(code)) {
-                alert('Please enter a valid 6-digit code.');
-                return;
-            }
-            
-            if (!twofaSecret) {
-                alert('Please generate a 2FA secret first.');
-                return;
-            }
-            
-            // Verify the TOTP code
-            const totp = new OTPAuth.TOTP({
-                issuer: '14592Studios',
-                label: 'MemberPortal',
-                algorithm: 'SHA1',
-                digits: 6,
-                period: 30,
-                secret: twofaSecret
-            });
-            
-            const isValid = totp.validate({ token: code, window: 1 }) !== null;
-            
-            if (isValid) {
-                twofaVerified = true;
-                localStorage.setItem('memberPortal2FAVerified', 'true');
-                update2FAStatus();
-                twofaInputs.forEach(input => input.value = '');
-                alert('2FA verification successful! Two-factor authentication is now active.');
-            } else {
-                alert('Invalid verification code. Please try again.');
-            }
-        }
-        
-        // Copy 2FA secret to clipboard
-        function copy2FASecret() {
-            if (!twofaSecret) return;
-            
-            navigator.clipboard.writeText(twofaSecret).then(() => {
-                alert('Secret key copied to clipboard!');
-            }).catch(() => {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = twofaSecret;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                alert('Secret key copied to clipboard!');
-            });
-        }
-        
         // Update face status display
         function updateFaceStatus() {
             if (userFaceDescriptor) {
@@ -1558,16 +1026,16 @@
             }
         }
         
-        // Initialize FaceAPI.js with optimized settings
+        // Initialize FaceAPI.js
         async function initializeFaceDetection() {
             try {
-                // Load face detection models with optimized settings
+                // Load face detection models
                 await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
                 await faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
                 await faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
                 
                 faceapiLoaded = true;
-                console.log('FaceAPI.js loaded successfully with optimized settings');
+                console.log('FaceAPI.js loaded successfully');
                 return true;
             } catch (error) {
                 console.error('Error loading FaceAPI.js:', error);
@@ -1576,13 +1044,13 @@
             }
         }
         
-        // Detect faces using FaceAPI.js with improved reliability
+        // Detect faces using FaceAPI.js
         async function detectFaces(videoElement) {
             if (!faceapiLoaded) return null;
             
             try {
                 const detection = await faceapi
-                    .detectSingleFace(videoElement, faceDetectionOptions)
+                    .detectSingleFace(videoElement, new faceapi.TinyFaceDetectorOptions())
                     .withFaceLandmarks()
                     .withFaceDescriptor();
                 
@@ -1604,7 +1072,7 @@
             return Math.sqrt(distance);
         }
         
-        // Start Face Detection for registration - FASTER and MORE RELIABLE
+        // Start Face Detection for registration
         async function startFaceRegistrationDetection() {
             if (!faceapiLoaded) {
                 faceidRegistrationError.textContent = "Face detection not available. Please try PIN authentication.";
@@ -1615,15 +1083,11 @@
             faceRegistrationScanning.style.display = 'flex';
             faceRegistrationStats.style.display = 'block';
             
-            let detectionCount = 0;
-            const requiredDetections = 3; // Require multiple detections for reliability
-            
             faceRegistrationDetectionInterval = setInterval(async () => {
                 if (faceidRegistrationVideo.readyState === faceidRegistrationVideo.HAVE_ENOUGH_DATA) {
                     const detection = await detectFaces(faceidRegistrationVideo);
                     
                     if (detection) {
-                        detectionCount++;
                         const box = detection.detection.box;
                         
                         // Show face overlay
@@ -1637,20 +1101,16 @@
                         const confidence = Math.round((1 - detection.detection.score) * 100);
                         registrationConfidence.textContent = `${confidence}%`;
                         
-                        // Only enable registration after multiple consistent detections
-                        if (detectionCount >= requiredDetections) {
-                            // Hide scanning indicator
-                            faceRegistrationScanning.style.display = 'none';
-                            
-                            // Show match indicator and enable submit button
-                            faceRegistrationIndicator.style.display = 'block';
-                            faceidRegistrationSubmit.disabled = false;
-                            
-                            // Store face descriptor for registration
-                            currentFaceDescriptor = Array.from(detection.descriptor);
-                        }
+                        // Hide scanning indicator
+                        faceRegistrationScanning.style.display = 'none';
+                        
+                        // Show match indicator and enable submit button
+                        faceRegistrationIndicator.style.display = 'block';
+                        faceidRegistrationSubmit.disabled = false;
+                        
+                        // Store face descriptor for registration
+                        currentFaceDescriptor = Array.from(detection.descriptor);
                     } else {
-                        detectionCount = 0; // Reset counter if face is lost
                         faceRegistrationOverlay.style.display = 'none';
                         faceRegistrationIndicator.style.display = 'none';
                         faceidRegistrationSubmit.disabled = true;
@@ -1659,10 +1119,10 @@
                         registrationConfidence.textContent = '0%';
                     }
                 }
-            }, 300); // Faster detection interval (300ms instead of 500ms)
+            }, 500);
         }
         
-        // Start Face Detection for verification - FASTER and MORE RELIABLE
+        // Start Face Detection for verification
         async function startFaceVerificationDetection() {
             if (!faceapiLoaded || !userFaceDescriptor) {
                 faceidVerificationError.textContent = "Face verification not available. Please use PIN authentication.";
@@ -1672,9 +1132,7 @@
             
             const storedDescriptor = JSON.parse(userFaceDescriptor);
             let verificationAttempts = 0;
-            const maxVerificationAttempts = 20; // More attempts for reliability
-            let consecutiveMatches = 0;
-            const requiredConsecutiveMatches = 2; // Require consecutive matches
+            const maxVerificationAttempts = 15;
             
             faceVerificationScanning.style.display = 'flex';
             faceVerificationStats.style.display = 'block';
@@ -1700,32 +1158,24 @@
                         const matchConfidence = Math.max(0, Math.round((1 - distance) * 100));
                         verificationConfidence.textContent = `${matchConfidence}%`;
                         
-                        // Check if face matches (slightly more lenient threshold for better UX)
-                        const isMatch = distance < 0.65 && matchConfidence >= 60;
+                        // Check if face matches (distance threshold for match)
+                        const isMatch = distance < 0.6; // Lower distance = better match
                         
-                        if (isMatch) {
-                            consecutiveMatches++;
+                        if (isMatch && matchConfidence >= 65) {
+                            // Face verified successfully
+                            clearInterval(faceVerificationDetectionInterval);
+                            faceVerificationScanning.style.display = 'none';
+                            faceVerificationStats.style.display = 'none';
+                            faceVerificationIndicator.style.display = 'block';
+                            faceVerificationOverlay.style.borderColor = '#4cd964';
                             
-                            if (consecutiveMatches >= requiredConsecutiveMatches) {
-                                // Face verified successfully
-                                clearInterval(faceVerificationDetectionInterval);
-                                faceVerificationScanning.style.display = 'none';
-                                faceVerificationStats.style.display = 'none';
-                                faceVerificationIndicator.style.display = 'block';
-                                faceVerificationOverlay.style.borderColor = '#4cd964';
-                                
-                                setTimeout(() => {
-                                    faceidVerificationSection.style.display = 'none';
-                                    stopFaceIDVerification();
-                                    loadingContainer.style.display = 'flex';
-                                    setTimeout(showPortal, 1000);
-                                }, 800);
-                            }
-                        } else {
-                            consecutiveMatches = 0; // Reset consecutive matches
-                        }
-                        
-                        if (verificationAttempts >= maxVerificationAttempts) {
+                            setTimeout(() => {
+                                faceidVerificationSection.style.display = 'none';
+                                stopFaceIDVerification();
+                                loadingContainer.style.display = 'flex';
+                                setTimeout(showPortal, 1000);
+                            }, 1000);
+                        } else if (verificationAttempts >= maxVerificationAttempts) {
                             // Too many failed attempts
                             clearInterval(faceVerificationDetectionInterval);
                             faceVerificationScanning.style.display = 'none';
@@ -1734,7 +1184,6 @@
                             faceVerificationOverlay.className = 'face-overlay unknown';
                         }
                     } else {
-                        consecutiveMatches = 0; // Reset on no detection
                         faceVerificationOverlay.style.display = 'none';
                         faceVerificationIndicator.style.display = 'none';
                         faceVerificationFailed.style.display = 'none';
@@ -1751,7 +1200,7 @@
                         }
                     }
                 }
-            }, 300); // Faster detection interval (300ms instead of 500ms)
+            }, 500);
         }
         
         // Stop Face Detection
@@ -1775,6 +1224,7 @@
             faceVerificationStats.style.display = 'none';
         }
 
+        // ... (rest of your existing code for PIN, QR scanning, etc. remains the same)
         // Initialize PIN input functionality
         function initializePinInputs() {
             pinInputs.forEach((input, index) => {
@@ -1834,7 +1284,7 @@
             return /^\d{4}$/.test(pin);
         }
         
-        // Start the scanner - FIXED VERSION
+        // Start the scanner
         startBtn.addEventListener('click', async () => {
             try {
                 status.textContent = "Initializing camera...";
@@ -2455,93 +1905,7 @@
             }
         });
         
-        // Settings tabs functionality
-        settingsTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Remove active class from all tabs and contents
-                settingsTabs.forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.settings-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                
-                // Add active class to clicked tab and corresponding content
-                tab.classList.add('active');
-                const tabId = tab.getAttribute('data-tab') + '-tab';
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
-        
-        // Verify PIN for security settings
-        verifyPinBtn.addEventListener('click', () => {
-            const enteredPin = prompt('Enter your PIN to verify identity:');
-            if (enteredPin === userPin) {
-                verifySecurityAccess();
-            } else {
-                alert('Incorrect PIN. Access denied.');
-            }
-        });
-        
-        // Verify Face ID for security settings
-        verifyFaceBtn.addEventListener('click', async () => {
-            if (!userFaceDescriptor) {
-                alert('Face ID not registered. Please use PIN verification.');
-                return;
-            }
-            
-            // Start face verification for security settings
-            faceidVerificationSection.style.display = 'block';
-            settingsSection.style.display = 'none';
-            
-            await startFaceIDVerification();
-            
-            // Override the success behavior for security verification
-            const originalInterval = faceVerificationDetectionInterval;
-            faceVerificationDetectionInterval = setInterval(async () => {
-                if (faceidVerificationVideo.readyState === faceidVerificationVideo.HAVE_ENOUGH_DATA) {
-                    const detection = await detectFaces(faceidVerificationVideo);
-                    
-                    if (detection) {
-                        const currentDescriptor = Array.from(detection.descriptor);
-                        const storedDescriptor = JSON.parse(userFaceDescriptor);
-                        const distance = calculateFaceDistance(currentDescriptor, storedDescriptor);
-                        const isMatch = distance < 0.65;
-                        
-                        if (isMatch) {
-                            clearInterval(faceVerificationDetectionInterval);
-                            stopFaceIDVerification();
-                            faceidVerificationSection.style.display = 'none';
-                            settingsSection.style.display = 'block';
-                            verifySecurityAccess();
-                        }
-                    }
-                }
-            }, 300);
-        });
-
-        // Add QR PIN button
-        addQrPinBtn.addEventListener('click', addNewQrPin);
-
-        // Generate 2FA button
-        generate2faBtn.addEventListener('click', generate2FASecret);
-
-        // Verify 2FA button
-        verify2faBtn.addEventListener('click', verify2FACode);
-
-        // 2FA toggle
-        twofaToggle.addEventListener('change', function() {
-            twofaEnabled = this.checked;
-            twofaSetupSection.style.display = twofaEnabled ? 'block' : 'none';
-            
-            if (!twofaEnabled) {
-                twofaSecret = null;
-                twofaVerified = false;
-                localStorage.removeItem('memberPortal2FASecret');
-                localStorage.removeItem('memberPortal2FAVerified');
-                update2FAStatus();
-            }
-        });
-
-        // Initialize when page loads
+        // Initialize
         window.addEventListener('load', async () => {
             // Initialize face detection
             const faceDetectionReady = await initializeFaceDetection();
@@ -2552,9 +1916,6 @@
             // Update face status
             updateFaceStatus();
             
-            // Initialize security features
-            initializeSecurityFeatures();
-            
             // Check if browser supports required APIs
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 errorDiv.textContent = "Your browser doesn't support camera access. Please try using Chrome, Firefox, or Edge.";
@@ -2562,11 +1923,6 @@
                 startBtn.disabled = true;
             }
         });
-
-        // Make functions global for HTML onclick handlers
-        window.editQrPin = editQrPin;
-        window.deleteQrPin = deleteQrPin;
-        window.copy2FASecret = copy2FASecret;
     </script>
 </body>
 </html>
