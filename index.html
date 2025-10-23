@@ -1775,8 +1775,686 @@
             faceVerificationStats.style.display = 'none';
         }
 
-        // ... (rest of your existing code remains the same)
-
+        // Initialize PIN input functionality
+        function initializePinInputs() {
+            pinInputs.forEach((input, index) => {
+                input.value = '';
+                input.classList.remove('filled');
+                
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    
+                    // Only allow numbers
+                    if (!/^\d*$/.test(value)) {
+                        e.target.value = '';
+                        return;
+                    }
+                    
+                    if (value.length === 1) {
+                        e.target.classList.add('filled');
+                        
+                        // Move to next input if available
+                        if (index < pinInputs.length - 1) {
+                            pinInputs[index + 1].focus();
+                        }
+                    } else {
+                        e.target.classList.remove('filled');
+                    }
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        // Move to previous input on backspace
+                        pinInputs[index - 1].focus();
+                    }
+                });
+            });
+            
+            // Focus first input
+            pinInputs[0].focus();
+        }
+        
+        // Get current PIN value
+        function getPinValue() {
+            return Array.from(pinInputs).map(input => input.value).join('');
+        }
+        
+        // Clear PIN inputs
+        function clearPinInputs() {
+            pinInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('filled');
+            });
+            pinInputs[0].focus();
+            pinError.style.display = 'none';
+        }
+        
+        // Validate PIN
+        function validatePin(pin) {
+            return /^\d{4}$/.test(pin);
+        }
+        
+        // Start the scanner - FIXED VERSION
+        startBtn.addEventListener('click', async () => {
+            try {
+                status.textContent = "Initializing camera...";
+                errorDiv.style.display = 'none';
+                successDiv.style.display = 'none';
+                
+                // Stop any existing stream
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                
+                // Request camera access
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
+                
+                // Set video source
+                video.srcObject = stream;
+                
+                // Wait for video to load
+                video.addEventListener('loadedmetadata', () => {
+                    video.play();
+                    startScanning();
+                    
+                    // Show video and hide placeholder
+                    video.style.display = 'block';
+                    placeholder.style.display = 'none';
+                    scanRegion.style.display = 'block';
+                }, { once: true });
+                
+                // Update UI
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                status.textContent = "Scanner active - scan your QR code";
+                
+            } catch (err) {
+                console.error("Error accessing camera:", err);
+                handleCameraError(err);
+            }
+        });
+        
+        // Stop the scanner
+        stopBtn.addEventListener('click', () => {
+            stopScanning();
+            
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            video.srcObject = null;
+            
+            // Update UI
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            status.textContent = "Scanner is not active";
+            
+            // Show placeholder and hide video
+            video.style.display = 'none';
+            placeholder.style.display = 'block';
+            scanRegion.style.display = 'none';
+        });
+        
+        // Start Face ID Registration
+        async function startFaceIDRegistration() {
+            try {
+                // Stop any existing stream
+                if (faceidRegistrationStream) {
+                    faceidRegistrationStream.getTracks().forEach(track => track.stop());
+                }
+                
+                // Request camera access for face detection
+                faceidRegistrationStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    } 
+                });
+                
+                // Set video source
+                faceidRegistrationVideo.srcObject = faceidRegistrationStream;
+                
+                // Wait for video to load
+                faceidRegistrationVideo.addEventListener('loadedmetadata', () => {
+                    faceidRegistrationVideo.play();
+                    faceidRegistrationScanning = true;
+                    
+                    // Show video and hide placeholder
+                    faceidRegistrationVideo.style.display = 'block';
+                    faceidRegistrationPlaceholder.style.display = 'none';
+                }, { once: true });
+                
+            } catch (err) {
+                console.error("Error accessing camera for Face ID:", err);
+                faceidRegistrationError.textContent = "Could not access camera for Face ID";
+                faceidRegistrationError.style.display = 'block';
+            }
+        }
+        
+        // Start Face ID Verification
+        async function startFaceIDVerification() {
+            try {
+                // Stop any existing stream
+                if (faceidVerificationStream) {
+                    faceidVerificationStream.getTracks().forEach(track => track.stop());
+                }
+                
+                // Request camera access for face detection
+                faceidVerificationStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    } 
+                });
+                
+                // Set video source
+                faceidVerificationVideo.srcObject = faceidVerificationStream;
+                
+                // Wait for video to load
+                faceidVerificationVideo.addEventListener('loadedmetadata', () => {
+                    faceidVerificationVideo.play();
+                    faceidVerificationScanning = true;
+                    
+                    // Show video and hide placeholder
+                    faceidVerificationVideo.style.display = 'block';
+                    faceidVerificationPlaceholder.style.display = 'none';
+                }, { once: true });
+                
+            } catch (err) {
+                console.error("Error accessing camera for Face ID:", err);
+                faceidVerificationError.textContent = "Could not access camera for Face ID";
+                faceidVerificationError.style.display = 'block';
+            }
+        }
+        
+        // Stop Face ID Registration
+        function stopFaceIDRegistration() {
+            faceidRegistrationScanning = false;
+            stopFaceDetection();
+            
+            if (faceidRegistrationStream) {
+                faceidRegistrationStream.getTracks().forEach(track => track.stop());
+                faceidRegistrationStream = null;
+            }
+            
+            faceidRegistrationVideo.srcObject = null;
+            faceidRegistrationVideo.style.display = 'none';
+            faceidRegistrationPlaceholder.style.display = 'block';
+        }
+        
+        // Stop Face ID Verification
+        function stopFaceIDVerification() {
+            faceidVerificationScanning = false;
+            stopFaceDetection();
+            
+            if (faceidVerificationStream) {
+                faceidVerificationStream.getTracks().forEach(track => track.stop());
+                faceidVerificationStream = null;
+            }
+            
+            faceidVerificationVideo.srcObject = null;
+            faceidVerificationVideo.style.display = 'none';
+            faceidVerificationPlaceholder.style.display = 'block';
+        }
+        
+        // PIN Submit handler
+        pinSubmit.addEventListener('click', () => {
+            const pin = getPinValue();
+            
+            if (!validatePin(pin)) {
+                pinError.textContent = "Please enter a valid 4-digit PIN";
+                pinError.style.display = 'block';
+                return;
+            }
+            
+            if (isFirstTimeSetup) {
+                // Save new PIN
+                localStorage.setItem('memberPortalPin', pin);
+                userPin = pin;
+                pinSection.style.display = 'none';
+                
+                // Show authentication choice
+                authChoiceSection.style.display = 'block';
+            } else {
+                // Verify existing PIN
+                if (pin === userPin) {
+                    pinSection.style.display = 'none';
+                    loadingContainer.style.display = 'flex';
+                    setTimeout(showPortal, 1500);
+                } else {
+                    pinError.textContent = "Incorrect PIN. Please try again.";
+                    pinError.style.display = 'block';
+                    clearPinInputs();
+                }
+            }
+        });
+        
+        // PIN Clear handler
+        pinClear.addEventListener('click', clearPinInputs);
+        
+        // Face ID Registration Submit handler
+        faceidRegistrationSubmit.addEventListener('click', () => {
+            if (currentFaceDescriptor) {
+                localStorage.setItem('memberPortalFaceDescriptor', JSON.stringify(currentFaceDescriptor));
+                userFaceDescriptor = JSON.stringify(currentFaceDescriptor);
+                
+                if (isRegisteringFace) {
+                    // Coming from settings - return to settings
+                    faceidRegistrationSection.style.display = 'none';
+                    stopFaceIDRegistration();
+                    settingsSection.style.display = 'block';
+                    updateFaceStatus();
+                    isRegisteringFace = false;
+                } else {
+                    // Coming from first-time setup
+                    usePinAuth = false;
+                    useFaceIDAuth = true;
+                    localStorage.setItem('memberPortalUsePin', 'false');
+                    localStorage.setItem('memberPortalUseFaceID', 'true');
+                    
+                    faceidRegistrationSection.style.display = 'none';
+                    stopFaceIDRegistration();
+                    loadingContainer.style.display = 'flex';
+                    setTimeout(showPortal, 1500);
+                }
+            }
+        });
+        
+        // Face ID Registration Cancel handler
+        faceidRegistrationCancel.addEventListener('click', () => {
+            faceidRegistrationSection.style.display = 'none';
+            stopFaceIDRegistration();
+            
+            if (isRegisteringFace) {
+                // Return to settings
+                settingsSection.style.display = 'block';
+                isRegisteringFace = false;
+            } else if (isFirstTimeSetup) {
+                // Return to PIN setup
+                pinSection.style.display = 'block';
+            } else {
+                // Return to scanner
+                scannerSection.style.display = 'block';
+            }
+        });
+        
+        // Face ID Verification Cancel handler
+        faceidVerificationCancel.addEventListener('click', () => {
+            faceidVerificationSection.style.display = 'none';
+            stopFaceIDVerification();
+            pinSection.style.display = 'block';
+        });
+        
+        // Use PIN button handler
+        usePinBtn.addEventListener('click', () => {
+            authChoiceSection.style.display = 'none';
+            usePinAuth = true;
+            useFaceIDAuth = false;
+            localStorage.setItem('memberPortalUsePin', 'true');
+            localStorage.setItem('memberPortalUseFaceID', 'false');
+            loadingContainer.style.display = 'flex';
+            setTimeout(showPortal, 1500);
+        });
+        
+        // Use Face ID button handler
+        useFaceidBtn.addEventListener('click', async () => {
+            authChoiceSection.style.display = 'none';
+            await startFaceRegistration();
+        });
+        
+        // Register Face button handler
+        registerFaceBtn.addEventListener('click', async () => {
+            settingsSection.style.display = 'none';
+            await startFaceRegistration();
+            isRegisteringFace = true;
+        });
+        
+        // Start face registration process
+        async function startFaceRegistration() {
+            faceidRegistrationSection.style.display = 'block';
+            faceidRegistrationSubmit.disabled = true;
+            faceRegistrationScanning.style.display = 'flex';
+            
+            await startFaceIDRegistration();
+            startFaceRegistrationDetection();
+        }
+        
+        // Start face verification process
+        async function startFaceVerification() {
+            faceidVerificationSection.style.display = 'block';
+            faceVerificationScanning.style.display = 'flex';
+            
+            await startFaceIDVerification();
+            startFaceVerificationDetection();
+        }
+        
+        // Settings button handler
+        settingsBtn.addEventListener('click', () => {
+            portalContainer.style.display = 'none';
+            settingsSection.style.display = 'block';
+            
+            // Set current settings
+            pinToggle.checked = usePinAuth;
+            faceidToggle.checked = useFaceIDAuth;
+            updateFaceStatus();
+        });
+        
+        // Save settings handler
+        saveSettings.addEventListener('click', () => {
+            usePinAuth = pinToggle.checked;
+            useFaceIDAuth = faceidToggle.checked;
+            
+            // Ensure at least one method is selected
+            if (!usePinAuth && !useFaceIDAuth) {
+                usePinAuth = true;
+                pinToggle.checked = true;
+            }
+            
+            localStorage.setItem('memberPortalUsePin', usePinAuth.toString());
+            localStorage.setItem('memberPortalUseFaceID', useFaceIDAuth.toString());
+            
+            settingsSection.style.display = 'none';
+            portalContainer.style.display = 'block';
+        });
+        
+        // Cancel settings handler
+        cancelSettings.addEventListener('click', () => {
+            settingsSection.style.display = 'none';
+            portalContainer.style.display = 'block';
+        });
+        
+        // Show portal
+        function showPortal() {
+            loadingContainer.style.display = 'none';
+            portalContainer.style.display = 'block';
+            buildMemberPortal();
+        }
+        
+        // Handle camera errors
+        function handleCameraError(err) {
+            let errorMessage = "Could not access camera. ";
+            
+            if (err.name === 'NotAllowedError') {
+                errorMessage += "Camera permission was denied. Please allow camera access to use QR scanner.";
+            } else if (err.name === 'NotFoundError') {
+                errorMessage += "No camera found on your device.";
+            } else if (err.name === 'NotSupportedError') {
+                errorMessage += "Camera access is not supported by your browser.";
+            } else if (err.name === 'NotReadableError') {
+                errorMessage += "Camera is already in use by another application.";
+            } else {
+                errorMessage += "Please check your camera settings and try again.";
+            }
+            
+            errorDiv.textContent = errorMessage;
+            errorDiv.style.display = 'block';
+            status.textContent = "Camera access failed";
+            
+            // Reset UI
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        }
+        
+        // Start scanning for QR codes
+        function startScanning() {
+            scanning = true;
+            scanFrame();
+        }
+        
+        // Stop scanning
+        function stopScanning() {
+            scanning = false;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }
+        
+        // Scan each video frame for QR codes
+        function scanFrame() {
+            if (!scanning) return;
+            
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                // Create canvas to draw video frame
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas dimensions to match video
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                // Draw video frame to canvas
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Get image data from canvas
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                
+                // Try to decode QR code
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                
+                if (code) {
+                    // QR code found!
+                    status.textContent = "QR Code detected!";
+                    
+                    // Process the QR code and check if it's a safe site
+                    processQRCode(code.data);
+                    
+                    return;
+                }
+            }
+            
+            // Continue scanning
+            animationFrameId = requestAnimationFrame(scanFrame);
+        }
+        
+        // Process QR code and check if it's a safe site
+        function processQRCode(url) {
+            // Stop scanning
+            stopScanning();
+            
+            // Hide scanner and show loading
+            scannerSection.style.display = 'none';
+            loadingContainer.style.display = 'flex';
+            
+            // Simulate verification process
+            setTimeout(() => {
+                // Check if the URL is in the safe sites list
+                const isSafe = isUrlSafe(url);
+                
+                if (isSafe) {
+                    // Site is safe - check if user has authentication set up
+                    if (!userPin && !userFaceDescriptor) {
+                        // First time setup
+                        isFirstTimeSetup = true;
+                        loadingContainer.style.display = 'none';
+                        pinSection.style.display = 'block';
+                        pinTitle.textContent = "Create Your PIN";
+                        pinInstructions.textContent = "Create a 4-digit PIN to secure your account";
+                        initializePinInputs();
+                    } else {
+                        // Existing user - use preferred authentication method
+                        isFirstTimeSetup = false;
+                        handleExistingUserAuth();
+                    }
+                } else {
+                    // Site is not safe - show error
+                    loadingContainer.style.display = 'none';
+                    scannerSection.style.display = 'block';
+                    errorDiv.textContent = `Access Denied: The QR code is not from an approved source.`;
+                    errorDiv.style.display = 'block';
+                    status.textContent = "Verification failed";
+                    
+                    // Reset scanner
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                }
+            }, 1500);
+        }
+        
+        // Handle authentication for existing users
+        async function handleExistingUserAuth() {
+            loadingContainer.style.display = 'none';
+            
+            console.log('Auth settings:', { usePinAuth, useFaceIDAuth, hasFace: !!userFaceDescriptor });
+            
+            // Check Face ID first if it's enabled and user has face registered
+            if (useFaceIDAuth && userFaceDescriptor) {
+                console.log('Using Face ID authentication - VERIFICATION');
+                // Use Face ID VERIFICATION (not registration)
+                await startFaceVerification();
+            } else if (usePinAuth) {
+                console.log('Using PIN authentication');
+                // Use PIN authentication
+                pinSection.style.display = 'block';
+                pinTitle.textContent = "Enter Your PIN";
+                pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
+                initializePinInputs();
+            } else {
+                // Fallback to PIN if no method is selected
+                console.log('Fallback to PIN authentication');
+                pinSection.style.display = 'block';
+                pinTitle.textContent = "Enter Your PIN";
+                pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
+                initializePinInputs();
+            }
+        }
+        
+        // Check if a URL is in the safe sites list
+        function isUrlSafe(url) {
+            // Normalize URL for comparison
+            const normalizedUrl = normalizeUrl(url);
+            
+            // Check if the URL matches any safe site
+            return safeSites.some(safeSite => {
+                const normalizedSafeSite = normalizeUrl(safeSite);
+                return normalizedUrl === normalizedSafeSite;
+            });
+        }
+        
+        // Normalize URL for comparison
+        function normalizeUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                // Remove trailing slashes and convert to lowercase
+                return `${urlObj.protocol}//${urlObj.hostname}${urlObj.pathname.replace(/\/$/, '')}`.toLowerCase();
+            } catch (e) {
+                // If it's not a valid URL, return the original string normalized
+                return url.toLowerCase().replace(/\/$/, '');
+            }
+        }
+        
+        // Build the member portal with sites
+        function buildMemberPortal() {
+            // Clear existing content but preserve the settings button
+            const existingSettingsBtn = document.getElementById('settings-btn');
+            portalContainer.innerHTML = '';
+            
+            // Re-add the settings button
+            const newSettingsBtn = document.createElement('button');
+            newSettingsBtn.className = 'settings-btn';
+            newSettingsBtn.id = 'settings-btn';
+            newSettingsBtn.innerHTML = '⚙️';
+            newSettingsBtn.addEventListener('click', () => {
+                portalContainer.style.display = 'none';
+                settingsSection.style.display = 'block';
+                
+                // Set current settings
+                pinToggle.checked = usePinAuth;
+                faceidToggle.checked = useFaceIDAuth;
+                updateFaceStatus();
+            });
+            
+            const welcomeMessage = document.createElement('h2');
+            welcomeMessage.className = 'welcome-message';
+            welcomeMessage.textContent = 'Welcome to Your Member Portal!';
+            
+            const memberSitesGrid = document.createElement('div');
+            memberSitesGrid.className = 'member-sites';
+            
+            // Add each site card from the memberPortalSites array
+            memberPortalSites.forEach(site => {
+                const siteCard = document.createElement('div');
+                siteCard.className = 'site-card';
+                siteCard.innerHTML = `
+                    <div class="site-icon">${site.icon}</div>
+                    <div class="site-name">${site.name}</div>
+                    <div class="site-description">${site.description}</div>
+                    <a href="${site.url}" target="_blank" class="site-link">Access Site</a>
+                `;
+                memberSitesGrid.appendChild(siteCard);
+            });
+            
+            const logoutBtn = document.createElement('button');
+            logoutBtn.className = 'logout-btn';
+            logoutBtn.textContent = 'Logout';
+            logoutBtn.addEventListener('click', () => {
+                // Reset to scanner view
+                portalContainer.style.display = 'none';
+                portalContainer.innerHTML = '';
+                scannerSection.style.display = 'block';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                status.textContent = "Scanner ready - scan a QR code";
+                errorDiv.style.display = 'none';
+                successDiv.style.display = 'none';
+                
+                // Stop any active stream
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                video.srcObject = null;
+                
+                // Show placeholder
+                video.style.display = 'none';
+                placeholder.style.display = 'block';
+                scanRegion.style.display = 'none';
+            });
+            
+            // Assemble portal
+            portalContainer.appendChild(newSettingsBtn);
+            portalContainer.appendChild(welcomeMessage);
+            portalContainer.appendChild(memberSitesGrid);
+            portalContainer.appendChild(logoutBtn);
+        }
+        
+        // Handle page visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && scanning) {
+                stopScanning();
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                video.srcObject = null;
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                status.textContent = "Scanner paused - page not visible";
+                
+                // Show placeholder
+                video.style.display = 'none';
+                placeholder.style.display = 'block';
+                scanRegion.style.display = 'none';
+            }
+            
+            if (document.hidden && faceidRegistrationScanning) {
+                stopFaceIDRegistration();
+            }
+            
+            if (document.hidden && faceidVerificationScanning) {
+                stopFaceIDVerification();
+            }
+        });
+        
         // Settings tabs functionality
         settingsTabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -1889,9 +2567,6 @@
         window.editQrPin = editQrPin;
         window.deleteQrPin = deleteQrPin;
         window.copy2FASecret = copy2FASecret;
-
-        // ... (rest of your existing JavaScript code remains the same)
-        // [Include all your existing JavaScript functions for PIN, QR scanning, etc.]
     </script>
 </body>
 </html>
