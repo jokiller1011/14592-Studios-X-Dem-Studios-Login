@@ -1,4 +1,4 @@
-<!-- Line 747 is the site list -->
+<!-- Line 778 is the site list -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -539,6 +539,16 @@
             border-radius: 8px;
             color: #4cd964;
         }
+
+        .auth-choice {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .auth-choice-btn {
+            margin: 0 10px;
+            min-width: 120px;
+        }
     </style>
 </head>
 <body>
@@ -581,8 +591,8 @@
         
         <!-- PIN Entry Section -->
         <div class="pin-section" id="pin-section" style="display: none;">
-            <h2 class="section-title" id="pin-title">Create Your PIN</h2>
-            <p class="pin-instructions" id="pin-instructions">Enter a 4-digit PIN to secure your account</p>
+            <h2 class="section-title" id="pin-title">Enter Your PIN</h2>
+            <p class="pin-instructions" id="pin-instructions">Enter your 4-digit PIN to access the portal</p>
             
             <div class="pin-input-container">
                 <input type="password" class="pin-input" maxlength="1" data-index="0">
@@ -601,8 +611,8 @@
         
         <!-- Face ID Section -->
         <div class="faceid-section" id="faceid-section" style="display: none;">
-            <h2 class="section-title" id="faceid-title">Face ID Setup</h2>
-            <p class="faceid-instructions" id="faceid-instructions">Position your face in the frame to register your Face ID</p>
+            <h2 class="section-title" id="faceid-title">Face ID Verification</h2>
+            <p class="faceid-instructions" id="faceid-instructions">Position your face in the frame to verify your identity</p>
             
             <div class="faceid-container">
                 <div id="faceid-video-container">
@@ -615,15 +625,25 @@
                 </div>
                 
                 <div class="face-match-indicator" id="face-match-indicator">
-                    ✓ Face detected and registered
+                    ✓ Face verified successfully
                 </div>
                 
                 <div class="faceid-buttons">
-                    <button class="faceid-submit" id="faceid-submit" disabled>Register Face</button>
-                    <button class="faceid-cancel" id="faceid-cancel">Cancel</button>
+                    <button class="faceid-cancel" id="faceid-cancel">Use PIN Instead</button>
                 </div>
                 
                 <div class="error" id="faceid-error"></div>
+            </div>
+        </div>
+
+        <!-- Authentication Choice Section -->
+        <div class="pin-section" id="auth-choice-section" style="display: none;">
+            <h2 class="section-title">Choose Authentication Method</h2>
+            <p class="pin-instructions">How would you like to sign in?</p>
+            
+            <div class="auth-choice">
+                <button class="auth-choice-btn" id="use-pin-btn">Use PIN</button>
+                <button class="auth-choice-btn" id="use-faceid-btn">Use Face ID</button>
             </div>
         </div>
         
@@ -634,12 +654,19 @@
             <div class="settings-options">
                 <div class="setting-option">
                     <div class="setting-info">
+                        <div class="setting-name">Preferred Authentication Method</div>
+                        <div class="setting-description">Choose how you want to sign in to your portal</div>
+                    </div>
+                </div>
+                
+                <div class="setting-option">
+                    <div class="setting-info">
                         <div class="setting-name">PIN Authentication</div>
                         <div class="setting-description">Use a 4-digit PIN to access your portal</div>
                     </div>
                     <div class="toggle-switch">
-                        <input type="checkbox" id="pin-toggle" class="toggle-checkbox" checked>
-                        <label for="pin-toggle" class="toggle-label"></label>
+                        <input type="radio" name="auth-method" id="pin-method" class="toggle-checkbox" value="pin" checked>
+                        <label for="pin-method" class="toggle-label"></label>
                     </div>
                 </div>
                 
@@ -649,8 +676,8 @@
                         <div class="setting-description">Use facial recognition to access your portal</div>
                     </div>
                     <div class="toggle-switch">
-                        <input type="checkbox" id="faceid-toggle" class="toggle-checkbox">
-                        <label for="faceid-toggle" class="toggle-label"></label>
+                        <input type="radio" name="auth-method" id="faceid-method" class="toggle-checkbox" value="faceid">
+                        <label for="faceid-method" class="toggle-label"></label>
                     </div>
                 </div>
             </div>
@@ -703,6 +730,7 @@
         const scannerSection = document.getElementById('scanner-section');
         const pinSection = document.getElementById('pin-section');
         const faceidSection = document.getElementById('faceid-section');
+        const authChoiceSection = document.getElementById('auth-choice-section');
         const settingsSection = document.getElementById('settings-section');
         
         const pinTitle = document.getElementById('pin-title');
@@ -714,13 +742,15 @@
         
         const faceidTitle = document.getElementById('faceid-title');
         const faceidInstructions = document.getElementById('faceid-instructions');
-        const faceidSubmit = document.getElementById('faceid-submit');
         const faceidCancel = document.getElementById('faceid-cancel');
         const faceidError = document.getElementById('faceid-error');
         
+        const usePinBtn = document.getElementById('use-pin-btn');
+        const useFaceidBtn = document.getElementById('use-faceid-btn');
+        
         const settingsBtn = document.getElementById('settings-btn');
-        const pinToggle = document.getElementById('pin-toggle');
-        const faceidToggle = document.getElementById('faceid-toggle');
+        const pinMethod = document.getElementById('pin-method');
+        const faceidMethod = document.getElementById('faceid-method');
         const saveSettings = document.getElementById('save-settings');
         const cancelSettings = document.getElementById('cancel-settings');
         
@@ -734,12 +764,13 @@
         let faceidScanning = false;
         let animationFrameId = null;
         let faceDetectionInterval = null;
+        let faceVerificationInterval = null;
         
         // User authentication data
         let userPin = localStorage.getItem('memberPortalPin');
         let userFaceDescriptor = localStorage.getItem('memberPortalFaceDescriptor');
-        let authMethod = localStorage.getItem('memberPortalAuthMethod') || 'pin';
-        let isCreatingAuth = false;
+        let preferredAuthMethod = localStorage.getItem('memberPortalPreferredAuthMethod') || 'pin';
+        let isFirstTimeSetup = false;
         let currentFaceDescriptor = null;
         
         // Face detection model
@@ -747,8 +778,7 @@
         
         // SAFE SITES LIST - Only these sites will be accepted
         const safeSites = [
-            "https://matrix.to/#/@jowilke77:matrix.org",
-            "https://popl.co/card/IgRPBGmi/1/dash"
+            "https://matrix.to/#/@jowilke77:matrix.org"
         ];
         
         // MEMBER PORTAL SITES - Edit these to customize the portal
@@ -806,7 +836,7 @@
             }
         }
         
-        // Start Face Detection
+        // Start Face Detection for setup
         async function startFaceDetection() {
             if (!faceModel) return;
             
@@ -830,8 +860,7 @@
                         faceOverlay.style.width = `${(box.xMax - box.xMin) * faceidVideo.videoWidth}px`;
                         faceOverlay.style.height = `${(box.yMax - box.yMin) * faceidVideo.videoHeight}px`;
                         
-                        // Enable submit button and show match indicator
-                        faceidSubmit.disabled = false;
+                        // Show match indicator
                         faceMatchIndicator.style.display = 'block';
                         
                         // Store face data for registration
@@ -841,12 +870,89 @@
                         });
                     } else {
                         faceOverlay.style.display = 'none';
-                        faceidSubmit.disabled = true;
                         faceMatchIndicator.style.display = 'none';
                         currentFaceDescriptor = null;
                     }
                 }
             }, 500);
+        }
+        
+        // Start Face Verification for login
+        async function startFaceVerification() {
+            if (!faceModel || !userFaceDescriptor) return;
+            
+            faceVerificationInterval = setInterval(async () => {
+                if (faceidVideo.readyState === faceidVideo.HAVE_ENOUGH_DATA) {
+                    const faces = await faceModel.estimateFaces({
+                        input: faceidVideo,
+                        returnTensors: false,
+                        flipHorizontal: false,
+                        predictIrises: false
+                    });
+                    
+                    if (faces.length > 0) {
+                        const face = faces[0];
+                        const box = face.boundingBox;
+                        
+                        // Show face overlay
+                        faceOverlay.style.display = 'block';
+                        faceOverlay.style.left = `${box.xMin * faceidVideo.videoWidth}px`;
+                        faceOverlay.style.top = `${box.yMin * faceidVideo.videoHeight}px`;
+                        faceOverlay.style.width = `${(box.xMax - box.xMin) * faceidVideo.videoWidth}px`;
+                        faceOverlay.style.height = `${(box.yMax - box.yMin) * faceidVideo.videoHeight}px`;
+                        
+                        // Verify face
+                        const currentFace = JSON.stringify({
+                            landmarks: face.scaledMesh,
+                            box: box
+                        });
+                        
+                        const isMatch = await verifyFace(currentFace);
+                        
+                        if (isMatch) {
+                            // Face verified successfully
+                            clearInterval(faceVerificationInterval);
+                            faceMatchIndicator.style.display = 'block';
+                            faceMatchIndicator.textContent = "✓ Face verified successfully";
+                            
+                            setTimeout(() => {
+                                faceidSection.style.display = 'none';
+                                stopFaceID();
+                                loadingContainer.style.display = 'flex';
+                                setTimeout(showPortal, 1000);
+                            }, 1000);
+                        }
+                    } else {
+                        faceOverlay.style.display = 'none';
+                        faceMatchIndicator.style.display = 'none';
+                    }
+                }
+            }, 500);
+        }
+        
+        // Verify face against stored descriptor
+        async function verifyFace(currentFaceDescriptor) {
+            try {
+                const storedDescriptor = JSON.parse(userFaceDescriptor);
+                const currentDescriptor = JSON.parse(currentFaceDescriptor);
+                
+                // Calculate simple distance between face positions
+                const storedBox = storedDescriptor.box;
+                const currentBox = currentDescriptor.box;
+                
+                const distance = Math.sqrt(
+                    Math.pow(storedBox.xMin - currentBox.xMin, 2) +
+                    Math.pow(storedBox.yMin - currentBox.yMin, 2) +
+                    Math.pow(storedBox.xMax - currentBox.xMax, 2) +
+                    Math.pow(storedBox.yMax - currentBox.yMax, 2)
+                );
+                
+                // If faces are reasonably close, consider it a match
+                return distance < 0.2;
+            } catch (error) {
+                console.error('Error verifying face:', error);
+                return false;
+            }
         }
         
         // Stop Face Detection
@@ -855,51 +961,12 @@
                 clearInterval(faceDetectionInterval);
                 faceDetectionInterval = null;
             }
+            if (faceVerificationInterval) {
+                clearInterval(faceVerificationInterval);
+                faceVerificationInterval = null;
+            }
             faceOverlay.style.display = 'none';
             faceMatchIndicator.style.display = 'none';
-        }
-        
-        // Verify Face ID
-        async function verifyFaceID() {
-            if (!faceModel || !userFaceDescriptor) return false;
-            
-            try {
-                const faces = await faceModel.estimateFaces({
-                    input: faceidVideo,
-                    returnTensors: false,
-                    flipHorizontal: false,
-                    predictIrises: false
-                });
-                
-                if (faces.length > 0) {
-                    const currentFace = JSON.stringify({
-                        landmarks: faces[0].scaledMesh,
-                        box: faces[0].boundingBox
-                    });
-                    
-                    // Simple face verification (in production, use proper face recognition)
-                    const storedDescriptor = JSON.parse(userFaceDescriptor);
-                    const currentDescriptor = JSON.parse(currentFace);
-                    
-                    // Calculate simple distance between face positions
-                    const storedBox = storedDescriptor.box;
-                    const currentBox = currentDescriptor.box;
-                    
-                    const distance = Math.sqrt(
-                        Math.pow(storedBox.xMin - currentBox.xMin, 2) +
-                        Math.pow(storedBox.yMin - currentBox.yMin, 2) +
-                        Math.pow(storedBox.xMax - currentBox.xMax, 2) +
-                        Math.pow(storedBox.yMax - currentBox.yMax, 2)
-                    );
-                    
-                    // If faces are reasonably close, consider it a match
-                    return distance < 0.2;
-                }
-            } catch (error) {
-                console.error('Error verifying face:', error);
-            }
-            
-            return false;
         }
         
         // Initialize PIN input functionality
@@ -1053,7 +1120,6 @@
                 faceidVideo.addEventListener('loadedmetadata', () => {
                     faceidVideo.play();
                     faceidScanning = true;
-                    startFaceDetection();
                     
                     // Show video and hide placeholder
                     faceidVideo.style.display = 'block';
@@ -1092,19 +1158,14 @@
                 return;
             }
             
-            if (isCreatingAuth) {
+            if (isFirstTimeSetup) {
                 // Save new PIN
                 localStorage.setItem('memberPortalPin', pin);
                 userPin = pin;
                 pinSection.style.display = 'none';
                 
-                // Check if Face ID should be set up
-                if (authMethod === 'faceid' || authMethod === 'both') {
-                    showFaceIDSetup();
-                } else {
-                    loadingContainer.style.display = 'flex';
-                    setTimeout(showPortal, 1500);
-                }
+                // Show Face ID setup option
+                authChoiceSection.style.display = 'block';
             } else {
                 // Verify existing PIN
                 if (pin === userPin) {
@@ -1122,25 +1183,51 @@
         // PIN Clear handler
         pinClear.addEventListener('click', clearPinInputs);
         
-        // Face ID Submit handler
-        faceidSubmit.addEventListener('click', async () => {
-            if (currentFaceDescriptor) {
-                localStorage.setItem('memberPortalFaceDescriptor', currentFaceDescriptor);
-                userFaceDescriptor = currentFaceDescriptor;
-                
-                faceidSection.style.display = 'none';
-                stopFaceID();
-                
-                loadingContainer.style.display = 'flex';
-                setTimeout(showPortal, 1500);
-            }
-        });
-        
         // Face ID Cancel handler
         faceidCancel.addEventListener('click', () => {
             faceidSection.style.display = 'none';
             stopFaceID();
-            scannerSection.style.display = 'block';
+            pinSection.style.display = 'block';
+        });
+        
+        // Use PIN button handler
+        usePinBtn.addEventListener('click', () => {
+            authChoiceSection.style.display = 'none';
+            preferredAuthMethod = 'pin';
+            localStorage.setItem('memberPortalPreferredAuthMethod', 'pin');
+            loadingContainer.style.display = 'flex';
+            setTimeout(showPortal, 1500);
+        });
+        
+        // Use Face ID button handler
+        useFaceidBtn.addEventListener('click', async () => {
+            authChoiceSection.style.display = 'none';
+            faceidSection.style.display = 'block';
+            faceidTitle.textContent = "Face ID Setup";
+            faceidInstructions.textContent = "Position your face in the frame to register your Face ID";
+            
+            await startFaceID();
+            startFaceDetection();
+            
+            // Auto-save face after detection
+            const saveInterval = setInterval(() => {
+                if (currentFaceDescriptor) {
+                    localStorage.setItem('memberPortalFaceDescriptor', currentFaceDescriptor);
+                    userFaceDescriptor = currentFaceDescriptor;
+                    preferredAuthMethod = 'faceid';
+                    localStorage.setItem('memberPortalPreferredAuthMethod', 'faceid');
+                    
+                    clearInterval(saveInterval);
+                    faceMatchIndicator.textContent = "✓ Face registered successfully";
+                    
+                    setTimeout(() => {
+                        faceidSection.style.display = 'none';
+                        stopFaceID();
+                        loadingContainer.style.display = 'flex';
+                        setTimeout(showPortal, 1500);
+                    }, 2000);
+                }
+            }, 500);
         });
         
         // Settings button handler
@@ -1149,29 +1236,15 @@
             settingsSection.style.display = 'block';
             
             // Set current settings
-            pinToggle.checked = authMethod === 'pin' || authMethod === 'both';
-            faceidToggle.checked = authMethod === 'faceid' || authMethod === 'both';
+            pinMethod.checked = preferredAuthMethod === 'pin';
+            faceidMethod.checked = preferredAuthMethod === 'faceid';
         });
         
         // Save settings handler
         saveSettings.addEventListener('click', () => {
-            const usePin = pinToggle.checked;
-            const useFaceID = faceidToggle.checked;
-            
-            if (!usePin && !useFaceID) {
-                alert('Please select at least one authentication method');
-                return;
-            }
-            
-            if (usePin && useFaceID) {
-                authMethod = 'both';
-            } else if (usePin) {
-                authMethod = 'pin';
-            } else {
-                authMethod = 'faceid';
-            }
-            
-            localStorage.setItem('memberPortalAuthMethod', authMethod);
+            const selectedMethod = document.querySelector('input[name="auth-method"]:checked').value;
+            preferredAuthMethod = selectedMethod;
+            localStorage.setItem('memberPortalPreferredAuthMethod', selectedMethod);
             
             settingsSection.style.display = 'none';
             portalContainer.style.display = 'block';
@@ -1182,12 +1255,6 @@
             settingsSection.style.display = 'none';
             portalContainer.style.display = 'block';
         });
-        
-        // Show Face ID setup
-        function showFaceIDSetup() {
-            faceidSection.style.display = 'block';
-            startFaceID();
-        }
         
         // Show portal
         function showPortal() {
@@ -1288,18 +1355,18 @@
                 const isSafe = isUrlSafe(url);
                 
                 if (isSafe) {
-                    // Site is safe - check authentication method
+                    // Site is safe - check if user has authentication set up
                     if (!userPin && !userFaceDescriptor) {
                         // First time setup
-                        isCreatingAuth = true;
+                        isFirstTimeSetup = true;
                         loadingContainer.style.display = 'none';
                         pinSection.style.display = 'block';
                         pinTitle.textContent = "Create Your PIN";
                         pinInstructions.textContent = "Create a 4-digit PIN to secure your account";
                         initializePinInputs();
                     } else {
-                        // Existing user - use configured auth method
-                        isCreatingAuth = false;
+                        // Existing user - use preferred authentication method
+                        isFirstTimeSetup = false;
                         handleExistingUserAuth();
                     }
                 } else {
@@ -1321,29 +1388,19 @@
         async function handleExistingUserAuth() {
             loadingContainer.style.display = 'none';
             
-            if (authMethod === 'pin' || (authMethod === 'both' && userPin)) {
-                // Use PIN authentication
-                pinSection.style.display = 'block';
-                pinTitle.textContent = "Enter Your PIN";
-                pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
-                initializePinInputs();
-            } else if (authMethod === 'faceid' || (authMethod === 'both' && userFaceDescriptor)) {
+            if (preferredAuthMethod === 'faceid' && userFaceDescriptor) {
                 // Use Face ID authentication
                 faceidSection.style.display = 'block';
                 faceidTitle.textContent = "Face ID Verification";
                 faceidInstructions.textContent = "Position your face in the frame to verify your identity";
                 await startFaceID();
-                
-                // Start Face ID verification
-                const verifyInterval = setInterval(async () => {
-                    if (await verifyFaceID()) {
-                        clearInterval(verifyInterval);
-                        faceidSection.style.display = 'none';
-                        stopFaceID();
-                        loadingContainer.style.display = 'flex';
-                        setTimeout(showPortal, 1000);
-                    }
-                }, 1000);
+                startFaceVerification();
+            } else {
+                // Use PIN authentication
+                pinSection.style.display = 'block';
+                pinTitle.textContent = "Enter Your PIN";
+                pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
+                initializePinInputs();
             }
         }
         
