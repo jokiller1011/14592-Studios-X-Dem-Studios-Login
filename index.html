@@ -1,4 +1,4 @@
-<!-- Line 537 is the site list -->
+<!-- Line 747 is the site list -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,7 +59,7 @@
             opacity: 0.9;
         }
         
-        .scanner-section, .pin-section {
+        .scanner-section, .pin-section, .faceid-section, .settings-section {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
             padding: 25px;
@@ -76,11 +76,11 @@
             text-align: center;
         }
         
-        .scanner-container {
+        .scanner-container, .faceid-container {
             margin-bottom: 20px;
         }
         
-        #video-container {
+        #video-container, #faceid-video-container {
             position: relative;
             width: 100%;
             margin: 0 auto;
@@ -94,7 +94,7 @@
             background: #000;
         }
         
-        #video {
+        #video, #faceid-video {
             width: 100%;
             height: auto;
             display: block;
@@ -111,6 +111,14 @@
             border: 2px solid #fdbb2d;
             border-radius: 10px;
             box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
+        }
+        
+        .face-overlay {
+            position: absolute;
+            border: 3px solid #4cd964;
+            border-radius: 10px;
+            background: rgba(76, 217, 100, 0.1);
+            display: none;
         }
         
         .scan-line {
@@ -168,12 +176,12 @@
             box-shadow: none;
         }
         
-        button#stop-btn {
+        button#stop-btn, button#faceid-stop-btn {
             background: #b21f1f;
             color: white;
         }
         
-        button#stop-btn:hover:not(:disabled) {
+        button#stop-btn:hover:not(:disabled), button#faceid-stop-btn:hover:not(:disabled) {
             background: #c12f2f;
         }
         
@@ -209,32 +217,32 @@
             background: rgba(76, 217, 100, 0.1);
         }
         
-        .pin-instructions {
+        .pin-instructions, .faceid-instructions {
             text-align: center;
             margin-bottom: 20px;
             opacity: 0.8;
             font-size: 0.95rem;
         }
         
-        .pin-buttons {
+        .pin-buttons, .faceid-buttons {
             display: flex;
             gap: 10px;
             justify-content: center;
         }
         
-        .pin-submit {
+        .pin-submit, .faceid-submit {
             background: #4cd964;
         }
         
-        .pin-submit:hover {
+        .pin-submit:hover, .faceid-submit:hover {
             background: #3cb854;
         }
         
-        .pin-clear {
+        .pin-clear, .faceid-cancel {
             background: #b21f1f;
         }
         
-        .pin-clear:hover {
+        .pin-clear:hover, .faceid-cancel:hover {
             background: #c12f2f;
         }
         
@@ -311,6 +319,27 @@
             padding: 30px;
             margin-top: 30px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: 1px solid #fdbb2d;
+            color: #fdbb2d;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .settings-btn:hover {
+            background: rgba(253, 187, 45, 0.1);
         }
         
         .welcome-message {
@@ -425,6 +454,91 @@
             font-size: 0.9rem;
             opacity: 0.8;
         }
+        
+        .settings-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .setting-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            border-left: 4px solid #fdbb2d;
+        }
+        
+        .setting-info {
+            flex: 1;
+        }
+        
+        .setting-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #fdbb2d;
+        }
+        
+        .setting-description {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-checkbox {
+            display: none;
+        }
+        
+        .toggle-label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60px;
+            height: 30px;
+            background: #b21f1f;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-label:after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-checkbox:checked + .toggle-label {
+            background: #4cd964;
+        }
+        
+        .toggle-checkbox:checked + .toggle-label:after {
+            left: 33px;
+        }
+        
+        .face-match-indicator {
+            display: none;
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(76, 217, 100, 0.1);
+            border: 1px solid #4cd964;
+            border-radius: 8px;
+            color: #4cd964;
+        }
     </style>
 </head>
 <body>
@@ -485,6 +599,68 @@
             <div class="error" id="pin-error"></div>
         </div>
         
+        <!-- Face ID Section -->
+        <div class="faceid-section" id="faceid-section" style="display: none;">
+            <h2 class="section-title" id="faceid-title">Face ID Setup</h2>
+            <p class="faceid-instructions" id="faceid-instructions">Position your face in the frame to register your Face ID</p>
+            
+            <div class="faceid-container">
+                <div id="faceid-video-container">
+                    <div class="placeholder-text" id="faceid-placeholder">
+                        <div class="camera-icon">👤</div>
+                        <p>Camera feed will appear here</p>
+                    </div>
+                    <video id="faceid-video" playsinline></video>
+                    <div class="face-overlay" id="face-overlay"></div>
+                </div>
+                
+                <div class="face-match-indicator" id="face-match-indicator">
+                    ✓ Face detected and registered
+                </div>
+                
+                <div class="faceid-buttons">
+                    <button class="faceid-submit" id="faceid-submit" disabled>Register Face</button>
+                    <button class="faceid-cancel" id="faceid-cancel">Cancel</button>
+                </div>
+                
+                <div class="error" id="faceid-error"></div>
+            </div>
+        </div>
+        
+        <!-- Settings Section -->
+        <div class="settings-section" id="settings-section" style="display: none;">
+            <h2 class="section-title">Security Settings</h2>
+            
+            <div class="settings-options">
+                <div class="setting-option">
+                    <div class="setting-info">
+                        <div class="setting-name">PIN Authentication</div>
+                        <div class="setting-description">Use a 4-digit PIN to access your portal</div>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="pin-toggle" class="toggle-checkbox" checked>
+                        <label for="pin-toggle" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div class="setting-option">
+                    <div class="setting-info">
+                        <div class="setting-name">Face ID Authentication</div>
+                        <div class="setting-description">Use facial recognition to access your portal</div>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="faceid-toggle" class="toggle-checkbox">
+                        <label for="faceid-toggle" class="toggle-label"></label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="save-settings">Save Settings</button>
+                <button id="cancel-settings" class="pin-clear">Cancel</button>
+            </div>
+        </div>
+        
         <!-- Loading Container -->
         <div class="loading-container" id="loading-container">
             <div class="loading-spinner"></div>
@@ -494,6 +670,7 @@
         
         <!-- Portal Container -->
         <div class="portal-container" id="portal-container">
+            <button class="settings-btn" id="settings-btn">⚙️</button>
             <!-- Portal content will be loaded here -->
         </div>
         
@@ -504,41 +681,74 @@
 
     <!-- Include the QR code scanning library -->
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <!-- Include Face API for real facial recognition -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection@0.0.1/dist/face-landmarks-detection.min.js"></script>
     
     <script>
         // Get DOM elements
         const video = document.getElementById('video');
+        const faceidVideo = document.getElementById('faceid-video');
         const startBtn = document.getElementById('start-btn');
         const stopBtn = document.getElementById('stop-btn');
         const status = document.getElementById('status');
         const errorDiv = document.getElementById('error');
         const successDiv = document.getElementById('success');
         const placeholder = document.getElementById('placeholder');
+        const faceidPlaceholder = document.getElementById('faceid-placeholder');
         const scanRegion = document.getElementById('scan-region');
+        const faceOverlay = document.getElementById('face-overlay');
+        const faceMatchIndicator = document.getElementById('face-match-indicator');
+        
         const scannerSection = document.getElementById('scanner-section');
         const pinSection = document.getElementById('pin-section');
+        const faceidSection = document.getElementById('faceid-section');
+        const settingsSection = document.getElementById('settings-section');
+        
         const pinTitle = document.getElementById('pin-title');
         const pinInstructions = document.getElementById('pin-instructions');
         const pinInputs = document.querySelectorAll('.pin-input');
         const pinSubmit = document.getElementById('pin-submit');
         const pinClear = document.getElementById('pin-clear');
         const pinError = document.getElementById('pin-error');
+        
+        const faceidTitle = document.getElementById('faceid-title');
+        const faceidInstructions = document.getElementById('faceid-instructions');
+        const faceidSubmit = document.getElementById('faceid-submit');
+        const faceidCancel = document.getElementById('faceid-cancel');
+        const faceidError = document.getElementById('faceid-error');
+        
+        const settingsBtn = document.getElementById('settings-btn');
+        const pinToggle = document.getElementById('pin-toggle');
+        const faceidToggle = document.getElementById('faceid-toggle');
+        const saveSettings = document.getElementById('save-settings');
+        const cancelSettings = document.getElementById('cancel-settings');
+        
         const loadingContainer = document.getElementById('loading-container');
         const portalContainer = document.getElementById('portal-container');
         
         // Variables for video stream and scanning
         let stream = null;
+        let faceidStream = null;
         let scanning = false;
+        let faceidScanning = false;
         let animationFrameId = null;
+        let faceDetectionInterval = null;
+        
+        // User authentication data
         let userPin = localStorage.getItem('memberPortalPin');
-        let isCreatingPin = false;
-        let currentMemberId = null;
+        let userFaceDescriptor = localStorage.getItem('memberPortalFaceDescriptor');
+        let authMethod = localStorage.getItem('memberPortalAuthMethod') || 'pin';
+        let isCreatingAuth = false;
+        let currentFaceDescriptor = null;
+        
+        // Face detection model
+        let faceModel = null;
         
         // SAFE SITES LIST - Only these sites will be accepted
         const safeSites = [
             "https://matrix.to/#/@jowilke77:matrix.org",
-            "https://typecard.com/fbce874c/",
-            "https://popl.co/card/IgRPBGmi/1/dash",
+            "https://popl.co/card/IgRPBGmi/1/dash"
         ];
         
         // MEMBER PORTAL SITES - Edit these to customize the portal
@@ -580,6 +790,117 @@
                 icon: "📇"
             }
         ];
+        
+        // Initialize Face Detection
+        async function initializeFaceDetection() {
+            try {
+                // Load face detection model
+                faceModel = await faceLandmarksDetection.load(
+                    faceLandmarksDetection.SupportedPackages.mediapipeFacemesh,
+                    { maxFaces: 1 }
+                );
+                return true;
+            } catch (error) {
+                console.error('Error loading face detection model:', error);
+                return false;
+            }
+        }
+        
+        // Start Face Detection
+        async function startFaceDetection() {
+            if (!faceModel) return;
+            
+            faceDetectionInterval = setInterval(async () => {
+                if (faceidVideo.readyState === faceidVideo.HAVE_ENOUGH_DATA) {
+                    const faces = await faceModel.estimateFaces({
+                        input: faceidVideo,
+                        returnTensors: false,
+                        flipHorizontal: false,
+                        predictIrises: false
+                    });
+                    
+                    if (faces.length > 0) {
+                        const face = faces[0];
+                        const box = face.boundingBox;
+                        
+                        // Show face overlay
+                        faceOverlay.style.display = 'block';
+                        faceOverlay.style.left = `${box.xMin * faceidVideo.videoWidth}px`;
+                        faceOverlay.style.top = `${box.yMin * faceidVideo.videoHeight}px`;
+                        faceOverlay.style.width = `${(box.xMax - box.xMin) * faceidVideo.videoWidth}px`;
+                        faceOverlay.style.height = `${(box.yMax - box.yMin) * faceidVideo.videoHeight}px`;
+                        
+                        // Enable submit button and show match indicator
+                        faceidSubmit.disabled = false;
+                        faceMatchIndicator.style.display = 'block';
+                        
+                        // Store face data for registration
+                        currentFaceDescriptor = JSON.stringify({
+                            landmarks: face.scaledMesh,
+                            box: box
+                        });
+                    } else {
+                        faceOverlay.style.display = 'none';
+                        faceidSubmit.disabled = true;
+                        faceMatchIndicator.style.display = 'none';
+                        currentFaceDescriptor = null;
+                    }
+                }
+            }, 500);
+        }
+        
+        // Stop Face Detection
+        function stopFaceDetection() {
+            if (faceDetectionInterval) {
+                clearInterval(faceDetectionInterval);
+                faceDetectionInterval = null;
+            }
+            faceOverlay.style.display = 'none';
+            faceMatchIndicator.style.display = 'none';
+        }
+        
+        // Verify Face ID
+        async function verifyFaceID() {
+            if (!faceModel || !userFaceDescriptor) return false;
+            
+            try {
+                const faces = await faceModel.estimateFaces({
+                    input: faceidVideo,
+                    returnTensors: false,
+                    flipHorizontal: false,
+                    predictIrises: false
+                });
+                
+                if (faces.length > 0) {
+                    const currentFace = JSON.stringify({
+                        landmarks: faces[0].scaledMesh,
+                        box: faces[0].boundingBox
+                    });
+                    
+                    // Simple face verification (in production, use proper face recognition)
+                    const storedDescriptor = JSON.parse(userFaceDescriptor);
+                    const currentDescriptor = JSON.parse(currentFace);
+                    
+                    // Calculate simple distance between face positions
+                    const storedBox = storedDescriptor.box;
+                    const currentBox = currentDescriptor.box;
+                    
+                    const distance = Math.sqrt(
+                        Math.pow(storedBox.xMin - currentBox.xMin, 2) +
+                        Math.pow(storedBox.yMin - currentBox.yMin, 2) +
+                        Math.pow(storedBox.xMax - currentBox.xMax, 2) +
+                        Math.pow(storedBox.yMax - currentBox.yMax, 2)
+                    );
+                    
+                    // If faces are reasonably close, consider it a match
+                    return distance < 0.2;
+                }
+            } catch (error) {
+                console.error('Error verifying face:', error);
+            }
+            
+            return false;
+        }
         
         // Initialize PIN input functionality
         function initializePinInputs() {
@@ -708,6 +1029,59 @@
             scanRegion.style.display = 'none';
         });
         
+        // Start Face ID
+        async function startFaceID() {
+            try {
+                // Stop any existing stream
+                if (faceidStream) {
+                    faceidStream.getTracks().forEach(track => track.stop());
+                }
+                
+                // Request camera access for face detection
+                faceidStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    } 
+                });
+                
+                // Set video source
+                faceidVideo.srcObject = faceidStream;
+                
+                // Wait for video to load
+                faceidVideo.addEventListener('loadedmetadata', () => {
+                    faceidVideo.play();
+                    faceidScanning = true;
+                    startFaceDetection();
+                    
+                    // Show video and hide placeholder
+                    faceidVideo.style.display = 'block';
+                    faceidPlaceholder.style.display = 'none';
+                }, { once: true });
+                
+            } catch (err) {
+                console.error("Error accessing camera for Face ID:", err);
+                faceidError.textContent = "Could not access camera for Face ID";
+                faceidError.style.display = 'block';
+            }
+        }
+        
+        // Stop Face ID
+        function stopFaceID() {
+            faceidScanning = false;
+            stopFaceDetection();
+            
+            if (faceidStream) {
+                faceidStream.getTracks().forEach(track => track.stop());
+                faceidStream = null;
+            }
+            
+            faceidVideo.srcObject = null;
+            faceidVideo.style.display = 'none';
+            faceidPlaceholder.style.display = 'block';
+        }
+        
         // PIN Submit handler
         pinSubmit.addEventListener('click', () => {
             const pin = getPinValue();
@@ -718,31 +1092,25 @@
                 return;
             }
             
-            if (isCreatingPin) {
+            if (isCreatingAuth) {
                 // Save new PIN
                 localStorage.setItem('memberPortalPin', pin);
                 userPin = pin;
                 pinSection.style.display = 'none';
-                loadingContainer.style.display = 'flex';
                 
-                // Show portal after delay
-                setTimeout(() => {
-                    loadingContainer.style.display = 'none';
-                    portalContainer.style.display = 'block';
-                    buildMemberPortal();
-                }, 1500);
+                // Check if Face ID should be set up
+                if (authMethod === 'faceid' || authMethod === 'both') {
+                    showFaceIDSetup();
+                } else {
+                    loadingContainer.style.display = 'flex';
+                    setTimeout(showPortal, 1500);
+                }
             } else {
                 // Verify existing PIN
                 if (pin === userPin) {
                     pinSection.style.display = 'none';
                     loadingContainer.style.display = 'flex';
-                    
-                    // Show portal after delay
-                    setTimeout(() => {
-                        loadingContainer.style.display = 'none';
-                        portalContainer.style.display = 'block';
-                        buildMemberPortal();
-                    }, 1500);
+                    setTimeout(showPortal, 1500);
                 } else {
                     pinError.textContent = "Incorrect PIN. Please try again.";
                     pinError.style.display = 'block';
@@ -753,6 +1121,80 @@
         
         // PIN Clear handler
         pinClear.addEventListener('click', clearPinInputs);
+        
+        // Face ID Submit handler
+        faceidSubmit.addEventListener('click', async () => {
+            if (currentFaceDescriptor) {
+                localStorage.setItem('memberPortalFaceDescriptor', currentFaceDescriptor);
+                userFaceDescriptor = currentFaceDescriptor;
+                
+                faceidSection.style.display = 'none';
+                stopFaceID();
+                
+                loadingContainer.style.display = 'flex';
+                setTimeout(showPortal, 1500);
+            }
+        });
+        
+        // Face ID Cancel handler
+        faceidCancel.addEventListener('click', () => {
+            faceidSection.style.display = 'none';
+            stopFaceID();
+            scannerSection.style.display = 'block';
+        });
+        
+        // Settings button handler
+        settingsBtn.addEventListener('click', () => {
+            portalContainer.style.display = 'none';
+            settingsSection.style.display = 'block';
+            
+            // Set current settings
+            pinToggle.checked = authMethod === 'pin' || authMethod === 'both';
+            faceidToggle.checked = authMethod === 'faceid' || authMethod === 'both';
+        });
+        
+        // Save settings handler
+        saveSettings.addEventListener('click', () => {
+            const usePin = pinToggle.checked;
+            const useFaceID = faceidToggle.checked;
+            
+            if (!usePin && !useFaceID) {
+                alert('Please select at least one authentication method');
+                return;
+            }
+            
+            if (usePin && useFaceID) {
+                authMethod = 'both';
+            } else if (usePin) {
+                authMethod = 'pin';
+            } else {
+                authMethod = 'faceid';
+            }
+            
+            localStorage.setItem('memberPortalAuthMethod', authMethod);
+            
+            settingsSection.style.display = 'none';
+            portalContainer.style.display = 'block';
+        });
+        
+        // Cancel settings handler
+        cancelSettings.addEventListener('click', () => {
+            settingsSection.style.display = 'none';
+            portalContainer.style.display = 'block';
+        });
+        
+        // Show Face ID setup
+        function showFaceIDSetup() {
+            faceidSection.style.display = 'block';
+            startFaceID();
+        }
+        
+        // Show portal
+        function showPortal() {
+            loadingContainer.style.display = 'none';
+            portalContainer.style.display = 'block';
+            buildMemberPortal();
+        }
         
         // Handle camera errors
         function handleCameraError(err) {
@@ -846,23 +1288,19 @@
                 const isSafe = isUrlSafe(url);
                 
                 if (isSafe) {
-                    // Site is safe - check if user has a PIN
-                    if (userPin) {
-                        // User has PIN - show PIN entry
-                        loadingContainer.style.display = 'none';
-                        pinSection.style.display = 'block';
-                        pinTitle.textContent = "Enter Your PIN";
-                        pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
-                        isCreatingPin = false;
-                        initializePinInputs();
-                    } else {
-                        // User doesn't have PIN - show PIN creation
+                    // Site is safe - check authentication method
+                    if (!userPin && !userFaceDescriptor) {
+                        // First time setup
+                        isCreatingAuth = true;
                         loadingContainer.style.display = 'none';
                         pinSection.style.display = 'block';
                         pinTitle.textContent = "Create Your PIN";
                         pinInstructions.textContent = "Create a 4-digit PIN to secure your account";
-                        isCreatingPin = true;
                         initializePinInputs();
+                    } else {
+                        // Existing user - use configured auth method
+                        isCreatingAuth = false;
+                        handleExistingUserAuth();
                     }
                 } else {
                     // Site is not safe - show error
@@ -876,7 +1314,37 @@
                     startBtn.disabled = false;
                     stopBtn.disabled = true;
                 }
-            }, 1500); // Simulate verification delay
+            }, 1500);
+        }
+        
+        // Handle authentication for existing users
+        async function handleExistingUserAuth() {
+            loadingContainer.style.display = 'none';
+            
+            if (authMethod === 'pin' || (authMethod === 'both' && userPin)) {
+                // Use PIN authentication
+                pinSection.style.display = 'block';
+                pinTitle.textContent = "Enter Your PIN";
+                pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
+                initializePinInputs();
+            } else if (authMethod === 'faceid' || (authMethod === 'both' && userFaceDescriptor)) {
+                // Use Face ID authentication
+                faceidSection.style.display = 'block';
+                faceidTitle.textContent = "Face ID Verification";
+                faceidInstructions.textContent = "Position your face in the frame to verify your identity";
+                await startFaceID();
+                
+                // Start Face ID verification
+                const verifyInterval = setInterval(async () => {
+                    if (await verifyFaceID()) {
+                        clearInterval(verifyInterval);
+                        faceidSection.style.display = 'none';
+                        stopFaceID();
+                        loadingContainer.style.display = 'flex';
+                        setTimeout(showPortal, 1000);
+                    }
+                }, 1000);
+            }
         }
         
         // Check if a URL is in the safe sites list
@@ -976,10 +1444,20 @@
                 placeholder.style.display = 'block';
                 scanRegion.style.display = 'none';
             }
+            
+            if (document.hidden && faceidScanning) {
+                stopFaceID();
+            }
         });
         
         // Initialize
-        window.addEventListener('load', () => {
+        window.addEventListener('load', async () => {
+            // Initialize face detection
+            const faceDetectionReady = await initializeFaceDetection();
+            if (!faceDetectionReady) {
+                console.warn('Face detection not available');
+            }
+            
             // Check if browser supports required APIs
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 errorDiv.textContent = "Your browser doesn't support camera access. Please try using Chrome, Firefox, or Edge.";
