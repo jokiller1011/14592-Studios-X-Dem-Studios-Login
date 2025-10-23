@@ -1,4 +1,4 @@
-<!-- Line 858 is the site list -->
+<!-- Line 914 is the site list -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Portal | 14592 Studios X Dem Studios</title>
     <style>
+        /* Your existing CSS remains the same */
         * {
             margin: 0;
             padding: 0;
@@ -582,6 +583,40 @@
         .face-verification-section {
             display: none;
         }
+
+        .face-scanning {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .face-scanning-dots {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .face-scanning-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fdbb2d;
+            animation: scanning-dot 1.5s infinite ease-in-out;
+        }
+
+        .face-scanning-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .face-scanning-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes scanning-dot {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
     </style>
 </head>
 <body>
@@ -657,6 +692,15 @@
                     <div class="face-overlay" id="face-registration-overlay"></div>
                 </div>
                 
+                <div class="face-scanning" id="face-registration-scanning">
+                    <div>Scanning for face...</div>
+                    <div class="face-scanning-dots">
+                        <div class="face-scanning-dot"></div>
+                        <div class="face-scanning-dot"></div>
+                        <div class="face-scanning-dot"></div>
+                    </div>
+                </div>
+                
                 <div class="face-match-indicator" id="face-registration-indicator">
                     ✓ Face detected and registered
                 </div>
@@ -683,6 +727,15 @@
                     </div>
                     <video id="faceid-verification-video" playsinline></video>
                     <div class="face-overlay" id="face-verification-overlay"></div>
+                </div>
+                
+                <div class="face-scanning" id="face-verification-scanning">
+                    <div>Verifying your face...</div>
+                    <div class="face-scanning-dots">
+                        <div class="face-scanning-dot"></div>
+                        <div class="face-scanning-dot"></div>
+                        <div class="face-scanning-dot"></div>
+                    </div>
                 </div>
                 
                 <div class="face-match-indicator" id="face-verification-indicator">
@@ -774,9 +827,9 @@
 
     <!-- Include the QR code scanning library -->
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-    <!-- Include Face API for real facial recognition -->
+    <!-- Include TensorFlow.js and Face API -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection@0.0.1/dist/face-landmarks-detection.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection@2.0.1/dist/face-landmarks-detection.min.js"></script>
     
     <script>
         // Get DOM elements
@@ -796,6 +849,8 @@
         const faceVerificationOverlay = document.getElementById('face-verification-overlay');
         const faceRegistrationIndicator = document.getElementById('face-registration-indicator');
         const faceVerificationIndicator = document.getElementById('face-verification-indicator');
+        const faceRegistrationScanning = document.getElementById('face-registration-scanning');
+        const faceVerificationScanning = document.getElementById('face-verification-scanning');
         
         const scannerSection = document.getElementById('scanner-section');
         const pinSection = document.getElementById('pin-section');
@@ -855,6 +910,7 @@
         
         // Face detection model
         let faceModel = null;
+        let isFaceModelLoaded = false;
         
         // SAFE SITES LIST - Only these sites will be accepted
         const safeSites = [
@@ -920,53 +976,71 @@
                 // Load face detection model
                 faceModel = await faceLandmarksDetection.load(
                     faceLandmarksDetection.SupportedPackages.mediapipeFacemesh,
-                    { maxFaces: 1 }
+                    { 
+                        maxFaces: 1,
+                        shouldLoadIrisModel: false
+                    }
                 );
+                isFaceModelLoaded = true;
+                console.log('Face detection model loaded successfully');
                 return true;
             } catch (error) {
                 console.error('Error loading face detection model:', error);
+                isFaceModelLoaded = false;
                 return false;
             }
         }
         
         // Start Face Detection for registration
         async function startFaceRegistrationDetection() {
-            if (!faceModel) return;
+            if (!isFaceModelLoaded) {
+                console.error('Face model not loaded');
+                return;
+            }
             
+            faceRegistrationScanning.style.display = 'flex';
             faceRegistrationDetectionInterval = setInterval(async () => {
                 if (faceidRegistrationVideo.readyState === faceidRegistrationVideo.HAVE_ENOUGH_DATA) {
-                    const faces = await faceModel.estimateFaces({
-                        input: faceidRegistrationVideo,
-                        returnTensors: false,
-                        flipHorizontal: false,
-                        predictIrises: false
-                    });
-                    
-                    if (faces.length > 0) {
-                        const face = faces[0];
-                        const box = face.boundingBox;
-                        
-                        // Show face overlay
-                        faceRegistrationOverlay.style.display = 'block';
-                        faceRegistrationOverlay.style.left = `${box.xMin * faceidRegistrationVideo.videoWidth}px`;
-                        faceRegistrationOverlay.style.top = `${box.yMin * faceidRegistrationVideo.videoHeight}px`;
-                        faceRegistrationOverlay.style.width = `${(box.xMax - box.xMin) * faceidRegistrationVideo.videoWidth}px`;
-                        faceRegistrationOverlay.style.height = `${(box.yMax - box.yMin) * faceidRegistrationVideo.videoHeight}px`;
-                        
-                        // Show match indicator and enable submit button
-                        faceRegistrationIndicator.style.display = 'block';
-                        faceidRegistrationSubmit.disabled = false;
-                        
-                        // Store face data for registration
-                        currentFaceDescriptor = JSON.stringify({
-                            landmarks: face.scaledMesh,
-                            box: box
+                    try {
+                        const faces = await faceModel.estimateFaces({
+                            input: faceidRegistrationVideo,
+                            returnTensors: false,
+                            flipHorizontal: false,
+                            predictIrises: false
                         });
-                    } else {
-                        faceRegistrationOverlay.style.display = 'none';
-                        faceRegistrationIndicator.style.display = 'none';
-                        faceidRegistrationSubmit.disabled = true;
-                        currentFaceDescriptor = null;
+                        
+                        if (faces.length > 0) {
+                            const face = faces[0];
+                            const box = face.boundingBox;
+                            
+                            // Show face overlay
+                            faceRegistrationOverlay.style.display = 'block';
+                            faceRegistrationOverlay.style.left = `${box.xMin * faceidRegistrationVideo.videoWidth}px`;
+                            faceRegistrationOverlay.style.top = `${box.yMin * faceidRegistrationVideo.videoHeight}px`;
+                            faceRegistrationOverlay.style.width = `${(box.xMax - box.xMin) * faceidRegistrationVideo.videoWidth}px`;
+                            faceRegistrationOverlay.style.height = `${(box.yMax - box.yMin) * faceidRegistrationVideo.videoHeight}px`;
+                            
+                            // Hide scanning indicator
+                            faceRegistrationScanning.style.display = 'none';
+                            
+                            // Show match indicator and enable submit button
+                            faceRegistrationIndicator.style.display = 'block';
+                            faceidRegistrationSubmit.disabled = false;
+                            
+                            // Store face data for registration
+                            currentFaceDescriptor = JSON.stringify({
+                                landmarks: face.scaledMesh,
+                                box: box
+                            });
+                        } else {
+                            faceRegistrationOverlay.style.display = 'none';
+                            faceRegistrationIndicator.style.display = 'none';
+                            faceidRegistrationSubmit.disabled = true;
+                            currentFaceDescriptor = null;
+                            faceRegistrationScanning.style.display = 'flex';
+                        }
+                    } catch (error) {
+                        console.error('Error detecting face:', error);
                     }
                 }
             }, 500);
@@ -974,52 +1048,72 @@
         
         // Start Face Detection for verification
         async function startFaceVerificationDetection() {
-            if (!faceModel || !userFaceDescriptor) return;
+            if (!isFaceModelLoaded || !userFaceDescriptor) {
+                console.error('Face model not loaded or no face registered');
+                return;
+            }
+            
+            faceVerificationScanning.style.display = 'flex';
+            let verificationAttempts = 0;
+            const maxVerificationAttempts = 10;
             
             faceVerificationDetectionInterval = setInterval(async () => {
                 if (faceidVerificationVideo.readyState === faceidVerificationVideo.HAVE_ENOUGH_DATA) {
-                    const faces = await faceModel.estimateFaces({
-                        input: faceidVerificationVideo,
-                        returnTensors: false,
-                        flipHorizontal: false,
-                        predictIrises: false
-                    });
-                    
-                    if (faces.length > 0) {
-                        const face = faces[0];
-                        const box = face.boundingBox;
-                        
-                        // Show face overlay
-                        faceVerificationOverlay.style.display = 'block';
-                        faceVerificationOverlay.style.left = `${box.xMin * faceidVerificationVideo.videoWidth}px`;
-                        faceVerificationOverlay.style.top = `${box.yMin * faceidVerificationVideo.videoHeight}px`;
-                        faceVerificationOverlay.style.width = `${(box.xMax - box.xMin) * faceidVerificationVideo.videoWidth}px`;
-                        faceVerificationOverlay.style.height = `${(box.yMax - box.yMin) * faceidVerificationVideo.videoHeight}px`;
-                        
-                        // Verify face
-                        const currentFace = JSON.stringify({
-                            landmarks: face.scaledMesh,
-                            box: box
+                    try {
+                        const faces = await faceModel.estimateFaces({
+                            input: faceidVerificationVideo,
+                            returnTensors: false,
+                            flipHorizontal: false,
+                            predictIrises: false
                         });
                         
-                        const isMatch = await verifyFace(currentFace);
-                        
-                        if (isMatch) {
-                            // Face verified successfully
-                            clearInterval(faceVerificationDetectionInterval);
-                            faceVerificationIndicator.style.display = 'block';
-                            faceVerificationIndicator.textContent = "✓ Face verified successfully";
+                        if (faces.length > 0) {
+                            const face = faces[0];
+                            const box = face.boundingBox;
                             
-                            setTimeout(() => {
-                                faceidVerificationSection.style.display = 'none';
-                                stopFaceIDVerification();
-                                loadingContainer.style.display = 'flex';
-                                setTimeout(showPortal, 1000);
-                            }, 1000);
+                            // Show face overlay
+                            faceVerificationOverlay.style.display = 'block';
+                            faceVerificationOverlay.style.left = `${box.xMin * faceidVerificationVideo.videoWidth}px`;
+                            faceVerificationOverlay.style.top = `${box.yMin * faceidVerificationVideo.videoHeight}px`;
+                            faceVerificationOverlay.style.width = `${(box.xMax - box.xMin) * faceidVerificationVideo.videoWidth}px`;
+                            faceVerificationOverlay.style.height = `${(box.yMax - box.yMin) * faceidVerificationVideo.videoHeight}px`;
+                            
+                            // Verify face
+                            const currentFace = JSON.stringify({
+                                landmarks: face.scaledMesh,
+                                box: box
+                            });
+                            
+                            const isMatch = await verifyFace(currentFace);
+                            verificationAttempts++;
+                            
+                            if (isMatch) {
+                                // Face verified successfully
+                                clearInterval(faceVerificationDetectionInterval);
+                                faceVerificationScanning.style.display = 'none';
+                                faceVerificationIndicator.style.display = 'block';
+                                faceVerificationIndicator.textContent = "✓ Face verified successfully";
+                                
+                                setTimeout(() => {
+                                    faceidVerificationSection.style.display = 'none';
+                                    stopFaceIDVerification();
+                                    loadingContainer.style.display = 'flex';
+                                    setTimeout(showPortal, 1000);
+                                }, 1000);
+                            } else if (verificationAttempts >= maxVerificationAttempts) {
+                                // Too many failed attempts
+                                clearInterval(faceVerificationDetectionInterval);
+                                faceVerificationScanning.style.display = 'none';
+                                faceidVerificationError.textContent = "Face verification failed. Please try PIN authentication.";
+                                faceidVerificationError.style.display = 'block';
+                            }
+                        } else {
+                            faceVerificationOverlay.style.display = 'none';
+                            faceVerificationIndicator.style.display = 'none';
+                            faceVerificationScanning.style.display = 'flex';
                         }
-                    } else {
-                        faceVerificationOverlay.style.display = 'none';
-                        faceVerificationIndicator.style.display = 'none';
+                    } catch (error) {
+                        console.error('Error detecting face:', error);
                     }
                 }
             }, 500);
@@ -1082,6 +1176,8 @@
             faceVerificationOverlay.style.display = 'none';
             faceRegistrationIndicator.style.display = 'none';
             faceVerificationIndicator.style.display = 'none';
+            faceRegistrationScanning.style.display = 'none';
+            faceVerificationScanning.style.display = 'none';
         }
         
         // Initialize PIN input functionality
@@ -1431,6 +1527,7 @@
         async function startFaceRegistration() {
             faceidRegistrationSection.style.display = 'block';
             faceidRegistrationSubmit.disabled = true;
+            faceRegistrationScanning.style.display = 'flex';
             
             await startFaceIDRegistration();
             startFaceRegistrationDetection();
@@ -1439,12 +1536,13 @@
         // Start face verification process
         async function startFaceVerification() {
             faceidVerificationSection.style.display = 'block';
+            faceVerificationScanning.style.display = 'flex';
             
             await startFaceIDVerification();
             startFaceVerificationDetection();
         }
         
-        // Settings button handler - FIXED: Preserve settings button
+        // Settings button handler
         settingsBtn.addEventListener('click', () => {
             portalContainer.style.display = 'none';
             settingsSection.style.display = 'block';
@@ -1479,7 +1577,7 @@
             portalContainer.style.display = 'block';
         });
         
-        // Show portal - FIXED: Preserve settings button
+        // Show portal
         function showPortal() {
             loadingContainer.style.display = 'none';
             portalContainer.style.display = 'block';
@@ -1659,7 +1757,7 @@
             }
         }
         
-        // Build the member portal with sites - FIXED: Preserve settings button
+        // Build the member portal with sites
         function buildMemberPortal() {
             // Clear existing content but preserve the settings button
             const existingSettingsBtn = document.getElementById('settings-btn');
