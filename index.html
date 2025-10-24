@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Portal | 14592 Studios X Dem Studios</title>
     <style>
-        /* Your existing CSS remains exactly the same */
         * {
             margin: 0;
             padding: 0;
@@ -18,14 +17,11 @@
             color: #fff;
             min-height: 100vh;
             padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
         .container {
             max-width: 1000px;
-            width: 100%;
+            margin: 0 auto;
         }
         
         header {
@@ -45,7 +41,6 @@
             margin: 0 auto 20px;
             font-size: 2rem;
             font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         h1 {
@@ -58,13 +53,19 @@
             font-size: 1.2rem;
             opacity: 0.9;
         }
-        
-        .scanner-section, .pin-section, .faceid-section, .settings-section {
+
+        /* Section Styles */
+        .scanner-section, .auth-choice-section, .pin-section, 
+        .biometric-section, .settings-section, .portal-container {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .scanner-section {
+            display: block;
         }
         
         .section-title {
@@ -76,29 +77,21 @@
             text-align: center;
         }
         
-        .scanner-container, .faceid-container {
-            margin-bottom: 20px;
-        }
-        
-        #video-container, #faceid-video-container {
+        /* Scanner Styles */
+        #video-container {
             position: relative;
             width: 100%;
+            max-width: 500px;
             margin: 0 auto;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             min-height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             background: #000;
         }
         
-        #video, #faceid-video {
+        #video {
             width: 100%;
             height: auto;
-            display: block;
-            background-color: #000;
         }
         
         #scan-region {
@@ -110,20 +103,6 @@
             height: 70%;
             border: 2px solid #fdbb2d;
             border-radius: 10px;
-            box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
-        }
-        
-        .face-overlay {
-            position: absolute;
-            border: 3px solid #4cd964;
-            border-radius: 10px;
-            background: rgba(76, 217, 100, 0.1);
-            display: none;
-        }
-        
-        .face-overlay.unknown {
-            border-color: #ff3b30;
-            background: rgba(255, 59, 48, 0.1);
         }
         
         .scan-line {
@@ -142,59 +121,100 @@
             100% { top: 0; }
         }
         
+        /* Button Styles */
         .controls {
             display: flex;
-            justify-content: center;
             gap: 10px;
             margin-top: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
         
         button {
-            background: #fdbb2d;
-            color: #0f1a30;
+            background: #007AFF;
+            color: white;
             border: none;
-            padding: 12px 25px;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
+            padding: 12px 20px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            flex: 1;
+            font-weight: 600;
         }
         
-        button:hover {
-            background: #ffcc44;
+        button:hover:not(:disabled) {
+            opacity: 0.9;
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        button:active {
-            transform: translateY(0);
         }
         
         button:disabled {
-            background: #cccccc;
-            color: #666;
+            background: #666;
             cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
         
-        button#stop-btn, button#faceid-stop-btn {
-            background: #b21f1f;
-            color: white;
+        #start-btn {
+            background: #fdbb2d;
+            color: #0f1a30;
         }
         
-        button#stop-btn:hover:not(:disabled), button#faceid-stop-btn:hover:not(:disabled) {
-            background: #c12f2f;
+        #stop-btn {
+            background: #ff3b30;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: 1px solid #fdbb2d;
+            color: #fdbb2d;
+            margin-bottom: 20px;
+        }
+
+        /* Auth Choice Styles */
+        .auth-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
         }
         
+        .auth-method {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .auth-method:hover {
+            border-color: #fdbb2d;
+            transform: translateY(-5px);
+        }
+        
+        .auth-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .auth-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fdbb2d;
+            margin-bottom: 10px;
+        }
+        
+        .auth-description {
+            opacity: 0.8;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        /* PIN Styles */
         .pin-input-container {
             display: flex;
             justify-content: center;
             gap: 10px;
             margin: 25px 0;
+            flex-wrap: wrap;
         }
         
         .pin-input {
@@ -207,57 +227,14 @@
             font-size: 2rem;
             text-align: center;
             font-weight: bold;
-            transition: all 0.3s ease;
         }
-        
-        .pin-input:focus {
-            outline: none;
-            border-color: #fdbb2d;
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 10px rgba(253, 187, 45, 0.3);
-        }
-        
-        .pin-input.filled {
-            border-color: #4cd964;
-            background: rgba(76, 217, 100, 0.1);
-        }
-        
-        .pin-instructions, .faceid-instructions {
-            text-align: center;
-            margin-bottom: 20px;
-            opacity: 0.8;
-            font-size: 0.95rem;
-        }
-        
-        .pin-buttons, .faceid-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        
-        .pin-submit, .faceid-submit {
-            background: #4cd964;
-        }
-        
-        .pin-submit:hover, .faceid-submit:hover {
-            background: #3cb854;
-        }
-        
-        .pin-clear, .faceid-cancel {
-            background: #b21f1f;
-        }
-        
-        .pin-clear:hover, .faceid-cancel:hover {
-            background: #c12f2f;
-        }
-        
+
+        /* Status Styles */
         .status {
             margin-top: 15px;
             font-style: italic;
             color: #fdbb2d;
-            min-height: 24px;
             text-align: center;
-            font-size: 0.9rem;
         }
         
         .error {
@@ -266,7 +243,6 @@
             padding: 10px;
             border-radius: 8px;
             margin-top: 10px;
-            font-size: 0.9rem;
             display: none;
         }
         
@@ -276,10 +252,10 @@
             padding: 10px;
             border-radius: 8px;
             margin-top: 10px;
-            font-size: 0.9rem;
             display: none;
         }
-        
+
+        /* Loading Styles */
         .loading-container {
             display: none;
             flex-direction: column;
@@ -287,10 +263,6 @@
             justify-content: center;
             padding: 50px;
             text-align: center;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            margin-top: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .loading-spinner {
@@ -306,31 +278,17 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        
-        .loading-text {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            color: #fdbb2d;
-        }
-        
-        .loading-subtext {
-            opacity: 0.8;
-        }
-        
-        .portal-container {
-            display: none;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 30px;
-            margin-top: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
+
+        /* Portal Styles */
+        .portal-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
         
         .settings-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
             background: transparent;
             border: 1px solid #fdbb2d;
             color: #fdbb2d;
@@ -341,48 +299,28 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-left: auto;
         }
-        
-        .settings-btn:hover {
-            background: rgba(253, 187, 45, 0.1);
-        }
-        
-        .welcome-message {
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            color: #fdbb2d;
-            text-align: center;
-        }
-        
+
         .member-sites {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
-            margin-top: 20px;
+            margin-top: 30px;
         }
         
         .site-card {
             background: rgba(255, 255, 255, 0.08);
             border-radius: 10px;
             padding: 25px;
-            transition: all 0.3s ease;
+            text-align: center;
             border-left: 4px solid #fdbb2d;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        
-        .site-card:hover {
-            background: rgba(255, 255, 255, 0.12);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
         }
         
         .site-icon {
             font-size: 2.5rem;
             margin-bottom: 15px;
-            text-align: center;
         }
         
         .site-name {
@@ -396,7 +334,6 @@
             font-size: 0.95rem;
             opacity: 0.8;
             margin-bottom: 20px;
-            flex-grow: 1;
         }
         
         .site-link {
@@ -406,270 +343,46 @@
             padding: 10px 20px;
             border-radius: 8px;
             text-decoration: none;
-            font-size: 0.95rem;
             font-weight: 500;
             transition: all 0.3s ease;
-            text-align: center;
-            margin-top: auto;
         }
         
         .site-link:hover {
             background: rgba(253, 187, 45, 0.3);
-            transform: translateY(-2px);
         }
-        
-        .logout-btn {
-            display: block;
-            margin: 40px auto 0;
-            background: transparent;
-            border: 1px solid #b21f1f;
-            color: #b21f1f;
-            padding: 12px 30px;
-            font-size: 1rem;
-        }
-        
-        .logout-btn:hover {
-            background: rgba(178, 31, 31, 0.1);
-        }
-        
-        .camera-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            opacity: 0.7;
-        }
-        
-        .placeholder-text {
-            padding: 20px;
-            text-align: center;
-            color: #aaa;
-        }
-        
-        .powered-by {
-            margin-top: 30px;
-            font-size: 0.9rem;
-            opacity: 0.6;
-            text-align: center;
-        }
-        
-        .safe-sites-info {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        .settings-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 25px 0;
-        }
-        
-        .setting-option {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            border-left: 4px solid #fdbb2d;
-        }
-        
-        .setting-info {
-            flex: 1;
-        }
-        
-        .setting-name {
-            font-weight: 600;
-            margin-bottom: 5px;
+
+        .edit-site-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
             color: #fdbb2d;
-        }
-        
-        .setting-description {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        .toggle-switch {
-            position: relative;
-            width: 60px;
+            width: 30px;
             height: 30px;
-        }
-        
-        .toggle-checkbox {
-            display: none;
-        }
-        
-        .toggle-label {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 60px;
-            height: 30px;
-            background: #b21f1f;
-            border-radius: 15px;
+            border-radius: 50%;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .toggle-label:after {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 24px;
-            height: 24px;
-            background: white;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-        
-        .toggle-checkbox:checked + .toggle-label {
-            background: #4cd964;
-        }
-        
-        .toggle-checkbox:checked + .toggle-label:after {
-            left: 33px;
-        }
-        
-        .face-match-indicator {
-            display: none;
-            text-align: center;
-            margin: 15px 0;
-            padding: 10px;
-            background: rgba(76, 217, 100, 0.1);
-            border: 1px solid #4cd964;
-            border-radius: 8px;
-            color: #4cd964;
-        }
-
-        .face-match-indicator.unknown {
-            background: rgba(255, 59, 48, 0.1);
-            border: 1px solid #ff3b30;
-            color: #ff3b30;
-        }
-
-        .auth-choice {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .auth-choice-btn {
-            margin: 0 10px;
-            min-width: 120px;
-        }
-
-        .register-face-btn {
-            background: #007AFF;
-            margin-top: 10px;
-        }
-
-        .register-face-btn:hover {
-            background: #0056CC;
-        }
-
-        .face-status {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        .face-status.registered {
-            background: rgba(76, 217, 100, 0.1);
-            border: 1px solid #4cd964;
-            color: #4cd964;
-        }
-
-        .face-status.not-registered {
-            background: rgba(255, 59, 48, 0.1);
-            border: 1px solid #ff3b30;
-            color: #ff3b30;
-        }
-
-        .face-verification-section {
             display: none;
         }
-
-        .face-scanning {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px 0;
+        
+        .site-card.editing .edit-site-btn {
+            display: block;
         }
 
-        .face-scanning-dots {
-            display: flex;
-            gap: 5px;
-            margin-top: 10px;
-        }
-
-        .face-scanning-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #fdbb2d;
-            animation: scanning-dot 1.5s infinite ease-in-out;
-        }
-
-        .face-scanning-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .face-scanning-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes scanning-dot {
-            0%, 100% { opacity: 0.3; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-
-        .face-instructions {
-            text-align: center;
-            margin: 15px 0;
-            padding: 10px;
-            background: rgba(253, 187, 45, 0.1);
-            border-radius: 8px;
-            border: 1px solid rgba(253, 187, 45, 0.3);
-        }
-
-        .detection-stats {
-            display: none;
-            text-align: center;
-            margin: 10px 0;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        /* New styles for security sections */
-        .security-banner {
-            background: linear-gradient(135deg, #b21f1f 0%, #c12f2f 100%);
+        .logout-btn {
+            background: #ff3b30;
             color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: bold;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 30px;
         }
 
-        .security-banner.spider {
-            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
-            border-left: 4px solid #b21f1f;
-        }
-
+        /* Settings Styles */
         .settings-tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
-            border-bottom: 2px solid rgba(253, 187, 45, 0.3);
-            padding-bottom: 10px;
+            flex-wrap: wrap;
         }
-
+        
         .settings-tab {
             background: rgba(255, 255, 255, 0.08);
             border: none;
@@ -678,138 +391,120 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: 600;
         }
-
+        
         .settings-tab.active {
             background: #fdbb2d;
             color: #0f1a30;
         }
-
-        .settings-tab:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.12);
-        }
-
+        
         .settings-content {
             display: none;
         }
-
+        
         .settings-content.active {
             display: block;
         }
-
-        .qr-pin-list {
-            margin-top: 20px;
-        }
-
-        .qr-pin-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+        
+        .biometric-method {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
             border-left: 4px solid #fdbb2d;
         }
-
-        .qr-pin-header {
+        
+        .method-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
         }
-
-        .qr-pin-name {
+        
+        .method-name {
+            font-size: 1.2rem;
             font-weight: bold;
             color: #fdbb2d;
         }
-
-        .qr-pin-actions {
+        
+        .method-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .status-enabled {
+            background: rgba(76, 217, 100, 0.2);
+            color: #4cd964;
+            border: 1px solid #4cd964;
+        }
+        
+        .status-disabled {
+            background: rgba(255, 59, 48, 0.2);
+            color: #ff3b30;
+            border: 1px solid #ff3b30;
+        }
+        
+        .method-actions {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
-        .small-btn {
-            padding: 8px 15px;
-            font-size: 0.9rem;
-        }
-
-        .danger-btn {
-            background: #b21f1f;
-            color: white;
-        }
-
-        .danger-btn:hover {
-            background: #c12f2f;
-        }
-
-        .authenticator-link {
-            display: inline-block;
-            background: rgba(0, 122, 255, 0.2);
-            color: #007AFF;
-            padding: 12px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            margin: 15px 0;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0, 122, 255, 0.3);
-        }
-
-        .authenticator-link:hover {
-            background: rgba(0, 122, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .security-note {
-            background: rgba(253, 187, 45, 0.1);
-            border: 1px solid rgba(253, 187, 45, 0.3);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-size: 0.9rem;
-        }
-
-        .verify-section {
+        /* Modal Styles */
+        .modal {
             display: none;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
         }
-
-        .qrcode-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
+        
+        .modal-content {
+            background: #1e3a5f;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            border: 2px solid #fdbb2d;
+        }
+        
+        .modal h3 {
+            color: #fdbb2d;
+            margin-bottom: 20px;
             text-align: center;
         }
-
-        .secret-key {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 5px;
-            font-family: monospace;
-            margin: 10px 0;
-            word-break: break-all;
+        
+        .form-group {
+            margin-bottom: 20px;
         }
-
-        .copy-btn {
-            background: #007AFF;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 10px;
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #fdbb2d;
         }
-
-        .camera-test {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
             border-radius: 8px;
-            margin: 15px 0;
-            text-align: center;
+            border: 1px solid rgba(253, 187, 45, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
         }
     </style>
 </head>
@@ -818,47 +513,48 @@
         <header>
             <div class="logo">Portal</div>
             <h1>14592 Studios X Dem Studios</h1>
-            <p class="subtitle">Member Portal Access System</p>
+            <p class="subtitle">Advanced Security Portal</p>
         </header>
         
+        <!-- QR Scanner Section -->
         <div class="scanner-section" id="scanner-section">
             <h2 class="section-title">Scan Your QR Code</h2>
             
-            <div class="scanner-container">
-                <div id="video-container">
-                    <div class="placeholder-text" id="placeholder">
-                        <div class="camera-icon">📷</div>
-                        <p>Camera feed will appear here</p>
-                        <div class="camera-test">
-                            <p><strong>Camera Test:</strong> If camera doesn't work, try these steps:</p>
-                            <p>1. Allow camera permissions</p>
-                            <p>2. Use HTTPS (required for camera)</p>
-                            <p>3. Try a different browser</p>
-                        </div>
-                    </div>
-                    <video id="video" playsinline></video>
-                    <div id="scan-region" style="display: none;">
-                        <div class="scan-line"></div>
-                    </div>
+            <div id="video-container">
+                <div class="placeholder-text" id="placeholder">
+                    <div style="font-size: 3rem; margin-bottom: 15px; opacity: 0.7;">📷</div>
+                    <p>Camera feed will appear here</p>
                 </div>
-                
-                <div class="controls">
-                    <button id="start-btn">Start Scanner</button>
-                    <button id="stop-btn" disabled>Stop Scanner</button>
+                <video id="video" playsinline style="display: none;"></video>
+                <div id="scan-region" style="display: none;">
+                    <div class="scan-line"></div>
                 </div>
-                
-                <p class="status" id="status">Click "Start Scanner" to begin</p>
-                <div class="error" id="error"></div>
-                <div class="success" id="success"></div>
             </div>
             
-            <div class="safe-sites-info">
-                <p><strong>Note:</strong> Only QR codes from approved sources will grant access to the member portal.</p>
+            <div class="controls">
+                <button id="start-btn">Start Scanner</button>
+                <button id="stop-btn" disabled>Stop Scanner</button>
             </div>
+            
+            <p class="status" id="status">Click "Start Scanner" to begin</p>
+            <div class="error" id="error"></div>
+            <div class="success" id="success"></div>
         </div>
         
-        <!-- PIN Entry Section -->
-        <div class="pin-section" id="pin-section" style="display: none;">
+        <!-- Authentication Choice Section -->
+        <div class="auth-choice-section" id="auth-choice-section">
+            <button class="back-btn" id="back-to-scanner">← Back to Scanner</button>
+            <h2 class="section-title">Choose Authentication Method</h2>
+            <p style="text-align: center; margin-bottom: 30px; opacity: 0.8;">Select how you'd like to authenticate</p>
+            
+            <div class="auth-methods" id="auth-methods">
+                <!-- Authentication methods will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- PIN Section -->
+        <div class="pin-section" id="pin-section">
+            <button class="back-btn" id="back-to-auth">← Back to Methods</button>
             <h2 class="section-title" id="pin-title">Enter Your PIN</h2>
             <p class="pin-instructions" id="pin-instructions">Enter your 4-digit PIN to access the portal</p>
             
@@ -869,298 +565,14 @@
                 <input type="password" class="pin-input" maxlength="1" data-index="3">
             </div>
             
-            <div class="pin-buttons">
+            <div class="controls">
                 <button class="pin-submit" id="pin-submit">Submit PIN</button>
                 <button class="pin-clear" id="pin-clear">Clear</button>
             </div>
             
             <div class="error" id="pin-error"></div>
         </div>
-        
-        <!-- Face ID Registration Section -->
-        <div class="faceid-section" id="faceid-registration-section" style="display: none;">
-            <h2 class="section-title">Face ID Setup</h2>
-            <p class="faceid-instructions">Position your face in the frame to register your Face ID</p>
-            
-            <div class="face-instructions">
-                <p>💡 <strong>Tips for better detection:</strong></p>
-                <p>• Make sure your face is well-lit</p>
-                <p>• Look directly at the camera</p>
-                <p>• Remove sunglasses or hats</p>
-            </div>
-            
-            <div class="faceid-container">
-                <div id="faceid-registration-video-container">
-                    <div class="placeholder-text" id="faceid-registration-placeholder">
-                        <div class="camera-icon">👤</div>
-                        <p>Camera feed will appear here</p>
-                    </div>
-                    <video id="faceid-registration-video" playsinline></video>
-                    <div class="face-overlay" id="face-registration-overlay"></div>
-                </div>
-                
-                <div class="face-scanning" id="face-registration-scanning">
-                    <div>Looking for your face...</div>
-                    <div class="face-scanning-dots">
-                        <div class="face-scanning-dot"></div>
-                        <div class="face-scanning-dot"></div>
-                        <div class="face-scanning-dot"></div>
-                    </div>
-                </div>
-                
-                <div class="detection-stats" id="face-registration-stats">
-                    Face detected: <span id="registration-confidence">0%</span> confidence
-                </div>
-                
-                <div class="face-match-indicator" id="face-registration-indicator">
-                    ✓ Face detected! Click "Register Face" to save
-                </div>
-                
-                <div class="faceid-buttons">
-                    <button class="faceid-submit" id="faceid-registration-submit" disabled>Register Face</button>
-                    <button class="faceid-cancel" id="faceid-registration-cancel">Cancel</button>
-                </div>
-                
-                <div class="error" id="faceid-registration-error"></div>
-            </div>
-        </div>
 
-        <!-- Face ID Verification Section -->
-        <div class="faceid-section face-verification-section" id="faceid-verification-section" style="display: none;">
-            <h2 class="section-title">Face ID Verification</h2>
-            <p class="faceid-instructions">Position your face in the frame to verify your identity</p>
-            
-            <div class="face-instructions">
-                <p>💡 <strong>Look directly at the camera</strong></p>
-                <p>Make sure your face is clearly visible</p>
-            </div>
-            
-            <div class="faceid-container">
-                <div id="faceid-verification-video-container">
-                    <div class="placeholder-text" id="faceid-verification-placeholder">
-                        <div class="camera-icon">👤</div>
-                        <p>Camera feed will appear here</p>
-                    </div>
-                    <video id="faceid-verification-video" playsinline></video>
-                    <div class="face-overlay" id="face-verification-overlay"></div>
-                </div>
-                
-                <div class="face-scanning" id="face-verification-scanning">
-                    <div>Verifying your identity...</div>
-                    <div class="face-scanning-dots">
-                        <div class="face-scanning-dot"></div>
-                        <div class="face-scanning-dot"></div>
-                        <div class="face-scanning-dot"></div>
-                    </div>
-                </div>
-                
-                <div class="detection-stats" id="face-verification-stats">
-                    Match confidence: <span id="verification-confidence">0%</span>
-                </div>
-                
-                <div class="face-match-indicator" id="face-verification-indicator">
-                    ✓ Face verified successfully
-                </div>
-                
-                <div class="face-match-indicator unknown" id="face-verification-failed">
-                    ✗ Face not recognized. Please try again or use PIN.
-                </div>
-                
-                <div class="faceid-buttons">
-                    <button class="faceid-cancel" id="faceid-verification-cancel">Use PIN Instead</button>
-                </div>
-                
-                <div class="error" id="faceid-verification-error"></div>
-            </div>
-        </div>
-
-        <!-- Authentication Choice Section -->
-        <div class="pin-section" id="auth-choice-section" style="display: none;">
-            <h2 class="section-title">Choose Authentication Method</h2>
-            <p class="pin-instructions">How would you like to sign in?</p>
-            
-            <div class="auth-choice">
-                <button class="auth-choice-btn" id="use-pin-btn">Use PIN</button>
-                <button class="auth-choice-btn" id="use-faceid-btn">Use Face ID</button>
-            </div>
-        </div>
-        
-        <!-- Settings Section -->
-        <div class="settings-section" id="settings-section" style="display: none;">
-            <div class="security-banner spider">
-                <span>🕷️ SECURITY CENTER - Verify your identity to modify sensitive settings</span>
-            </div>
-            
-            <div class="settings-tabs">
-                <button class="settings-tab active" data-tab="security">Security</button>
-                <button class="settings-tab" data-tab="biometrics">Biometrics</button>
-                <button class="settings-tab" data-tab="2fa">2FA</button>
-                <button class="settings-tab" data-tab="general">General</button>
-            </div>
-            
-            <!-- Security Tab -->
-            <div class="settings-content active" id="security-tab">
-                <h2 class="section-title">Security Settings</h2>
-                
-                <div class="verify-section" id="security-verify-section">
-                    <h3>Verify Your Identity</h3>
-                    <p>To modify security settings, please verify your identity:</p>
-                    <div class="controls">
-                        <button id="verify-pin-btn">Verify with PIN</button>
-                        <button id="verify-face-btn">Verify with Face ID</button>
-                    </div>
-                </div>
-                
-                <div id="security-settings-content" style="display: none;">
-                    <div class="setting-option">
-                        <div class="setting-info">
-                            <div class="setting-name">PIN Protection</div>
-                            <div class="setting-description">Require PIN for QR code access</div>
-                        </div>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="pin-protection-toggle" class="toggle-checkbox" checked>
-                            <label for="pin-protection-toggle" class="toggle-label"></label>
-                        </div>
-                    </div>
-                    
-                    <div class="security-note">
-                        <strong>Note:</strong> When PIN protection is disabled, anyone with a valid QR code can access the portal without authentication.
-                    </div>
-                    
-                    <h3 style="margin-top: 30px;">QR Code PIN Management</h3>
-                    <p>Each QR code can have its own unique PIN for enhanced security.</p>
-                    
-                    <div class="qr-pin-list" id="qr-pin-list">
-                        <!-- QR PIN items will be dynamically added here -->
-                    </div>
-                    
-                    <div class="controls">
-                        <button id="add-qr-pin-btn">Add New QR PIN</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Biometrics Tab -->
-            <div class="settings-content" id="biometrics-tab">
-                <h2 class="section-title">Biometric Settings</h2>
-                
-                <div class="setting-option">
-                    <div class="setting-info">
-                        <div class="setting-name">Face ID Authentication</div>
-                        <div class="setting-description">Use facial recognition to access your portal</div>
-                    </div>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="faceid-toggle" class="toggle-checkbox">
-                        <label for="faceid-toggle" class="toggle-label"></label>
-                    </div>
-                </div>
-
-                <!-- Face Registration Section -->
-                <div class="setting-option">
-                    <div class="setting-info">
-                        <div class="setting-name">Face Registration</div>
-                        <div class="setting-description" id="face-status-text">No face registered</div>
-                    </div>
-                    <button class="register-face-btn" id="register-face-btn">Register Face</button>
-                </div>
-                <div class="face-status not-registered" id="face-status">
-                    Face not registered. Click "Register Face" to set up Face ID.
-                </div>
-                
-                <div class="security-note">
-                    <strong>Biometric Data:</strong> Your facial data is stored securely on your device and is never transmitted to our servers.
-                </div>
-            </div>
-            
-            <!-- 2FA Tab -->
-            <div class="settings-content" id="2fa-tab">
-                <h2 class="section-title">Two-Factor Authentication</h2>
-                
-                <div class="setting-option">
-                    <div class="setting-info">
-                        <div class="setting-name">Enable 2FA</div>
-                        <div class="setting-description">Add an extra layer of security with time-based codes</div>
-                    </div>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="2fa-toggle" class="toggle-checkbox">
-                        <label for="2fa-toggle" class="toggle-label"></label>
-                    </div>
-                </div>
-                
-                <div id="2fa-setup-section" style="display: none;">
-                    <div class="security-note">
-                        <strong>We recommend using Alpha Authenticator</strong> for the best security experience.
-                    </div>
-                    
-                    <a href="https://jokiller1011.github.io/Alpha-Authenciator/" target="_blank" class="authenticator-link">
-                        🔐 Get Alpha Authenticator
-                    </a>
-                    
-                    <div id="2fa-qrcode-container" class="qrcode-container" style="display: none;">
-                        <h3>Scan this QR code with your authenticator app:</h3>
-                        <canvas id="2fa-qrcode"></canvas>
-                        <div class="secret-key" id="2fa-secret-display">
-                            Secret: <span id="2fa-secret-text"></span>
-                            <button class="copy-btn" onclick="copy2FASecret()">Copy</button>
-                        </div>
-                    </div>
-                    
-                    <div class="setting-option">
-                        <div class="setting-info">
-                            <div class="setting-name">2FA Status</div>
-                            <div class="setting-description" id="2fa-status-text">Not configured</div>
-                        </div>
-                        <button id="generate-2fa-btn">Setup 2FA</button>
-                    </div>
-                    
-                    <div class="pin-input-container">
-                        <input type="text" class="pin-input" maxlength="1" data-index="0" placeholder="0">
-                        <input type="text" class="pin-input" maxlength="1" data-index="1" placeholder="0">
-                        <input type="text" class="pin-input" maxlength="1" data-index="2" placeholder="0">
-                        <input type="text" class="pin-input" maxlength="1" data-index="3" placeholder="0">
-                        <input type="text" class="pin-input" maxlength="1" data-index="4" placeholder="0">
-                        <input type="text" class="pin-input" maxlength="1" data-index="5" placeholder="0">
-                    </div>
-                    
-                    <div class="controls">
-                        <button id="verify-2fa-btn">Verify Code</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- General Tab -->
-            <div class="settings-content" id="general-tab">
-                <h2 class="section-title">General Settings</h2>
-                
-                <div class="setting-option">
-                    <div class="setting-info">
-                        <div class="setting-name">PIN Authentication</div>
-                        <div class="setting-description">Use a 4-digit PIN to access your portal</div>
-                    </div>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="pin-toggle" class="toggle-checkbox" checked>
-                        <label for="pin-toggle" class="toggle-label"></label>
-                    </div>
-                </div>
-                
-                <div class="setting-option">
-                    <div class="setting-info">
-                        <div class="setting-name">Auto-Logout</div>
-                        <div class="setting-description">Automatically logout after 30 minutes of inactivity</div>
-                    </div>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="auto-logout-toggle" class="toggle-checkbox" checked>
-                        <label for="auto-logout-toggle" class="toggle-label"></label>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="controls">
-                <button id="save-settings">Save Settings</button>
-                <button id="cancel-settings" class="pin-clear">Cancel</button>
-            </div>
-        </div>
-        
         <!-- Loading Container -->
         <div class="loading-container" id="loading-container">
             <div class="loading-spinner"></div>
@@ -1171,686 +583,605 @@
         <!-- Portal Container -->
         <div class="portal-container" id="portal-container">
             <button class="settings-btn" id="settings-btn">⚙️</button>
-            <!-- Portal content will be loaded here -->
+            <h2 class="welcome-message">Welcome to the Member Portal!</h2>
+            
+            <div class="portal-controls">
+                <button id="add-site-btn" style="background: #4cd964;">+ Add New Site</button>
+                <button id="edit-sites-btn" style="background: #fdbb2d; color: #0f1a30;">Edit Sites</button>
+            </div>
+            
+            <div class="member-sites" id="member-sites">
+                <!-- Sites will be dynamically added here -->
+            </div>
+            
+            <div class="controls">
+                <button class="logout-btn" id="logout-btn">Logout</button>
+            </div>
         </div>
-        
-        <div class="powered-by">
-            <p>Powered by 14592 Security Systems</p>
+
+        <!-- Settings Section -->
+        <div class="settings-section" id="settings-section">
+            <h2 class="section-title">Security Settings</h2>
+            
+            <div class="settings-tabs">
+                <button class="settings-tab active" data-tab="biometrics">Biometrics</button>
+                <button class="settings-tab" data-tab="security">Security</button>
+            </div>
+            
+            <!-- Biometrics Tab -->
+            <div class="settings-content active" id="biometrics-tab">
+                <!-- Face ID -->
+                <div class="biometric-method">
+                    <div class="method-header">
+                        <div class="method-name">Face ID Recognition</div>
+                        <div class="method-status status-disabled" id="faceid-status">Not Set Up</div>
+                    </div>
+                    <div class="method-description">
+                        Use facial recognition for authentication.
+                    </div>
+                    <div class="method-actions">
+                        <button class="setup-btn" id="setup-faceid">Set Up Face ID</button>
+                        <button class="test-btn" id="test-faceid" disabled>Test</button>
+                        <button class="remove-btn" id="remove-faceid" disabled>Remove</button>
+                    </div>
+                </div>
+
+                <!-- Voice Recognition -->
+                <div class="biometric-method">
+                    <div class="method-header">
+                        <div class="method-name">Voice Recognition</div>
+                        <div class="method-status status-disabled" id="voice-status">Not Set Up</div>
+                    </div>
+                    <div class="method-description">
+                        Use voice recognition for authentication.
+                    </div>
+                    <div class="method-actions">
+                        <button class="setup-btn" id="setup-voice">Set Up Voice</button>
+                        <button class="test-btn" id="test-voice" disabled>Test</button>
+                        <button class="remove-btn" id="remove-voice" disabled>Remove</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Security Tab -->
+            <div class="settings-content" id="security-tab">
+                <div class="biometric-method">
+                    <div class="method-header">
+                        <div class="method-name">PIN Settings</div>
+                        <div class="method-status status-enabled" id="pin-settings-status">Enabled</div>
+                    </div>
+                    <div class="method-description">
+                        Change your 4-digit PIN code.
+                    </div>
+                    <div class="method-actions">
+                        <button class="setup-btn" id="change-pin">Change PIN</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="back-to-portal">← Back to Portal</button>
+            </div>
         </div>
     </div>
 
-    <!-- Include the QR code scanning library -->
+    <!-- Site Editor Modal -->
+    <div class="modal" id="site-editor-modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Add New Site</h3>
+            <div class="form-group">
+                <label for="site-name">Site Name</label>
+                <input type="text" id="site-name" placeholder="Enter site name">
+            </div>
+            <div class="form-group">
+                <label for="site-description">Description</label>
+                <textarea id="site-description" placeholder="Enter site description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="site-url">URL</label>
+                <input type="text" id="site-url" placeholder="https://example.com">
+            </div>
+            <div class="form-group">
+                <label for="site-icon">Icon (Emoji)</label>
+                <input type="text" id="site-icon" placeholder="🎬" maxlength="2">
+            </div>
+            <div class="controls">
+                <button id="save-site" style="background: #4cd964;">Save Site</button>
+                <button id="cancel-site" style="background: #ff3b30;">Cancel</button>
+                <button id="delete-site" style="background: #ff3b30; display: none;">Delete Site</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include QR code scanning library -->
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-    <!-- Include FaceAPI.js for real face detection and recognition -->
-    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
-    <!-- Include QR Code generator -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <!-- Include OTP library for 2FA -->
-    <script src="https://cdn.jsdelivr.net/npm/otpauth@9.1.3/dist/otpauth.umd.min.js"></script>
     
     <script>
-        // Get DOM elements
-        const video = document.getElementById('video');
-        const faceidRegistrationVideo = document.getElementById('faceid-registration-video');
-        const faceidVerificationVideo = document.getElementById('faceid-verification-video');
-        const startBtn = document.getElementById('start-btn');
-        const stopBtn = document.getElementById('stop-btn');
-        const status = document.getElementById('status');
-        const errorDiv = document.getElementById('error');
-        const successDiv = document.getElementById('success');
-        const placeholder = document.getElementById('placeholder');
-        const faceidRegistrationPlaceholder = document.getElementById('faceid-registration-placeholder');
-        const faceidVerificationPlaceholder = document.getElementById('faceid-verification-placeholder');
-        const scanRegion = document.getElementById('scan-region');
-        
-        // Get all section elements
-        const scannerSection = document.getElementById('scanner-section');
-        const pinSection = document.getElementById('pin-section');
-        const pinTitle = document.getElementById('pin-title');
-        const pinInstructions = document.getElementById('pin-instructions');
-        const pinError = document.getElementById('pin-error');
-        const faceidRegistrationSection = document.getElementById('faceid-registration-section');
-        const faceidVerificationSection = document.getElementById('faceid-verification-section');
-        const authChoiceSection = document.getElementById('auth-choice-section');
-        const settingsSection = document.getElementById('settings-section');
-        const loadingContainer = document.getElementById('loading-container');
-        const portalContainer = document.getElementById('portal-container');
-        const settingsBtn = document.getElementById('settings-btn');
-        
-        // Variables for video stream and scanning
-        let stream = null;
-        let scanning = false;
-        let animationFrameId = null;
-        
-        // User data storage
-        let userPin = localStorage.getItem('userPin');
-        let userFaceDescriptor = localStorage.getItem('userFaceDescriptor');
-        let isFirstTimeSetup = false;
+        class SecurityManager {
+            constructor() {
+                this.userPin = localStorage.getItem('userPin');
+                this.sites = JSON.parse(localStorage.getItem('sites')) || this.getDefaultSites();
+                this.isFirstTimeSetup = !this.userPin;
+                this.stream = null;
+                this.scanning = false;
+                this.animationFrameId = null;
+                this.editingSiteId = null;
+                this.editingMode = false;
+                this.init();
+            }
 
-        // SIMPLIFIED SCANNER FUNCTION - FIXED VERSION
-        startBtn.addEventListener('click', async () => {
-            console.log('Start Scanner button clicked');
-            
-            try {
-                status.textContent = "Initializing camera...";
-                errorDiv.style.display = 'none';
-                successDiv.style.display = 'none';
-                startBtn.disabled = true;
-
-                // Stop any existing stream
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                }
-
-                // Try different camera constraints for better compatibility
-                const constraints = {
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
+            getDefaultSites() {
+                return [
+                    {
+                        id: 1,
+                        name: "14592 Studios",
+                        description: "Access exclusive content and production resources",
+                        url: "#",
+                        icon: "🎬"
+                    },
+                    {
+                        id: 2,
+                        name: "Dem Studios",
+                        description: "Explore creative projects and design assets",
+                        url: "#",
+                        icon: "🎨"
+                    },
+                    {
+                        id: 3,
+                        name: "Security Dashboard",
+                        description: "Manage your security settings and access logs",
+                        url: "#",
+                        icon: "🔐"
                     }
-                };
+                ];
+            }
 
-                console.log('Requesting camera access...');
-                stream = await navigator.mediaDevices.getUserMedia(constraints);
-                console.log('Camera access granted');
+            init() {
+                this.setupEventListeners();
+                this.setupScanner();
+                this.renderSites();
+            }
 
-                // Set video source
-                video.srcObject = stream;
+            setupEventListeners() {
+                // Scanner
+                document.getElementById('start-btn').addEventListener('click', () => this.startScanner());
+                document.getElementById('stop-btn').addEventListener('click', () => this.stopScanner());
 
-                // Wait for video to load
-                video.onloadedmetadata = () => {
-                    console.log('Video metadata loaded');
-                    video.play().then(() => {
-                        console.log('Video started playing');
-                        startScanning();
+                // Navigation
+                document.getElementById('back-to-scanner').addEventListener('click', () => this.showScanner());
+                document.getElementById('back-to-auth').addEventListener('click', () => this.showAuthChoice());
+                document.getElementById('back-to-portal').addEventListener('click', () => this.showPortal());
+
+                // PIN
+                document.getElementById('pin-submit').addEventListener('click', () => this.submitPIN());
+                document.getElementById('pin-clear').addEventListener('click', () => this.clearPIN());
+
+                // Portal
+                document.getElementById('settings-btn').addEventListener('click', () => this.showSettings());
+                document.getElementById('logout-btn').addEventListener('click', () => this.logout());
+                document.getElementById('add-site-btn').addEventListener('click', () => this.openSiteEditor());
+                document.getElementById('edit-sites-btn').addEventListener('click', () => this.toggleEditMode());
+
+                // Settings
+                document.getElementById('change-pin').addEventListener('click', () => this.changePIN());
+
+                // Modal
+                document.getElementById('save-site').addEventListener('click', () => this.saveSite());
+                document.getElementById('cancel-site').addEventListener('click', () => this.closeSiteEditor());
+                document.getElementById('delete-site').addEventListener('click', () => this.deleteSite());
+
+                // Settings tabs
+                document.querySelectorAll('.settings-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+                        document.querySelectorAll('.settings-content').forEach(content => {
+                            content.classList.remove('active');
+                        });
                         
-                        // Show video and hide placeholder
-                        video.style.display = 'block';
-                        placeholder.style.display = 'none';
-                        scanRegion.style.display = 'block';
-                        
-                        // Update UI
-                        stopBtn.disabled = false;
-                        status.textContent = "Scanner active - scan your QR code";
-                    }).catch(err => {
-                        console.error('Error playing video:', err);
-                        handleCameraError(err);
+                        tab.classList.add('active');
+                        const tabId = tab.getAttribute('data-tab');
+                        document.getElementById(`${tabId}-tab`).classList.add('active');
                     });
-                };
-
-                video.onerror = (err) => {
-                    console.error('Video error:', err);
-                    handleCameraError(err);
-                };
-
-            } catch (err) {
-                console.error("Error accessing camera:", err);
-                handleCameraError(err);
+                });
             }
-        });
 
-        // Stop the scanner
-        stopBtn.addEventListener('click', () => {
-            console.log('Stop Scanner button clicked');
-            stopScanning();
-            
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
-            
-            video.srcObject = null;
-            
-            // Update UI
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-            status.textContent = "Scanner is not active";
-            
-            // Show placeholder and hide video
-            video.style.display = 'none';
-            placeholder.style.display = 'block';
-            scanRegion.style.display = 'none';
-        });
+            // QR Scanner Functions
+            async startScanner() {
+                try {
+                    document.getElementById('status').textContent = "Initializing camera...";
+                    document.getElementById('error').style.display = 'none';
+                    document.getElementById('start-btn').disabled = true;
 
-        // Handle camera errors with better messages
-        function handleCameraError(err) {
-            console.error('Camera error details:', err);
-            
-            let errorMessage = "Could not access camera. ";
-            
-            if (err.name === 'NotAllowedError') {
-                errorMessage = "❌ Camera permission was denied. Please allow camera access in your browser settings and reload the page.";
-            } else if (err.name === 'NotFoundError') {
-                errorMessage = "❌ No camera found on your device. Please connect a camera and try again.";
-            } else if (err.name === 'NotSupportedError') {
-                errorMessage = "❌ Camera access is not supported by your browser. Please try using Chrome, Firefox, or Edge.";
-            } else if (err.name === 'NotReadableError') {
-                errorMessage = "❌ Camera is already in use by another application. Please close other camera apps and try again.";
-            } else if (err.name === 'OverconstrainedError') {
-                errorMessage = "❌ Camera doesn't support the required resolution. Trying alternative camera...";
-                // Try again with simpler constraints
-                tryAlternativeCamera();
-                return;
-            } else {
-                errorMessage = "❌ Camera error: " + err.message + ". Please check your camera settings.";
-            }
-            
-            errorDiv.textContent = errorMessage;
-            errorDiv.style.display = 'block';
-            status.textContent = "Camera access failed";
-            
-            // Reset UI
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-        }
-
-        // Try alternative camera constraints
-        async function tryAlternativeCamera() {
-            try {
-                const alternativeConstraints = {
-                    video: {
-                        facingMode: 'environment'
-                        // Remove resolution constraints for better compatibility
+                    if (this.stream) {
+                        this.stream.getTracks().forEach(track => track.stop());
                     }
-                };
-                
-                stream = await navigator.mediaDevices.getUserMedia(alternativeConstraints);
-                video.srcObject = stream;
-                
-                video.onloadedmetadata = () => {
-                    video.play();
-                    startScanning();
-                    video.style.display = 'block';
-                    placeholder.style.display = 'none';
-                    scanRegion.style.display = 'block';
-                    stopBtn.disabled = false;
-                    status.textContent = "Scanner active (using alternative camera)";
-                    errorDiv.style.display = 'none';
-                };
-            } catch (err) {
-                errorDiv.textContent = "❌ Could not access any camera. Please check your device permissions and try again.";
-                errorDiv.style.display = 'block';
-                startBtn.disabled = false;
-            }
-        }
 
-        // Start scanning for QR codes
-        function startScanning() {
-            scanning = true;
-            scanFrame();
-        }
+                    this.stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: 'environment' }
+                    });
 
-        // Stop scanning
-        function stopScanning() {
-            scanning = false;
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-                animationFrameId = null;
-            }
-        }
+                    const video = document.getElementById('video');
+                    video.srcObject = this.stream;
 
-        // Scan each video frame for QR codes
-        function scanFrame() {
-            if (!scanning) return;
-            
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                // Create canvas to draw video frame
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
-                // Set canvas dimensions to match video
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                
-                // Draw video frame to canvas
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                // Get image data from canvas
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                
-                // Try to decode QR code
-                const code = jsQR(imageData.data, imageData.width, imageData.height);
-                
-                if (code) {
-                    // QR code found!
-                    console.log('QR Code detected:', code.data);
-                    status.textContent = "QR Code detected!";
-                    
-                    // Process the QR code and check if it's a safe site
-                    processQRCode(code.data);
-                    return;
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        this.startScanning();
+                        video.style.display = 'block';
+                        document.getElementById('placeholder').style.display = 'none';
+                        document.getElementById('scan-region').style.display = 'block';
+                        document.getElementById('stop-btn').disabled = false;
+                        document.getElementById('status').textContent = "Scanner active - scan your QR code";
+                    };
+
+                } catch (err) {
+                    this.handleCameraError(err);
                 }
             }
-            
-            // Continue scanning
-            animationFrameId = requestAnimationFrame(scanFrame);
-        }
 
-        // Process QR code and check if it's a safe site
-        function processQRCode(url) {
-            // Stop scanning
-            stopScanning();
-            
-            // Hide scanner and show loading
-            scannerSection.style.display = 'none';
-            loadingContainer.style.display = 'flex';
-            
-            // Simulate verification process
-            setTimeout(() => {
-                // Check if the URL is in the safe sites list
-                const isSafe = isUrlSafe(url);
+            stopScanner() {
+                this.stopScanning();
+                if (this.stream) {
+                    this.stream.getTracks().forEach(track => track.stop());
+                    this.stream = null;
+                }
+                const video = document.getElementById('video');
+                video.srcObject = null;
+                video.style.display = 'none';
+                document.getElementById('placeholder').style.display = 'block';
+                document.getElementById('scan-region').style.display = 'none';
+                document.getElementById('start-btn').disabled = false;
+                document.getElementById('stop-btn').disabled = true;
+                document.getElementById('status').textContent = "Scanner is not active";
+            }
+
+            startScanning() {
+                this.scanning = true;
+                this.scanFrame();
+            }
+
+            stopScanning() {
+                this.scanning = false;
+                if (this.animationFrameId) {
+                    cancelAnimationFrame(this.animationFrameId);
+                }
+            }
+
+            scanFrame() {
+                if (!this.scanning) return;
+                
+                const video = document.getElementById('video');
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, imageData.width, imageData.height);
+                    
+                    if (code) {
+                        document.getElementById('status').textContent = "QR Code detected!";
+                        this.processQRCode(code.data);
+                        return;
+                    }
+                }
+                
+                this.animationFrameId = requestAnimationFrame(() => this.scanFrame());
+            }
+
+            // LINE 691: Safe Site List - This is where QR codes are checked
+            processQRCode(url) {
+                this.stopScanning();
+                
+                // Check if QR code is from safe source
+                const safeDomains = [
+                    'https://matrix.to/#/@jowilke77:matrix.org',
+                    'https://popl.co/card/IgRPBGmi/1/dash', 
+                    'https://typecard.com/fbce874c/'
+                ];
+                
+                let isSafe = false;
+                for (const domain of safeDomains) {
+                    if (url.includes(domain)) {
+                        isSafe = true;
+                        break;
+                    }
+                }
+                
+                // Also accept any URL that contains "14592" or "demstudios" anywhere
+                if (url.includes('14592') || url.includes('demstudios')) {
+                    isSafe = true;
+                }
                 
                 if (isSafe) {
-                    // Site is safe - check if user has authentication set up
-                    if (!userPin && !userFaceDescriptor) {
-                        // First time setup
-                        isFirstTimeSetup = true;
-                        loadingContainer.style.display = 'none';
-                        pinSection.style.display = 'block';
-                        pinTitle.textContent = "Create Your PIN";
-                        pinInstructions.textContent = "Create a 4-digit PIN to secure your account";
-                        initializePinInputs();
-                    } else {
-                        // Existing user - use preferred authentication method
-                        isFirstTimeSetup = false;
-                        handleExistingUserAuth();
-                    }
+                    this.showAuthChoice();
                 } else {
-                    // Site is not safe - show error
-                    loadingContainer.style.display = 'none';
-                    scannerSection.style.display = 'block';
-                    errorDiv.textContent = `Access Denied: The QR code is not from an approved source.`;
-                    errorDiv.style.display = 'block';
-                    status.textContent = "Verification failed";
-                    
-                    // Reset scanner
-                    startBtn.disabled = false;
-                    stopBtn.disabled = true;
+                    this.showError("Access Denied: QR code not from approved source. Detected: " + url);
                 }
-            }, 1500);
-        }
-
-        // Check if URL is from a safe site
-        function isUrlSafe(url) {
-            // For demo purposes, accept any URL that contains "14592" or "demstudios"
-            // In a real application, you would check against a whitelist of approved domains
-            return url.includes('matrix') || url.includes('demstudios') || url.includes('github.io');
-        }
-
-        // Initialize PIN input functionality
-        function initializePinInputs() {
-            const pinInputs = document.querySelectorAll('.pin-input');
-            const pinSubmit = document.getElementById('pin-submit');
-            const pinClear = document.getElementById('pin-clear');
-            const pinError = document.getElementById('pin-error');
-            
-            // Clear any existing PIN inputs
-            pinInputs.forEach(input => {
-                input.value = '';
-                input.classList.remove('filled');
-            });
-            
-            // Focus on first input
-            if (pinInputs.length > 0) {
-                pinInputs[0].focus();
             }
-            
-            // Add event listeners to PIN inputs
-            pinInputs.forEach((input, index) => {
-                input.addEventListener('input', (e) => {
-                    const value = e.target.value;
-                    
-                    if (value) {
-                        input.classList.add('filled');
+
+            // Authentication Flow
+            showAuthChoice() {
+                this.hideAllSections();
+                document.getElementById('auth-choice-section').style.display = 'block';
+                
+                const authMethods = document.getElementById('auth-methods');
+                authMethods.innerHTML = '';
+                
+                // Always show PIN option
+                authMethods.innerHTML += `
+                    <div class="auth-method" onclick="securityManager.showPIN()">
+                        <div class="auth-icon">🔒</div>
+                        <div class="auth-name">PIN</div>
+                        <div class="auth-description">Use your 4-digit PIN code</div>
+                    </div>
+                `;
+            }
+
+            showPIN() {
+                this.hideAllSections();
+                document.getElementById('pin-section').style.display = 'block';
+                
+                if (this.isFirstTimeSetup) {
+                    document.getElementById('pin-title').textContent = "Create Your PIN";
+                    document.getElementById('pin-instructions').textContent = "Create a 4-digit PIN to secure your account";
+                } else {
+                    document.getElementById('pin-title').textContent = "Enter Your PIN";
+                    document.getElementById('pin-instructions').textContent = "Enter your 4-digit PIN to access the portal";
+                }
+                
+                this.initializePinInputs();
+            }
+
+            // PIN Functions
+            initializePinInputs() {
+                const pinInputs = document.querySelectorAll('.pin-input');
+                pinInputs.forEach(input => {
+                    input.value = '';
+                    input.addEventListener('input', (e) => {
+                        const value = e.target.value;
+                        const index = parseInt(e.target.dataset.index);
                         
-                        // Move to next input if available
-                        if (index < pinInputs.length - 1) {
+                        if (value && index < pinInputs.length - 1) {
                             pinInputs[index + 1].focus();
-                        } else {
-                            // Last input filled, enable submit button
-                            pinSubmit.disabled = false;
                         }
-                    } else {
-                        input.classList.remove('filled');
-                    }
+                    });
                 });
                 
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Backspace' && !input.value && index > 0) {
-                        // Move to previous input on backspace
-                        pinInputs[index - 1].focus();
-                    }
-                });
-            });
-            
-            // PIN submit handler
-            pinSubmit.addEventListener('click', () => {
+                if (pinInputs.length > 0) {
+                    pinInputs[0].focus();
+                }
+            }
+
+            submitPIN() {
+                const pinInputs = document.querySelectorAll('.pin-input');
                 const pin = Array.from(pinInputs).map(input => input.value).join('');
+                const pinError = document.getElementById('pin-error');
                 
                 if (pin.length === 4) {
-                    if (isFirstTimeSetup) {
-                        // First time setup - save PIN
-                        userPin = pin;
-                        localStorage.setItem('userPin', userPin);
+                    if (this.isFirstTimeSetup) {
+                        this.userPin = pin;
+                        localStorage.setItem('userPin', pin);
+                        this.isFirstTimeSetup = false;
                         pinError.style.display = 'none';
-                        
-                        // Show success and move to next step
-                        showSuccess("PIN created successfully!");
-                        pinSection.style.display = 'none';
-                        
-                        // Offer Face ID registration
-                        showFaceIDRegistration();
+                        this.showSuccess("PIN created successfully!");
+                        this.showPortal();
                     } else {
-                        // Verify existing PIN
-                        if (pin === userPin) {
+                        if (pin === this.userPin) {
                             pinError.style.display = 'none';
-                            showSuccess("PIN verified successfully!");
-                            pinSection.style.display = 'none';
-                            showPortal();
+                            this.showSuccess("PIN verified successfully!");
+                            this.showPortal();
                         } else {
                             pinError.textContent = "Incorrect PIN. Please try again.";
                             pinError.style.display = 'block';
-                            
-                            // Clear inputs
-                            pinInputs.forEach(input => {
-                                input.value = '';
-                                input.classList.remove('filled');
-                            });
-                            pinInputs[0].focus();
+                            this.clearPIN();
                         }
                     }
                 } else {
                     pinError.textContent = "Please enter a complete 4-digit PIN.";
                     pinError.style.display = 'block';
                 }
-            });
-            
-            // PIN clear handler
-            pinClear.addEventListener('click', () => {
+            }
+
+            clearPIN() {
+                const pinInputs = document.querySelectorAll('.pin-input');
                 pinInputs.forEach(input => {
                     input.value = '';
-                    input.classList.remove('filled');
                 });
-                pinInputs[0].focus();
-                pinError.style.display = 'none';
-            });
-        }
-
-        // Handle authentication for existing users
-        function handleExistingUserAuth() {
-            // Check if Face ID is enabled and registered
-            const faceIDEnabled = localStorage.getItem('faceIDEnabled') === 'true';
-            
-            if (faceIDEnabled && userFaceDescriptor) {
-                // Show authentication choice
-                loadingContainer.style.display = 'none';
-                authChoiceSection.style.display = 'block';
-                
-                // Set up authentication choice buttons
-                document.getElementById('use-pin-btn').addEventListener('click', () => {
-                    authChoiceSection.style.display = 'none';
-                    pinSection.style.display = 'block';
-                    pinTitle.textContent = "Enter Your PIN";
-                    pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
-                    initializePinInputs();
-                });
-                
-                document.getElementById('use-faceid-btn').addEventListener('click', () => {
-                    authChoiceSection.style.display = 'none';
-                    startFaceIDVerification();
-                });
-            } else {
-                // Only PIN authentication available
-                loadingContainer.style.display = 'none';
-                pinSection.style.display = 'block';
-                pinTitle.textContent = "Enter Your PIN";
-                pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
-                initializePinInputs();
+                if (pinInputs.length > 0) {
+                    pinInputs[0].focus();
+                }
+                document.getElementById('pin-error').style.display = 'none';
             }
-        }
 
-        // Show Face ID registration
-        function showFaceIDRegistration() {
-            faceidRegistrationSection.style.display = 'block';
-            
-            // Set up registration cancel button
-            document.getElementById('faceid-registration-cancel').addEventListener('click', () => {
-                faceidRegistrationSection.style.display = 'none';
-                showPortal();
-            });
-            
-            // For demo purposes, we'll simulate Face ID registration
-            // In a real application, you would use the FaceAPI here
-            document.getElementById('faceid-registration-submit').addEventListener('click', () => {
-                // Simulate successful face registration
-                userFaceDescriptor = "face_descriptor_" + Date.now();
-                localStorage.setItem('userFaceDescriptor', userFaceDescriptor);
-                localStorage.setItem('faceIDEnabled', 'true');
+            // Site Management
+            renderSites() {
+                const sitesContainer = document.getElementById('member-sites');
+                sitesContainer.innerHTML = '';
                 
-                showSuccess("Face ID registered successfully!");
-                faceidRegistrationSection.style.display = 'none';
-                showPortal();
-            });
-            
-            // Enable the register button after a short delay (simulating face detection)
-            setTimeout(() => {
-                document.getElementById('faceid-registration-submit').disabled = false;
-                document.getElementById('face-registration-indicator').style.display = 'block';
-            }, 2000);
-        }
+                this.sites.forEach(site => {
+                    const siteCard = document.createElement('div');
+                    siteCard.className = `site-card ${this.editingMode ? 'editing' : ''}`;
+                    siteCard.innerHTML = `
+                        <button class="edit-site-btn" onclick="securityManager.editSite(${site.id})">✏️</button>
+                        <div class="site-icon">${site.icon}</div>
+                        <div class="site-name">${site.name}</div>
+                        <div class="site-description">${site.description}</div>
+                        <a href="${site.url}" class="site-link" target="_blank">Visit Site</a>
+                    `;
+                    sitesContainer.appendChild(siteCard);
+                });
+                
+                // Update edit button text
+                document.getElementById('edit-sites-btn').textContent = 
+                    this.editingMode ? 'Done Editing' : 'Edit Sites';
+            }
 
-        // Start Face ID verification
-        function startFaceIDVerification() {
-            faceidVerificationSection.style.display = 'block';
-            
-            // Set up verification cancel button
-            document.getElementById('faceid-verification-cancel').addEventListener('click', () => {
-                faceidVerificationSection.style.display = 'none';
-                pinSection.style.display = 'block';
-                pinTitle.textContent = "Enter Your PIN";
-                pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
-                initializePinInputs();
-            });
-            
-            // For demo purposes, we'll simulate Face ID verification
-            // In a real application, you would use the FaceAPI here
-            setTimeout(() => {
-                // Simulate successful face verification
-                document.getElementById('face-verification-indicator').style.display = 'block';
-                
-                setTimeout(() => {
-                    showSuccess("Face ID verified successfully!");
-                    faceidVerificationSection.style.display = 'none';
-                    showPortal();
-                }, 1000);
-            }, 3000);
-        }
+            toggleEditMode() {
+                this.editingMode = !this.editingMode;
+                this.renderSites();
+            }
 
-        // Show the portal
-        function showPortal() {
-            portalContainer.style.display = 'block';
-            
-            // Load portal content
-            portalContainer.innerHTML = `
-                <button class="settings-btn" id="settings-btn">⚙️</button>
-                <h2 class="welcome-message">Welcome to the Member Portal!</h2>
-                <p style="text-align: center; margin-bottom: 30px;">You have successfully authenticated and can now access member-only content.</p>
+            openSiteEditor(siteId = null) {
+                this.editingSiteId = siteId;
+                const modal = document.getElementById('site-editor-modal');
+                const title = document.getElementById('modal-title');
+                const deleteBtn = document.getElementById('delete-site');
                 
-                <div class="member-sites">
-                    <div class="site-card">
-                        <div class="site-icon">🎬</div>
-                        <div class="site-name">14592 Studios</div>
-                        <div class="site-description">Access exclusive content, behind-the-scenes footage, and production resources from 14592 Studios.</div>
-                        <a href="#" class="site-link">Enter Studio</a>
-                    </div>
-                    
-                    <div class="site-card">
-                        <div class="site-icon">🎨</div>
-                        <div class="site-name">Dem Studios</div>
-                        <div class="site-description">Explore creative projects, design assets, and collaborative works from Dem Studios.</div>
-                        <a href="#" class="site-link">Enter Studio</a>
-                    </div>
-                    
-                    <div class="site-card">
-                        <div class="site-icon">🔐</div>
-                        <div class="site-name">Security Dashboard</div>
-                        <div class="site-description">Manage your security settings, view access logs, and configure authentication methods.</div>
-                        <a href="#" class="site-link">Open Dashboard</a>
-                    </div>
-                </div>
+                if (siteId) {
+                    // Editing existing site
+                    const site = this.sites.find(s => s.id === siteId);
+                    title.textContent = 'Edit Site';
+                    document.getElementById('site-name').value = site.name;
+                    document.getElementById('site-description').value = site.description;
+                    document.getElementById('site-url').value = site.url;
+                    document.getElementById('site-icon').value = site.icon;
+                    deleteBtn.style.display = 'block';
+                } else {
+                    // Adding new site
+                    title.textContent = 'Add New Site';
+                    document.getElementById('site-name').value = '';
+                    document.getElementById('site-description').value = '';
+                    document.getElementById('site-url').value = '';
+                    document.getElementById('site-icon').value = '🎬';
+                    deleteBtn.style.display = 'none';
+                }
                 
-                <button class="logout-btn" id="logout-btn">Logout</button>
-            `;
-            
-            // Set up logout button
-            document.getElementById('logout-btn').addEventListener('click', logout);
-            
-            // Set up settings button
-            document.getElementById('settings-btn').addEventListener('click', showSettings);
-        }
+                modal.style.display = 'flex';
+            }
 
-        // Show settings
-        function showSettings() {
-            portalContainer.style.display = 'none';
-            settingsSection.style.display = 'block';
-            
-            // Set up settings tabs
-            const tabs = document.querySelectorAll('.settings-tab');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    // Remove active class from all tabs and content
-                    tabs.forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.settings-content').forEach(content => {
-                        content.classList.remove('active');
+            closeSiteEditor() {
+                document.getElementById('site-editor-modal').style.display = 'none';
+                this.editingSiteId = null;
+            }
+
+            saveSite() {
+                const name = document.getElementById('site-name').value;
+                const description = document.getElementById('site-description').value;
+                const url = document.getElementById('site-url').value;
+                const icon = document.getElementById('site-icon').value;
+                
+                if (!name || !description || !url) {
+                    this.showError("Please fill in all fields");
+                    return;
+                }
+                
+                if (this.editingSiteId) {
+                    // Update existing site
+                    const siteIndex = this.sites.findIndex(s => s.id === this.editingSiteId);
+                    this.sites[siteIndex] = {
+                        ...this.sites[siteIndex],
+                        name,
+                        description,
+                        url,
+                        icon
+                    };
+                } else {
+                    // Add new site
+                    const newId = Math.max(...this.sites.map(s => s.id), 0) + 1;
+                    this.sites.push({
+                        id: newId,
+                        name,
+                        description,
+                        url,
+                        icon
                     });
-                    
-                    // Add active class to clicked tab and corresponding content
-                    tab.classList.add('active');
-                    const tabId = tab.getAttribute('data-tab');
-                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                }
+                
+                localStorage.setItem('sites', JSON.stringify(this.sites));
+                this.renderSites();
+                this.closeSiteEditor();
+                this.showSuccess("Site saved successfully!");
+            }
+
+            editSite(siteId) {
+                this.openSiteEditor(siteId);
+            }
+
+            deleteSite() {
+                if (this.editingSiteId) {
+                    this.sites = this.sites.filter(s => s.id !== this.editingSiteId);
+                    localStorage.setItem('sites', JSON.stringify(this.sites));
+                    this.renderSites();
+                    this.closeSiteEditor();
+                    this.showSuccess("Site deleted successfully!");
+                }
+            }
+
+            changePIN() {
+                this.showPIN();
+                document.getElementById('pin-title').textContent = "Change Your PIN";
+                document.getElementById('pin-instructions').textContent = "Enter your new 4-digit PIN";
+                this.isFirstTimeSetup = true;
+            }
+
+            // Navigation Functions
+            hideAllSections() {
+                const sections = [
+                    'scanner-section', 'auth-choice-section', 'pin-section', 
+                    'loading-container', 'portal-container', 'settings-section'
+                ];
+                
+                sections.forEach(section => {
+                    document.getElementById(section).style.display = 'none';
                 });
-            });
-            
-            // Set up cancel settings button
-            document.getElementById('cancel-settings').addEventListener('click', () => {
-                settingsSection.style.display = 'none';
-                portalContainer.style.display = 'block';
-            });
-            
-            // Set up save settings button
-            document.getElementById('save-settings').addEventListener('click', () => {
-                showSuccess("Settings saved successfully!");
+            }
+
+            showScanner() {
+                this.hideAllSections();
+                document.getElementById('scanner-section').style.display = 'block';
+                this.stopScanner(); // Reset scanner
+            }
+
+            showPortal() {
+                this.hideAllSections();
+                document.getElementById('portal-container').style.display = 'block';
+            }
+
+            showSettings() {
+                this.hideAllSections();
+                document.getElementById('settings-section').style.display = 'block';
+            }
+
+            logout() {
+                this.hideAllSections();
+                document.getElementById('scanner-section').style.display = 'block';
+                this.showSuccess("Logged out successfully");
+            }
+
+            // Utility Functions
+            handleCameraError(err) {
+                let errorMessage = "Could not access camera. ";
+                if (err.name === 'NotAllowedError') {
+                    errorMessage = "Camera permission was denied.";
+                } else if (err.name === 'NotFoundError') {
+                    errorMessage = "No camera found on your device.";
+                }
+                this.showError(errorMessage);
+            }
+
+            showSuccess(message) {
+                const successDiv = document.getElementById('success');
+                successDiv.textContent = message;
+                successDiv.style.display = 'block';
                 setTimeout(() => {
-                    settingsSection.style.display = 'none';
-                    portalContainer.style.display = 'block';
-                }, 1000);
-            });
-            
-            // Set up register face button
-            document.getElementById('register-face-btn').addEventListener('click', () => {
-                settingsSection.style.display = 'none';
-                showFaceIDRegistration();
-            });
-        }
-
-        // Logout function
-        function logout() {
-            // Clear any active streams
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
+                    successDiv.style.display = 'none';
+                }, 3000);
             }
-            
-            // Reset UI to initial state
-            portalContainer.style.display = 'none';
-            scannerSection.style.display = 'block';
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-            status.textContent = "Ready to scan - click Start Scanner";
-            
-            // Show placeholder and hide video
-            video.style.display = 'none';
-            placeholder.style.display = 'block';
-            scanRegion.style.display = 'none';
-            
-            showSuccess("You have been logged out successfully.");
-        }
 
-        // Show success message
-        function showSuccess(message) {
-            successDiv.textContent = message;
-            successDiv.style.display = 'block';
-            setTimeout(() => {
-                successDiv.style.display = 'none';
-            }, 3000);
-        }
-
-        // Initialize face detection (simplified for demo)
-        async function initializeFaceDetection() {
-            // In a real application, you would initialize FaceAPI here
-            console.log("Face detection would be initialized here");
-            return true;
-        }
-
-        // Update face status display
-        function updateFaceStatus() {
-            const faceStatus = document.getElementById('face-status');
-            const faceStatusText = document.getElementById('face-status-text');
-            
-            if (userFaceDescriptor) {
-                faceStatus.textContent = "Face ID is registered and ready to use.";
-                faceStatus.className = "face-status registered";
-                faceStatusText.textContent = "Face registered";
-            } else {
-                faceStatus.textContent = "Face not registered. Click 'Register Face' to set up Face ID.";
-                faceStatus.className = "face-status not-registered";
-                faceStatusText.textContent = "No face registered";
-            }
-        }
-
-        // Initialize security features
-        function initializeSecurityFeatures() {
-            updateFaceStatus();
-            
-            // Set up Face ID toggle
-            const faceIDToggle = document.getElementById('faceid-toggle');
-            faceIDToggle.checked = localStorage.getItem('faceIDEnabled') === 'true';
-            faceIDToggle.addEventListener('change', (e) => {
-                localStorage.setItem('faceIDEnabled', e.target.checked.toString());
-            });
-        }
-
-        // Initialize when page loads
-        window.addEventListener('load', async () => {
-            console.log('Page loaded, initializing...');
-            
-            // Check if browser supports required APIs
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                errorDiv.textContent = "❌ Your browser doesn't support camera access. Please try using Chrome, Firefox, or Edge.";
+            showError(message) {
+                const errorDiv = document.getElementById('error');
+                errorDiv.textContent = message;
                 errorDiv.style.display = 'block';
-                startBtn.disabled = true;
-                status.textContent = "Browser not supported";
-            } else {
-                status.textContent = "Ready to scan - click Start Scanner";
-                startBtn.disabled = false;
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 5000);
             }
-            
-            // Initialize other features
-            const faceDetectionReady = await initializeFaceDetection();
-            if (!faceDetectionReady) {
-                console.warn('Face detection not available');
-            }
-            
-            updateFaceStatus();
-            initializeSecurityFeatures();
-        });
-
-        // Copy 2FA secret function
-        function copy2FASecret() {
-            // This would copy the 2FA secret in a real implementation
-            alert("2FA secret would be copied to clipboard");
         }
+
+        // Initialize the security manager
+        const securityManager = new SecurityManager();
     </script>
 </body>
 </html>
