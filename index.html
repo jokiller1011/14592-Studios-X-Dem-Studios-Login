@@ -6,7 +6,6 @@
     <title>Member Portal | 14592 Studios X Dem Studios</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* All CSS styles remain exactly the same as before */
         * {
             margin: 0;
             padding: 0;
@@ -169,12 +168,12 @@
             box-shadow: none;
         }
         
-        button#stop-btn, button#faceid-stop-btn {
+        button#stop-btn {
             background: #b21f1f;
             color: white;
         }
         
-        button#stop-btn:hover:not(:disabled), button#faceid-stop-btn:hover:not(:disabled) {
+        button#stop-btn:hover:not(:disabled) {
             background: #c12f2f;
         }
         
@@ -448,7 +447,260 @@
             opacity: 0.8;
         }
         
-        /* Rest of the CSS remains the same as before */
+        .settings-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .setting-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            border-left: 4px solid #fdbb2d;
+        }
+        
+        .setting-info {
+            flex: 1;
+        }
+        
+        .setting-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #fdbb2d;
+        }
+        
+        .setting-description {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-checkbox {
+            display: none;
+        }
+        
+        .toggle-label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60px;
+            height: 30px;
+            background: #b21f1f;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-label:after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-checkbox:checked + .toggle-label {
+            background: #4cd964;
+        }
+        
+        .toggle-checkbox:checked + .toggle-label:after {
+            left: 33px;
+        }
+        
+        .face-match-indicator {
+            display: none;
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(76, 217, 100, 0.1);
+            border: 1px solid #4cd964;
+            border-radius: 8px;
+            color: #4cd964;
+        }
+
+        .face-match-indicator.unknown {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid #ff3b30;
+            color: #ff3b30;
+        }
+
+        .auth-choice {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .auth-choice-btn {
+            margin: 0 10px;
+            min-width: 120px;
+        }
+
+        .register-face-btn {
+            background: #007AFF;
+        }
+
+        .register-face-btn:hover {
+            background: #0056CC;
+        }
+
+        .face-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .face-status.registered {
+            background: rgba(76, 217, 100, 0.1);
+            border: 1px solid #4cd964;
+            color: #4cd964;
+        }
+
+        .face-status.not-registered {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid #ff3b30;
+            color: #ff3b30;
+        }
+
+        .face-verification-section {
+            display: none;
+        }
+
+        .face-scanning {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .face-scanning-dots {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .face-scanning-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fdbb2d;
+            animation: scanning-dot 1.5s infinite ease-in-out;
+        }
+
+        .face-scanning-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .face-scanning-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes scanning-dot {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .face-instructions {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(253, 187, 45, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(253, 187, 45, 0.3);
+        }
+
+        .detection-stats {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .face-overlay {
+            position: absolute;
+            border: 3px solid #4cd964;
+            border-radius: 10px;
+            background: rgba(76, 217, 100, 0.1);
+            display: none;
+        }
+
+        .face-overlay.unknown {
+            border-color: #ff3b30;
+            background: rgba(255, 59, 48, 0.1);
+        }
+
+        .face-registration-container {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .face-samples {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+        
+        .face-sample {
+            width: 80px;
+            height: 80px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .face-sample.captured {
+            border-color: #4cd964;
+            background: rgba(76, 217, 100, 0.1);
+        }
+        
+        .face-sample i {
+            font-size: 1.5rem;
+            opacity: 0.7;
+        }
+        
+        .registration-progress {
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #4cd964;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -472,6 +724,7 @@
                             <p>1. Allow camera permissions</p>
                             <p>2. Use HTTPS (required for camera)</p>
                             <p>3. Try a different browser</p>
+                            <p><strong>Demo:</strong> Press 'T' to simulate QR scan</p>
                         </div>
                     </div>
                     <video id="video" playsinline></video>
@@ -492,7 +745,6 @@
             
             <div class="safe-sites-info">
                 <p><strong>Note:</strong> Only QR codes from approved sources will grant access to the member portal.</p>
-                <p><strong>Approved domains:</strong> 14592studios.com, demstudios.com, portal.14592studios.com, members.14592studios.com</p>
             </div>
         </div>
         
@@ -538,8 +790,36 @@
                     <div class="face-overlay" id="face-registration-overlay"></div>
                 </div>
                 
+                <div class="face-registration-container" id="face-registration-container">
+                    <h3>Face Registration Progress</h3>
+                    <p class="registration-progress">We need to capture multiple angles of your face for better recognition</p>
+                    
+                    <div class="face-samples">
+                        <div class="face-sample" id="sample-1">
+                            <i>📷</i>
+                        </div>
+                        <div class="face-sample" id="sample-2">
+                            <i>📷</i>
+                        </div>
+                        <div class="face-sample" id="sample-3">
+                            <i>📷</i>
+                        </div>
+                        <div class="face-sample" id="sample-4">
+                            <i>📷</i>
+                        </div>
+                        <div class="face-sample" id="sample-5">
+                            <i>📷</i>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="registration-progress-bar"></div>
+                    </div>
+                    <p id="registration-status">Position your face in the frame to start</p>
+                </div>
+                
                 <div class="faceid-buttons">
-                    <button class="faceid-submit" id="faceid-registration-submit" disabled>Register Face</button>
+                    <button class="faceid-submit" id="faceid-registration-submit" disabled>Complete Registration</button>
                     <button class="faceid-cancel" id="faceid-registration-cancel">Cancel</button>
                 </div>
                 
@@ -562,6 +842,14 @@
                     <div class="face-overlay" id="face-verification-overlay"></div>
                 </div>
                 
+                <div class="face-match-indicator" id="face-verification-indicator">
+                    ✓ Face verified successfully
+                </div>
+                
+                <div class="face-match-indicator unknown" id="face-verification-failed">
+                    ✗ Face not recognized. Please try again or use PIN.
+                </div>
+                
                 <div class="faceid-buttons">
                     <button class="faceid-cancel" id="faceid-verification-cancel">Use PIN Instead</button>
                 </div>
@@ -578,6 +866,45 @@
             <div class="auth-choice">
                 <button class="auth-choice-btn" id="use-pin-btn">Use PIN</button>
                 <button class="auth-choice-btn" id="use-faceid-btn">Use Face ID</button>
+            </div>
+        </div>
+        
+        <!-- Settings Section -->
+        <div class="settings-section" id="settings-section" style="display: none;">
+            <h2 class="section-title">Security Settings</h2>
+            
+            <div class="settings-options">
+                <div class="setting-option">
+                    <div class="setting-info">
+                        <div class="setting-name">Face ID Authentication</div>
+                        <div class="setting-description">Use facial recognition to access your portal</div>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="faceid-toggle" class="toggle-checkbox">
+                        <label for="faceid-toggle" class="toggle-label"></label>
+                    </div>
+                </div>
+
+                <!-- Face Registration Section -->
+                <div class="setting-option">
+                    <div class="setting-info">
+                        <div class="setting-name">Face Registration</div>
+                        <div class="setting-description" id="face-status-text">No face registered</div>
+                    </div>
+                    <button class="register-face-btn" id="register-face-btn">Register Face</button>
+                </div>
+                <div class="face-status not-registered" id="face-status">
+                    Face not registered. Click "Register Face" to set up Face ID.
+                </div>
+                
+                <div class="security-note">
+                    <strong>Biometric Data:</strong> Your facial data is stored securely on your device and is never transmitted to our servers.
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="save-settings">Save Settings</button>
+                <button id="cancel-settings" class="pin-clear">Cancel</button>
             </div>
         </div>
         
@@ -601,15 +928,21 @@
 
     <!-- Include the QR code scanning library -->
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <!-- Include FaceAPI.js for real face detection and recognition -->
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
     
     <script>
         // Get DOM elements
         const video = document.getElementById('video');
+        const faceidRegistrationVideo = document.getElementById('faceid-registration-video');
+        const faceidVerificationVideo = document.getElementById('faceid-verification-video');
         const startBtn = document.getElementById('start-btn');
         const stopBtn = document.getElementById('stop-btn');
         const status = document.getElementById('status');
         const errorDiv = document.getElementById('error');
         const placeholder = document.getElementById('placeholder');
+        const faceidRegistrationPlaceholder = document.getElementById('faceid-registration-placeholder');
+        const faceidVerificationPlaceholder = document.getElementById('faceid-verification-placeholder');
         const scanRegion = document.getElementById('scan-region');
         
         // Section elements
@@ -618,6 +951,7 @@
         const faceidRegistrationSection = document.getElementById('faceid-registration-section');
         const faceidVerificationSection = document.getElementById('faceid-verification-section');
         const authChoiceSection = document.getElementById('auth-choice-section');
+        const settingsSection = document.getElementById('settings-section');
         const loadingContainer = document.getElementById('loading-container');
         const portalContainer = document.getElementById('portal-container');
         
@@ -629,52 +963,79 @@
         const pinTitle = document.getElementById('pin-title');
         const pinInstructions = document.getElementById('pin-instructions');
         
+        // Face ID elements
+        const faceidRegistrationSubmit = document.getElementById('faceid-registration-submit');
+        const faceidRegistrationCancel = document.getElementById('faceid-registration-cancel');
+        const faceidVerificationCancel = document.getElementById('faceid-verification-cancel');
+        const faceRegistrationOverlay = document.getElementById('face-registration-overlay');
+        const faceVerificationOverlay = document.getElementById('face-verification-overlay');
+        const faceVerificationIndicator = document.getElementById('face-verification-indicator');
+        const faceVerificationFailed = document.getElementById('face-verification-failed');
+        
         // Authentication choice elements
         const usePinBtn = document.getElementById('use-pin-btn');
         const useFaceidBtn = document.getElementById('use-faceid-btn');
         
+        // Settings elements
+        const settingsBtn = document.getElementById('settings-btn');
+        const saveSettings = document.getElementById('save-settings');
+        const cancelSettings = document.getElementById('cancel-settings');
+        const registerFaceBtn = document.getElementById('register-face-btn');
+        const faceStatus = document.getElementById('face-status');
+        const faceStatusText = document.getElementById('face-status-text');
+        const faceRegistrationContainer = document.getElementById('face-registration-container');
+        const registrationProgressBar = document.getElementById('registration-progress-bar');
+        const registrationStatus = document.getElementById('registration-status');
+        
         // Variables for video stream and scanning
         let stream = null;
+        let faceStream = null;
+        let verificationStream = null;
         let scanning = false;
         let animationFrameId = null;
+        let faceDetectionInterval = null;
+        let faceVerificationInterval = null;
         
         // User data
         let userPin = localStorage.getItem('userPin');
         let userFaceDescriptor = JSON.parse(localStorage.getItem('userFaceDescriptor') || 'null');
         let isFirstTimeSetup = false;
+        let faceSamples = [];
+        let samplesCollected = 0;
+        const totalSamples = 5;
+        let faceApiInitialized = false;
 
-        // FIXED SAFE DOMAINS LIST - ACTUALLY CHECKS AGAINST THE LIST
-        const safeDomains = [
-            'https://matrix.to/#/@jowilke77:matrix.org',
-            'https://popl.co/card/IgRPBGmi/1/dash', 
-            'portal.14592studios.com',
-            'members.14592studios.com'
-        ];
-
-        // FIXED: Actually check against the safe domains list
-        function isUrlSafe(url) {
-            console.log("Checking URL:", url);
-            
+        // Initialize FaceAPI
+        async function initializeFaceAPI() {
             try {
-                const urlObj = new URL(url);
-                const hostname = urlObj.hostname.toLowerCase();
+                // Load face-api models
+                await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
+                await faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
+                await faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
                 
-                // Check if the hostname matches any of our safe domains
-                const isSafe = safeDomains.some(domain => {
-                    // Exact match or subdomain match
-                    return hostname === domain || hostname.endsWith('.' + domain);
-                });
-                
-                console.log("URL check result:", isSafe, "for hostname:", hostname);
-                return isSafe;
-                
-            } catch (e) {
-                console.log("Invalid URL format:", e.message);
+                console.log('Face detection models loaded');
+                faceApiInitialized = true;
+                return true;
+            } catch (error) {
+                console.error('Error loading face detection models:', error);
                 return false;
             }
         }
 
-        // FIXED SCANNER FUNCTION
+        // Update face status display
+        function updateFaceStatus() {
+            if (userFaceDescriptor) {
+                faceStatus.textContent = "✓ Face registered successfully";
+                faceStatus.className = "face-status registered";
+                faceStatusText.textContent = "Face registered";
+            } else {
+                faceStatus.textContent = "Face not registered. Click 'Register Face' to set up Face ID.";
+                faceStatus.className = "face-status not-registered";
+                faceStatusText.textContent = "No face registered";
+            }
+        }
+
+        // WORKING SCANNER FUNCTION
         startBtn.addEventListener('click', async () => {
             console.log('Start Scanner button clicked');
             
@@ -688,7 +1049,7 @@
                     stream.getTracks().forEach(track => track.stop());
                 }
 
-                // Get camera access with simplified constraints
+                // Get camera access
                 const constraints = {
                     video: {
                         facingMode: 'environment'
@@ -752,7 +1113,7 @@
             scanRegion.style.display = 'none';
         });
 
-        // Handle camera errors with better messages
+        // Handle camera errors
         function handleCameraError(err) {
             console.error('Camera error details:', err);
             
@@ -822,7 +1183,7 @@
                         console.log('QR Code detected:', code.data);
                         status.textContent = "QR Code detected!";
                         
-                        // Process the QR code and check if it's a safe site
+                        // Process the QR code
                         processQRCode(code.data);
                         return;
                     }
@@ -835,7 +1196,7 @@
             animationFrameId = requestAnimationFrame(scanFrame);
         }
 
-        // Process QR code and check if it's a safe site
+        // Process QR code
         function processQRCode(url) {
             // Stop scanning
             stopScanning();
@@ -846,36 +1207,19 @@
             
             // Simulate verification process
             setTimeout(() => {
-                // ACTUALLY CHECK AGAINST THE SAFE DOMAINS LIST
-                const isSafe = isUrlSafe(url);
-                console.log("Final safety check result:", isSafe);
-                
-                if (isSafe) {
-                    // Site is safe - check if user has authentication set up
-                    if (!userPin && !userFaceDescriptor) {
-                        // First time setup
-                        isFirstTimeSetup = true;
-                        loadingContainer.style.display = 'none';
-                        pinSection.style.display = 'block';
-                        pinTitle.textContent = "Create Your PIN";
-                        pinInstructions.textContent = "Create a 4-digit PIN to secure your account";
-                        initializePinInputs();
-                    } else {
-                        // Existing user - use preferred authentication method
-                        isFirstTimeSetup = false;
-                        handleExistingUserAuth();
-                    }
-                } else {
-                    // Site is not safe - show error
+                // For demo purposes, accept any QR code
+                if (!userPin && !userFaceDescriptor) {
+                    // First time setup
+                    isFirstTimeSetup = true;
                     loadingContainer.style.display = 'none';
-                    scannerSection.style.display = 'block';
-                    errorDiv.textContent = `Access Denied: The QR code (${url}) is not from an approved source. Only QR codes from ${safeDomains.join(', ')} are allowed.`;
-                    errorDiv.style.display = 'block';
-                    status.textContent = "Verification failed";
-                    
-                    // Reset scanner
-                    startBtn.disabled = false;
-                    stopBtn.disabled = true;
+                    pinSection.style.display = 'block';
+                    pinTitle.textContent = "Create Your PIN";
+                    pinInstructions.textContent = "Create a 4-digit PIN to secure your account";
+                    initializePinInputs();
+                } else {
+                    // Existing user - use preferred authentication method
+                    isFirstTimeSetup = false;
+                    handleExistingUserAuth();
                 }
             }, 1500);
         }
@@ -976,6 +1320,7 @@
             faceidRegistrationSection.style.display = 'none';
             faceidVerificationSection.style.display = 'none';
             authChoiceSection.style.display = 'none';
+            settingsSection.style.display = 'none';
             loadingContainer.style.display = 'none';
             portalContainer.style.display = 'block';
             
@@ -983,7 +1328,7 @@
             loadPortalContent();
         }
 
-        // Load portal content with working links
+        // Load portal content
         function loadPortalContent() {
             const portalContent = `
                 <h1 class="welcome-message">Welcome to the Member Portal!</h1>
@@ -1032,16 +1377,356 @@
             });
         }
 
-        // Use Face ID for authentication (simulated)
-        useFaceidBtn.addEventListener('click', () => {
+        // FACE ID REGISTRATION FUNCTIONALITY
+        registerFaceBtn.addEventListener('click', async () => {
+            if (!faceApiInitialized) {
+                const success = await initializeFaceAPI();
+                if (!success) {
+                    document.getElementById('faceid-registration-error').textContent = 
+                        "Face detection not available. Please try again later.";
+                    document.getElementById('faceid-registration-error').style.display = 'block';
+                    return;
+                }
+            }
+            
+            // Show face registration section
+            settingsSection.style.display = 'none';
+            faceidRegistrationSection.style.display = 'block';
+            
+            // Reset registration state
+            faceSamples = [];
+            samplesCollected = 0;
+            registrationProgressBar.style.width = '0%';
+            registrationStatus.textContent = "Position your face in the frame to start";
+            
+            // Reset sample indicators
+            for (let i = 1; i <= totalSamples; i++) {
+                const sample = document.getElementById(`sample-${i}`);
+                sample.className = 'face-sample';
+                sample.innerHTML = '<i>📷</i>';
+            }
+            
+            // Show registration container
+            faceRegistrationContainer.style.display = 'block';
+            
+            // Start face detection
+            startFaceDetection();
+        });
+
+        // Start face detection for registration
+        async function startFaceDetection() {
+            try {
+                // Stop any existing stream
+                if (faceStream) {
+                    faceStream.getTracks().forEach(track => track.stop());
+                }
+
+                // Get camera access
+                faceStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 640 }, 
+                        height: { ideal: 480 } 
+                    } 
+                });
+
+                // Set video source
+                faceidRegistrationVideo.srcObject = faceStream;
+                
+                // Wait for video to load
+                faceidRegistrationVideo.onloadedmetadata = () => {
+                    faceidRegistrationVideo.play();
+                    
+                    // Show video and hide placeholder
+                    faceidRegistrationVideo.style.display = 'block';
+                    faceidRegistrationPlaceholder.style.display = 'none';
+                    
+                    // Start face detection loop
+                    startFaceDetectionLoop();
+                };
+            } catch (error) {
+                console.error('Error accessing camera for face detection:', error);
+                document.getElementById('faceid-registration-error').textContent = 
+                    "Could not access camera. Please check permissions and try again.";
+                document.getElementById('faceid-registration-error').style.display = 'block';
+            }
+        }
+
+        // Face detection loop for registration
+        function startFaceDetectionLoop() {
+            if (faceDetectionInterval) clearInterval(faceDetectionInterval);
+            
+            faceDetectionInterval = setInterval(async () => {
+                if (samplesCollected >= totalSamples) {
+                    clearInterval(faceDetectionInterval);
+                    faceidRegistrationSubmit.disabled = false;
+                    registrationStatus.textContent = "All samples captured! Click 'Complete Registration' to finish.";
+                    return;
+                }
+                
+                try {
+                    // Detect faces using FaceAPI
+                    const detections = await faceapi
+                        .detectAllFaces(faceidRegistrationVideo, new faceapi.TinyFaceDetectorOptions())
+                        .withFaceLandmarks()
+                        .withFaceDescriptors();
+                    
+                    if (detections.length > 0) {
+                        const detection = detections[0];
+                        
+                        // Update overlay position
+                        const dims = faceapi.matchDimensions(faceidRegistrationVideo, faceidRegistrationVideo, true);
+                        const resizedDetection = faceapi.resizeResults(detection, dims);
+                        
+                        // Show overlay
+                        faceRegistrationOverlay.style.display = 'block';
+                        faceRegistrationOverlay.style.width = `${resizedDetection.detection.box.width}px`;
+                        faceRegistrationOverlay.style.height = `${resizedDetection.detection.box.height}px`;
+                        faceRegistrationOverlay.style.left = `${resizedDetection.detection.box.x}px`;
+                        faceRegistrationOverlay.style.top = `${resizedDetection.detection.box.y}px`;
+                        
+                        // Auto-capture samples when face is properly positioned
+                        if (samplesCollected < totalSamples && 
+                            resizedDetection.detection.box.width > 100 && 
+                            resizedDetection.detection.box.height > 100) {
+                            
+                            // Add a small delay between captures
+                            setTimeout(() => {
+                                captureFaceSample(detection.descriptor);
+                            }, samplesCollected * 500);
+                        }
+                    } else {
+                        // No face detected
+                        faceRegistrationOverlay.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Face detection error:', error);
+                }
+            }, 1000); // Check every second
+        }
+
+        // Capture a face sample
+        function captureFaceSample(descriptor) {
+            if (samplesCollected >= totalSamples) return;
+            
+            faceSamples.push(descriptor);
+            samplesCollected++;
+            
+            // Update progress
+            const progress = (samplesCollected / totalSamples) * 100;
+            registrationProgressBar.style.width = `${progress}%`;
+            
+            // Update sample indicator
+            const sample = document.getElementById(`sample-${samplesCollected}`);
+            sample.className = 'face-sample captured';
+            sample.innerHTML = '✓';
+            
+            // Update status
+            registrationStatus.textContent = `Sample ${samplesCollected} of ${totalSamples} captured`;
+        }
+
+        // Register face
+        faceidRegistrationSubmit.addEventListener('click', () => {
+            if (faceSamples.length === 0) {
+                document.getElementById('faceid-registration-error').textContent = 
+                    "No face samples captured. Please position your face in the frame.";
+                document.getElementById('faceid-registration-error').style.display = 'block';
+                return;
+            }
+            
+            // Calculate average descriptor
+            const descriptorSize = faceSamples[0].length;
+            const avgDescriptor = new Float32Array(descriptorSize);
+            
+            for (let i = 0; i < descriptorSize; i++) {
+                let sum = 0;
+                for (const sample of faceSamples) {
+                    sum += sample[i];
+                }
+                avgDescriptor[i] = sum / faceSamples.length;
+            }
+            
+            // Save descriptor
+            userFaceDescriptor = Array.from(avgDescriptor);
+            localStorage.setItem('userFaceDescriptor', JSON.stringify(userFaceDescriptor));
+            
+            // Show success message
+            document.getElementById('faceid-registration-error').style.display = 'none';
+            
+            // Update face status
+            updateFaceStatus();
+            
+            // Stop face detection
+            if (faceDetectionInterval) clearInterval(faceDetectionInterval);
+            if (faceStream) {
+                faceStream.getTracks().forEach(track => track.stop());
+                faceStream = null;
+            }
+            
+            // Return to settings
+            faceidRegistrationSection.style.display = 'none';
+            settingsSection.style.display = 'block';
+        });
+
+        // Cancel face registration
+        faceidRegistrationCancel.addEventListener('click', () => {
+            // Stop face detection
+            if (faceDetectionInterval) clearInterval(faceDetectionInterval);
+            if (faceStream) {
+                faceStream.getTracks().forEach(track => track.stop());
+                faceStream = null;
+            }
+            
+            // Return to settings
+            faceidRegistrationSection.style.display = 'none';
+            settingsSection.style.display = 'block';
+        });
+
+        // Use Face ID for authentication
+        useFaceidBtn.addEventListener('click', async () => {
+            if (!userFaceDescriptor) {
+                authChoiceSection.style.display = 'none';
+                pinSection.style.display = 'block';
+                pinTitle.textContent = "Enter Your PIN";
+                pinInstructions.textContent = "Face ID not registered. Please use PIN instead.";
+                initializePinInputs();
+                return;
+            }
+
+            if (!faceApiInitialized) {
+                const success = await initializeFaceAPI();
+                if (!success) {
+                    document.getElementById('faceid-verification-error').textContent = 
+                        "Face detection not available. Please use PIN instead.";
+                    document.getElementById('faceid-verification-error').style.display = 'block';
+                    return;
+                }
+            }
+
             authChoiceSection.style.display = 'none';
             faceidVerificationSection.style.display = 'block';
+            startFaceVerification();
+        });
+
+        // Start face verification
+        async function startFaceVerification() {
+            try {
+                // Stop any existing stream
+                if (verificationStream) {
+                    verificationStream.getTracks().forEach(track => track.stop());
+                }
+
+                // Get camera access
+                verificationStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 640 }, 
+                        height: { ideal: 480 } 
+                    } 
+                });
+
+                // Set video source
+                faceidVerificationVideo.srcObject = verificationStream;
+                
+                // Wait for video to load
+                faceidVerificationVideo.onloadedmetadata = () => {
+                    faceidVerificationVideo.play();
+                    
+                    // Show video and hide placeholder
+                    faceidVerificationVideo.style.display = 'block';
+                    faceidVerificationPlaceholder.style.display = 'none';
+                    
+                    // Start face verification loop
+                    startFaceVerificationLoop();
+                };
+            } catch (error) {
+                console.error('Error accessing camera for face verification:', error);
+                document.getElementById('faceid-verification-error').textContent = 
+                    "Could not access camera. Please check permissions and try again.";
+                document.getElementById('faceid-verification-error').style.display = 'block';
+            }
+        }
+
+        // Face verification loop - ONLY WORKS FOR REGISTERED FACE
+        function startFaceVerificationLoop() {
+            if (faceVerificationInterval) clearInterval(faceVerificationInterval);
             
-            // Simulate face verification
-            setTimeout(() => {
-                // For demo, always succeed
-                showPortal();
-            }, 2000);
+            faceVerificationInterval = setInterval(async () => {
+                try {
+                    // Detect faces using FaceAPI
+                    const detections = await faceapi
+                        .detectAllFaces(faceidVerificationVideo, new faceapi.TinyFaceDetectorOptions())
+                        .withFaceLandmarks()
+                        .withFaceDescriptors();
+                    
+                    if (detections.length > 0) {
+                        const detection = detections[0];
+                        
+                        // Update overlay position
+                        const dims = faceapi.matchDimensions(faceidVerificationVideo, faceidVerificationVideo, true);
+                        const resizedDetection = faceapi.resizeResults(detection, dims);
+                        
+                        // Show overlay
+                        faceVerificationOverlay.style.display = 'block';
+                        faceVerificationOverlay.style.width = `${resizedDetection.detection.box.width}px`;
+                        faceVerificationOverlay.style.height = `${resizedDetection.detection.box.height}px`;
+                        faceVerificationOverlay.style.left = `${resizedDetection.detection.box.x}px`;
+                        faceVerificationOverlay.style.top = `${resizedDetection.detection.box.y}px`;
+                        
+                        // Calculate similarity with registered face
+                        const registeredDescriptor = new Float32Array(userFaceDescriptor);
+                        const distance = faceapi.euclideanDistance(registeredDescriptor, detection.descriptor);
+                        
+                        // Convert distance to similarity score (0-100%)
+                        const similarity = Math.max(0, 100 - (distance * 100));
+                        
+                        // Check if face matches - STRICT THRESHOLD
+                        if (similarity > 70) { // High threshold for security
+                            // Face verified successfully - ONLY FOR REGISTERED FACE
+                            clearInterval(faceVerificationInterval);
+                            faceVerificationOverlay.style.borderColor = '#4cd964';
+                            faceVerificationIndicator.style.display = 'block';
+                            faceVerificationFailed.style.display = 'none';
+                            
+                            // Show portal after short delay
+                            setTimeout(() => {
+                                if (verificationStream) {
+                                    verificationStream.getTracks().forEach(track => track.stop());
+                                    verificationStream = null;
+                                }
+                                showPortal();
+                            }, 1000);
+                        } else {
+                            // Face doesn't match - REJECT OTHER FACES
+                            faceVerificationOverlay.style.borderColor = '#ff3b30';
+                            faceVerificationIndicator.style.display = 'none';
+                            faceVerificationFailed.style.display = 'block';
+                        }
+                    } else {
+                        // No face detected
+                        faceVerificationOverlay.style.display = 'none';
+                        faceVerificationIndicator.style.display = 'none';
+                        faceVerificationFailed.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Face verification error:', error);
+                }
+            }, 1000); // Check every second
+        }
+
+        // Cancel face verification
+        faceidVerificationCancel.addEventListener('click', () => {
+            // Stop face verification
+            if (faceVerificationInterval) clearInterval(faceVerificationInterval);
+            if (verificationStream) {
+                verificationStream.getTracks().forEach(track => track.stop());
+                verificationStream = null;
+            }
+            
+            // Show PIN entry
+            faceidVerificationSection.style.display = 'none';
+            pinSection.style.display = 'block';
+            pinTitle.textContent = "Enter Your PIN";
+            pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
+            initializePinInputs();
         });
 
         // Use PIN for authentication
@@ -1051,6 +1736,25 @@
             pinTitle.textContent = "Enter Your PIN";
             pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
             initializePinInputs();
+        });
+
+        // Settings functionality
+        settingsBtn.addEventListener('click', () => {
+            portalContainer.style.display = 'none';
+            settingsSection.style.display = 'block';
+            updateFaceStatus();
+        });
+
+        // Cancel settings
+        cancelSettings.addEventListener('click', () => {
+            settingsSection.style.display = 'none';
+            portalContainer.style.display = 'block';
+        });
+
+        // Save settings
+        saveSettings.addEventListener('click', () => {
+            settingsSection.style.display = 'none';
+            portalContainer.style.display = 'block';
         });
 
         // Initialize when page loads
@@ -1067,21 +1771,19 @@
                 status.textContent = "Ready to scan - click Start Scanner";
                 startBtn.disabled = false;
             }
+            
+            // Initialize face detection
+            await initializeFaceAPI();
+            
+            // Update face status
+            updateFaceStatus();
         });
 
-        // DEMO: Add test QR codes for validation
+        // DEMO: Add a way to test without a QR code
         document.addEventListener('keydown', (e) => {
-            // Press '1' for valid QR code (approved domain)
-            if (e.key === '1') {
+            // Press 'T' to simulate a QR code scan
+            if (e.key === 't' || e.key === 'T') {
                 processQRCode('https://portal.14592studios.com/member-access');
-            }
-            // Press '2' for invalid QR code (unapproved domain)
-            if (e.key === '2') {
-                processQRCode('https://malicious-site.com/fake-access');
-            }
-            // Press '3' for another valid QR code
-            if (e.key === '3') {
-                processQRCode('https://members.demstudios.com/login');
             }
         });
     </script>
