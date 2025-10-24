@@ -701,6 +701,17 @@
             width: 0%;
             transition: width 0.3s ease;
         }
+
+        .security-banner {
+            background: linear-gradient(135deg, #b21f1f 0%, #c12f2f 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -871,6 +882,10 @@
         
         <!-- Settings Section -->
         <div class="settings-section" id="settings-section" style="display: none;">
+            <div class="security-banner">
+                <span>🔒 SECURITY CENTER - Manage your authentication settings</span>
+            </div>
+            
             <h2 class="section-title">Security Settings</h2>
             
             <div class="settings-options">
@@ -880,7 +895,7 @@
                         <div class="setting-description">Use facial recognition to access your portal</div>
                     </div>
                     <div class="toggle-switch">
-                        <input type="checkbox" id="faceid-toggle" class="toggle-checkbox">
+                        <input type="checkbox" id="faceid-toggle" class="toggle-checkbox" checked>
                         <label for="faceid-toggle" class="toggle-label"></label>
                     </div>
                 </div>
@@ -904,7 +919,7 @@
             
             <div class="controls">
                 <button id="save-settings">Save Settings</button>
-                <button id="cancel-settings" class="pin-clear">Cancel</button>
+                <button id="cancel-settings" class="pin-clear">Back to Portal</button>
             </div>
         </div>
         
@@ -932,6 +947,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
     
     <script>
+        // SAFE SITES LIST - Only these domains are allowed
+        const safeDomains = [
+            '14592studios.com',
+            'demstudios.com',
+            'portal.14592studios.com',
+            'members.14592studios.com',
+            'secure.14592studios.com',
+            'auth.demstudios.com'
+        ];
+
         // Get DOM elements
         const video = document.getElementById('video');
         const faceidRegistrationVideo = document.getElementById('faceid-registration-video');
@@ -1004,6 +1029,29 @@
         let samplesCollected = 0;
         const totalSamples = 5;
         let faceApiInitialized = false;
+
+        // Check if URL is from a safe source
+        function isUrlSafe(url) {
+            console.log("Checking URL:", url);
+            
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname.toLowerCase();
+                
+                // Check if the hostname matches any of our safe domains
+                const isSafe = safeDomains.some(domain => {
+                    // Exact match or subdomain match
+                    return hostname === domain || hostname.endsWith('.' + domain);
+                });
+                
+                console.log("URL check result:", isSafe, "for hostname:", hostname);
+                return isSafe;
+                
+            } catch (e) {
+                console.log("Invalid URL format:", e.message);
+                return false;
+            }
+        }
 
         // Initialize FaceAPI
         async function initializeFaceAPI() {
@@ -1183,7 +1231,7 @@
                         console.log('QR Code detected:', code.data);
                         status.textContent = "QR Code detected!";
                         
-                        // Process the QR code
+                        // Process the QR code and check if it's a safe site
                         processQRCode(code.data);
                         return;
                     }
@@ -1196,7 +1244,7 @@
             animationFrameId = requestAnimationFrame(scanFrame);
         }
 
-        // Process QR code
+        // Process QR code and check if it's a safe site
         function processQRCode(url) {
             // Stop scanning
             stopScanning();
@@ -1207,19 +1255,39 @@
             
             // Simulate verification process
             setTimeout(() => {
-                // For demo purposes, accept any QR code
-                if (!userPin && !userFaceDescriptor) {
-                    // First time setup
-                    isFirstTimeSetup = true;
-                    loadingContainer.style.display = 'none';
-                    pinSection.style.display = 'block';
-                    pinTitle.textContent = "Create Your PIN";
-                    pinInstructions.textContent = "Create a 4-digit PIN to secure your account";
-                    initializePinInputs();
+                // ACTUALLY CHECK AGAINST THE SAFE DOMAINS LIST
+                const isSafe = isUrlSafe(url);
+                console.log("Final safety check result:", isSafe);
+                
+                if (isSafe) {
+                    // Site is safe - check if user has authentication set up
+                    if (!userPin && !userFaceDescriptor) {
+                        // First time setup
+                        isFirstTimeSetup = true;
+                        loadingContainer.style.display = 'none';
+                        pinSection.style.display = 'block';
+                        pinTitle.textContent = "Create Your PIN";
+                        pinInstructions.textContent = "Create a 4-digit PIN to secure your account";
+                        initializePinInputs();
+                    } else {
+                        // Existing user - use preferred authentication method
+                        isFirstTimeSetup = false;
+                        handleExistingUserAuth();
+                    }
                 } else {
-                    // Existing user - use preferred authentication method
-                    isFirstTimeSetup = false;
-                    handleExistingUserAuth();
+                    // Site is not safe - show error
+                    loadingContainer.style.display = 'none';
+                    scannerSection.style.display = 'block';
+                    errorDiv.textContent = `Access Denied: The QR code (${url}) is not from an approved source. Only QR codes from our approved domains are allowed.`;
+                    errorDiv.style.display = 'block';
+                    status.textContent = "Verification failed";
+                    
+                    // Reset scanner
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                    video.style.display = 'none';
+                    placeholder.style.display = 'block';
+                    scanRegion.style.display = 'none';
                 }
             }, 1500);
         }
@@ -1374,6 +1442,19 @@
                 portalContainer.style.display = 'none';
                 scannerSection.style.display = 'block';
                 clearPinInputs();
+                
+                // Reset scanner state
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                video.srcObject = null;
+                video.style.display = 'none';
+                placeholder.style.display = 'block';
+                scanRegion.style.display = 'none';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                status.textContent = "Click 'Start Scanner' to begin";
             });
         }
 
@@ -1779,11 +1860,22 @@
             updateFaceStatus();
         });
 
-        // DEMO: Add a way to test without a QR code
+        // DEMO: Add test QR codes for validation
         document.addEventListener('keydown', (e) => {
-            // Press 'T' to simulate a QR code scan
-            if (e.key === 't' || e.key === 'T') {
+            // Press '1' for valid QR code (approved domain)
+            if (e.key === '1') {
+                console.log("Demo: Testing valid QR code");
                 processQRCode('https://portal.14592studios.com/member-access');
+            }
+            // Press '2' for invalid QR code (unapproved domain)
+            if (e.key === '2') {
+                console.log("Demo: Testing invalid QR code");
+                processQRCode('https://malicious-site.com/fake-access');
+            }
+            // Press '3' for another valid QR code
+            if (e.key === '3') {
+                console.log("Demo: Testing valid QR code");
+                processQRCode('https://members.demstudios.com/login');
             }
         });
     </script>
