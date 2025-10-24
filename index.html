@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Portal | Advanced Security</title>
+    <title>Member Portal | 14592 Studios X Dem Studios</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -17,11 +18,14 @@
             color: #fff;
             min-height: 100vh;
             padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .container {
             max-width: 1000px;
-            margin: 0 auto;
+            width: 100%;
         }
         
         header {
@@ -41,6 +45,7 @@
             margin: 0 auto 20px;
             font-size: 2rem;
             font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         h1 {
@@ -53,13 +58,13 @@
             font-size: 1.2rem;
             opacity: 0.9;
         }
-
-        /* Scanner Section */
-        .scanner-section, .settings-section {
+        
+        .scanner-section, .pin-section, .faceid-section, .settings-section {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
             padding: 25px;
-            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .section-title {
@@ -68,22 +73,32 @@
             color: #fdbb2d;
             border-bottom: 2px solid rgba(253, 187, 45, 0.3);
             padding-bottom: 10px;
+            text-align: center;
         }
         
-        #video-container {
+        .scanner-container, .faceid-container {
+            margin-bottom: 20px;
+        }
+        
+        #video-container, #faceid-video-container {
             position: relative;
             width: 100%;
-            max-width: 500px;
             margin: 0 auto;
             border-radius: 10px;
             overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: #000;
         }
         
-        #video {
+        #video, #faceid-video {
             width: 100%;
             height: auto;
+            display: block;
+            background-color: #000;
         }
         
         #scan-region {
@@ -95,6 +110,7 @@
             height: 70%;
             border: 2px solid #fdbb2d;
             border-radius: 10px;
+            box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
         }
         
         .scan-line {
@@ -115,57 +131,50 @@
         
         .controls {
             display: flex;
+            justify-content: center;
             gap: 10px;
             margin-top: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
         }
         
         button {
-            background: #007AFF;
-            color: white;
+            background: #fdbb2d;
+            color: #0f1a30;
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            flex: 1;
         }
         
-        button:hover:not(:disabled) {
-            opacity: 0.9;
+        button:hover {
+            background: #ffcc44;
             transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
         }
         
         button:disabled {
-            background: #666;
+            background: #cccccc;
+            color: #666;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
         
-        #start-btn {
-            background: #fdbb2d;
-            color: #0f1a30;
+        button#stop-btn, button#faceid-stop-btn {
+            background: #b21f1f;
+            color: white;
         }
         
-        #stop-btn {
-            background: #ff3b30;
-        }
-        
-        .test-btn {
-            background: #4cd964;
-        }
-        
-        .remove-btn {
-            background: #ff3b30;
-        }
-
-        /* PIN Section */
-        .pin-section {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            display: none;
+        button#stop-btn:hover:not(:disabled), button#faceid-stop-btn:hover:not(:disabled) {
+            background: #c12f2f;
         }
         
         .pin-input-container {
@@ -173,7 +182,6 @@
             justify-content: center;
             gap: 10px;
             margin: 25px 0;
-            flex-wrap: wrap;
         }
         
         .pin-input {
@@ -186,160 +194,57 @@
             font-size: 2rem;
             text-align: center;
             font-weight: bold;
-        }
-
-        /* Settings */
-        .settings-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .settings-tab {
-            background: rgba(255, 255, 255, 0.08);
-            border: none;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
             transition: all 0.3s ease;
         }
         
-        .settings-tab.active {
-            background: #fdbb2d;
-            color: #0f1a30;
+        .pin-input:focus {
+            outline: none;
+            border-color: #fdbb2d;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 10px rgba(253, 187, 45, 0.3);
         }
         
-        .settings-content {
-            display: none;
+        .pin-input.filled {
+            border-color: #4cd964;
+            background: rgba(76, 217, 100, 0.1);
         }
         
-        .settings-content.active {
-            display: block;
+        .pin-instructions, .faceid-instructions {
+            text-align: center;
+            margin-bottom: 20px;
+            opacity: 0.8;
+            font-size: 0.95rem;
         }
         
-        .biometric-method {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 15px 0;
-            border-left: 4px solid #fdbb2d;
-        }
-        
-        .method-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .method-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #fdbb2d;
-        }
-        
-        .method-status {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-        
-        .status-enabled {
-            background: rgba(76, 217, 100, 0.2);
-            color: #4cd964;
-            border: 1px solid #4cd964;
-        }
-        
-        .status-disabled {
-            background: rgba(255, 59, 48, 0.2);
-            color: #ff3b30;
-            border: 1px solid #ff3b30;
-        }
-        
-        .method-actions {
+        .pin-buttons, .faceid-buttons {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
+            justify-content: center;
         }
         
-        .setup-guide {
-            background: rgba(253, 187, 45, 0.1);
-            border: 1px solid rgba(253, 187, 45, 0.3);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
+        .pin-submit, .faceid-submit {
+            background: #4cd964;
         }
         
-        .face-camera-feed {
-            width: 100%;
-            max-width: 400px;
-            height: 300px;
-            background: #000;
-            border-radius: 10px;
-            margin: 15px auto;
-            display: block;
+        .pin-submit:hover, .faceid-submit:hover {
+            background: #3cb854;
         }
         
-        .voice-recording {
-            display: none;
-            text-align: center;
-            margin: 15px 0;
+        .pin-clear, .faceid-cancel {
+            background: #b21f1f;
         }
         
-        .recording-dot {
-            width: 12px;
-            height: 12px;
-            background: #ff3b30;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 10px;
-            animation: recording-pulse 1s infinite;
+        .pin-clear:hover, .faceid-cancel:hover {
+            background: #c12f2f;
         }
         
-        @keyframes recording-pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-        
-        .authenticator-code {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            text-align: center;
-            font-family: monospace;
-            font-size: 1.5rem;
-            letter-spacing: 3px;
-        }
-        
-        .qrcode-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            text-align: center;
-        }
-        
-        .secret-key {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 5px;
-            font-family: monospace;
-            margin: 10px 0;
-            word-break: break-all;
-            color: #333;
-        }
-
-        /* Status and Messages */
         .status {
             margin-top: 15px;
             font-style: italic;
             color: #fdbb2d;
+            min-height: 24px;
             text-align: center;
+            font-size: 0.9rem;
         }
         
         .error {
@@ -348,6 +253,7 @@
             padding: 10px;
             border-radius: 8px;
             margin-top: 10px;
+            font-size: 0.9rem;
             display: none;
         }
         
@@ -357,10 +263,10 @@
             padding: 10px;
             border-radius: 8px;
             margin-top: 10px;
+            font-size: 0.9rem;
             display: none;
         }
-
-        /* Loading */
+        
         .loading-container {
             display: none;
             flex-direction: column;
@@ -368,6 +274,10 @@
             justify-content: center;
             padding: 50px;
             text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .loading-spinner {
@@ -383,17 +293,31 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        /* Portal */
+        
+        .loading-text {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #fdbb2d;
+        }
+        
+        .loading-subtext {
+            opacity: 0.8;
+        }
+        
         .portal-container {
             display: none;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
             padding: 30px;
             margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
         }
         
         .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
             background: transparent;
             border: 1px solid #fdbb2d;
             color: #fdbb2d;
@@ -404,16 +328,534 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: auto;
+        }
+        
+        .settings-btn:hover {
+            background: rgba(253, 187, 45, 0.1);
+        }
+        
+        .welcome-message {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #fdbb2d;
+            text-align: center;
+        }
+        
+        .member-sites {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .site-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border-left: 4px solid #fdbb2d;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .site-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .site-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .site-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #fdbb2d;
+        }
+        
+        .site-description {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        
+        .site-link {
+            display: inline-block;
+            background: rgba(253, 187, 45, 0.2);
+            color: #fdbb2d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin-top: auto;
+        }
+        
+        .site-link:hover {
+            background: rgba(253, 187, 45, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .logout-btn {
+            display: block;
+            margin: 40px auto 0;
+            background: transparent;
+            border: 1px solid #b21f1f;
+            color: #b21f1f;
+            padding: 12px 30px;
+            font-size: 1rem;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(178, 31, 31, 0.1);
+        }
+        
+        .camera-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+        
+        .placeholder-text {
+            padding: 20px;
+            text-align: center;
+            color: #aaa;
+        }
+        
+        .powered-by {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            opacity: 0.6;
+            text-align: center;
+        }
+        
+        .safe-sites-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .settings-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .setting-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            border-left: 4px solid #fdbb2d;
+        }
+        
+        .setting-info {
+            flex: 1;
+        }
+        
+        .setting-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #fdbb2d;
+        }
+        
+        .setting-description {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-checkbox {
+            display: none;
+        }
+        
+        .toggle-label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60px;
+            height: 30px;
+            background: #b21f1f;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-label:after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-checkbox:checked + .toggle-label {
+            background: #4cd964;
+        }
+        
+        .toggle-checkbox:checked + .toggle-label:after {
+            left: 33px;
+        }
+        
+        .face-match-indicator {
+            display: none;
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(76, 217, 100, 0.1);
+            border: 1px solid #4cd964;
+            border-radius: 8px;
+            color: #4cd964;
         }
 
-        /* Passkey */
-        .passkey-info {
-            background: rgba(0, 122, 255, 0.1);
-            border: 1px solid #007AFF;
+        .face-match-indicator.unknown {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid #ff3b30;
+            color: #ff3b30;
+        }
+
+        .auth-choice {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .auth-choice-btn {
+            margin: 0 10px;
+            min-width: 120px;
+        }
+
+        .register-face-btn {
+            background: #007AFF;
+            margin-top: 10px;
+        }
+
+        .register-face-btn:hover {
+            background: #0056CC;
+        }
+
+        .face-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .face-status.registered {
+            background: rgba(76, 217, 100, 0.1);
+            border: 1px solid #4cd964;
+            color: #4cd964;
+        }
+
+        .face-status.not-registered {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid #ff3b30;
+            color: #ff3b30;
+        }
+
+        .face-verification-section {
+            display: none;
+        }
+
+        .face-scanning {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .face-scanning-dots {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .face-scanning-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fdbb2d;
+            animation: scanning-dot 1.5s infinite ease-in-out;
+        }
+
+        .face-scanning-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .face-scanning-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes scanning-dot {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .face-instructions {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(253, 187, 45, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(253, 187, 45, 0.3);
+        }
+
+        .detection-stats {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* New styles for security sections */
+        .security-banner {
+            background: linear-gradient(135deg, #b21f1f 0%, #c12f2f 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .security-banner.spider {
+            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+            border-left: 4px solid #b21f1f;
+        }
+
+        .settings-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(253, 187, 45, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .settings-tab {
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .settings-tab.active {
+            background: #fdbb2d;
+            color: #0f1a30;
+        }
+
+        .settings-tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .settings-content {
+            display: none;
+        }
+
+        .settings-content.active {
+            display: block;
+        }
+
+        .qr-pin-list {
+            margin-top: 20px;
+        }
+
+        .qr-pin-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #fdbb2d;
+        }
+
+        .qr-pin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .qr-pin-name {
+            font-weight: bold;
+            color: #fdbb2d;
+        }
+
+        .qr-pin-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .small-btn {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+
+        .danger-btn {
+            background: #b21f1f;
+            color: white;
+        }
+
+        .danger-btn:hover {
+            background: #c12f2f;
+        }
+
+        .authenticator-link {
+            display: inline-block;
+            background: rgba(0, 122, 255, 0.2);
+            color: #007AFF;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 122, 255, 0.3);
+        }
+
+        .authenticator-link:hover {
+            background: rgba(0, 122, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .security-note {
+            background: rgba(253, 187, 45, 0.1);
+            border: 1px solid rgba(253, 187, 45, 0.3);
             padding: 15px;
             border-radius: 8px;
             margin: 15px 0;
+            font-size: 0.9rem;
+        }
+
+        .verify-section {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .qrcode-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .secret-key {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .camera-test {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        /* New styles for face registration */
+        .face-registration-container {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .face-samples {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+        
+        .face-sample {
+            width: 80px;
+            height: 80px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .face-sample.captured {
+            border-color: #4cd964;
+            background: rgba(76, 217, 100, 0.1);
+        }
+        
+        .face-sample i {
+            font-size: 1.5rem;
+            opacity: 0.7;
+        }
+        
+        .registration-progress {
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #4cd964;
+            width: 0%;
+            transition: width 0.3s ease;
         }
     </style>
 </head>
@@ -422,36 +864,47 @@
         <header>
             <div class="logo">Portal</div>
             <h1>14592 Studios X Dem Studios</h1>
-            <p class="subtitle">Advanced Security Portal</p>
+            <p class="subtitle">Member Portal Access System</p>
         </header>
         
-        <!-- QR Scanner Section -->
         <div class="scanner-section" id="scanner-section">
             <h2 class="section-title">Scan Your QR Code</h2>
             
-            <div id="video-container">
-                <div class="placeholder-text" id="placeholder">
-                    <div style="font-size: 3rem; margin-bottom: 15px; opacity: 0.7;">📷</div>
-                    <p>Camera feed will appear here</p>
+            <div class="scanner-container">
+                <div id="video-container">
+                    <div class="placeholder-text" id="placeholder">
+                        <div class="camera-icon">📷</div>
+                        <p>Camera feed will appear here</p>
+                        <div class="camera-test">
+                            <p><strong>Camera Test:</strong> If camera doesn't work, try these steps:</p>
+                            <p>1. Allow camera permissions</p>
+                            <p>2. Use HTTPS (required for camera)</p>
+                            <p>3. Try a different browser</p>
+                        </div>
+                    </div>
+                    <video id="video" playsinline></video>
+                    <div id="scan-region" style="display: none;">
+                        <div class="scan-line"></div>
+                    </div>
                 </div>
-                <video id="video" playsinline style="display: none;"></video>
-                <div id="scan-region" style="display: none;">
-                    <div class="scan-line"></div>
+                
+                <div class="controls">
+                    <button id="start-btn">Start Scanner</button>
+                    <button id="stop-btn" disabled>Stop Scanner</button>
                 </div>
+                
+                <p class="status" id="status">Click "Start Scanner" to begin</p>
+                <div class="error" id="error"></div>
+                <div class="success" id="success"></div>
             </div>
             
-            <div class="controls">
-                <button id="start-btn">Start Scanner</button>
-                <button id="stop-btn" disabled>Stop Scanner</button>
+            <div class="safe-sites-info">
+                <p><strong>Note:</strong> Only QR codes from approved sources will grant access to the member portal.</p>
             </div>
-            
-            <p class="status" id="status">Click "Start Scanner" to begin</p>
-            <div class="error" id="error"></div>
-            <div class="success" id="success"></div>
         </div>
         
-        <!-- PIN Section -->
-        <div class="pin-section" id="pin-section">
+        <!-- PIN Entry Section -->
+        <div class="pin-section" id="pin-section" style="display: none;">
             <h2 class="section-title" id="pin-title">Enter Your PIN</h2>
             <p class="pin-instructions" id="pin-instructions">Enter your 4-digit PIN to access the portal</p>
             
@@ -462,14 +915,326 @@
                 <input type="password" class="pin-input" maxlength="1" data-index="3">
             </div>
             
-            <div class="controls">
+            <div class="pin-buttons">
                 <button class="pin-submit" id="pin-submit">Submit PIN</button>
                 <button class="pin-clear" id="pin-clear">Clear</button>
             </div>
             
             <div class="error" id="pin-error"></div>
         </div>
+        
+        <!-- Face ID Registration Section -->
+        <div class="faceid-section" id="faceid-registration-section" style="display: none;">
+            <h2 class="section-title">Face ID Setup</h2>
+            <p class="faceid-instructions">Position your face in the frame to register your Face ID</p>
+            
+            <div class="face-instructions">
+                <p>💡 <strong>Tips for better detection:</strong></p>
+                <p>• Make sure your face is well-lit</p>
+                <p>• Look directly at the camera</p>
+                <p>• Remove sunglasses or hats</p>
+            </div>
+            
+            <div class="faceid-container">
+                <div id="faceid-registration-video-container">
+                    <div class="placeholder-text" id="faceid-registration-placeholder">
+                        <div class="camera-icon">👤</div>
+                        <p>Camera feed will appear here</p>
+                    </div>
+                    <video id="faceid-registration-video" playsinline></video>
+                    <div class="face-overlay" id="face-registration-overlay"></div>
+                </div>
+                
+                <div class="face-registration-container" id="face-registration-container">
+                    <h3>Face Registration Progress</h3>
+                    <p class="registration-progress">We need to capture multiple angles of your face for better recognition</p>
+                    
+                    <div class="face-samples">
+                        <div class="face-sample" id="sample-1">
+                            <i>📷</i>
+                        </div>
+                        <div class="face-sample" id="sample-2">
+                            <i>📷</i>
+                        </div>
+                        <div class="face-sample" id="sample-3">
+                            <i>📷</i>
+                        </div>
+                        <div class="face-sample" id="sample-4">
+                            <i>📷</i>
+                        </div>
+                        <div class="face-sample" id="sample-5">
+                            <i>📷</i>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="registration-progress-bar"></div>
+                    </div>
+                    <p id="registration-status">Position your face in the frame to start</p>
+                </div>
+                
+                <div class="face-scanning" id="face-registration-scanning">
+                    <div>Looking for your face...</div>
+                    <div class="face-scanning-dots">
+                        <div class="face-scanning-dot"></div>
+                        <div class="face-scanning-dot"></div>
+                        <div class="face-scanning-dot"></div>
+                    </div>
+                </div>
+                
+                <div class="detection-stats" id="face-registration-stats">
+                    Face detected: <span id="registration-confidence">0%</span> confidence
+                </div>
+                
+                <div class="face-match-indicator" id="face-registration-indicator">
+                    ✓ Face detected! Click "Register Face" to save
+                </div>
+                
+                <div class="faceid-buttons">
+                    <button class="faceid-submit" id="faceid-registration-submit" disabled>Register Face</button>
+                    <button class="faceid-cancel" id="faceid-registration-cancel">Cancel</button>
+                </div>
+                
+                <div class="error" id="faceid-registration-error"></div>
+            </div>
+        </div>
 
+        <!-- Face ID Verification Section -->
+        <div class="faceid-section face-verification-section" id="faceid-verification-section" style="display: none;">
+            <h2 class="section-title">Face ID Verification</h2>
+            <p class="faceid-instructions">Position your face in the frame to verify your identity</p>
+            
+            <div class="face-instructions">
+                <p>💡 <strong>Look directly at the camera</strong></p>
+                <p>Make sure your face is clearly visible</p>
+            </div>
+            
+            <div class="faceid-container">
+                <div id="faceid-verification-video-container">
+                    <div class="placeholder-text" id="faceid-verification-placeholder">
+                        <div class="camera-icon">👤</div>
+                        <p>Camera feed will appear here</p>
+                    </div>
+                    <video id="faceid-verification-video" playsinline></video>
+                    <div class="face-overlay" id="face-verification-overlay"></div>
+                </div>
+                
+                <div class="face-scanning" id="face-verification-scanning">
+                    <div>Verifying your identity...</div>
+                    <div class="face-scanning-dots">
+                        <div class="face-scanning-dot"></div>
+                        <div class="face-scanning-dot"></div>
+                        <div class="face-scanning-dot"></div>
+                    </div>
+                </div>
+                
+                <div class="detection-stats" id="face-verification-stats">
+                    Match confidence: <span id="verification-confidence">0%</span>
+                </div>
+                
+                <div class="face-match-indicator" id="face-verification-indicator">
+                    ✓ Face verified successfully
+                </div>
+                
+                <div class="face-match-indicator unknown" id="face-verification-failed">
+                    ✗ Face not recognized. Please try again or use PIN.
+                </div>
+                
+                <div class="faceid-buttons">
+                    <button class="faceid-cancel" id="faceid-verification-cancel">Use PIN Instead</button>
+                </div>
+                
+                <div class="error" id="faceid-verification-error"></div>
+            </div>
+        </div>
+
+        <!-- Authentication Choice Section -->
+        <div class="pin-section" id="auth-choice-section" style="display: none;">
+            <h2 class="section-title">Choose Authentication Method</h2>
+            <p class="pin-instructions">How would you like to sign in?</p>
+            
+            <div class="auth-choice">
+                <button class="auth-choice-btn" id="use-pin-btn">Use PIN</button>
+                <button class="auth-choice-btn" id="use-faceid-btn">Use Face ID</button>
+            </div>
+        </div>
+        
+        <!-- Settings Section -->
+        <div class="settings-section" id="settings-section" style="display: none;">
+            <div class="security-banner spider">
+                <span>🕷️ SECURITY CENTER - Verify your identity to modify sensitive settings</span>
+            </div>
+            
+            <div class="settings-tabs">
+                <button class="settings-tab active" data-tab="security">Security</button>
+                <button class="settings-tab" data-tab="biometrics">Biometrics</button>
+                <button class="settings-tab" data-tab="2fa">2FA</button>
+                <button class="settings-tab" data-tab="general">General</button>
+            </div>
+            
+            <!-- Security Tab -->
+            <div class="settings-content active" id="security-tab">
+                <h2 class="section-title">Security Settings</h2>
+                
+                <div class="verify-section" id="security-verify-section">
+                    <h3>Verify Your Identity</h3>
+                    <p>To modify security settings, please verify your identity:</p>
+                    <div class="controls">
+                        <button id="verify-pin-btn">Verify with PIN</button>
+                        <button id="verify-face-btn">Verify with Face ID</button>
+                    </div>
+                </div>
+                
+                <div id="security-settings-content" style="display: none;">
+                    <div class="setting-option">
+                        <div class="setting-info">
+                            <div class="setting-name">PIN Protection</div>
+                            <div class="setting-description">Require PIN for QR code access</div>
+                        </div>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="pin-protection-toggle" class="toggle-checkbox" checked>
+                            <label for="pin-protection-toggle" class="toggle-label"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="security-note">
+                        <strong>Note:</strong> When PIN protection is disabled, anyone with a valid QR code can access the portal without authentication.
+                    </div>
+                    
+                    <h3 style="margin-top: 30px;">QR Code PIN Management</h3>
+                    <p>Each QR code can have its own unique PIN for enhanced security.</p>
+                    
+                    <div class="qr-pin-list" id="qr-pin-list">
+                        <!-- QR PIN items will be dynamically added here -->
+                    </div>
+                    
+                    <div class="controls">
+                        <button id="add-qr-pin-btn">Add New QR PIN</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Biometrics Tab -->
+            <div class="settings-content" id="biometrics-tab">
+                <h2 class="section-title">Biometric Settings</h2>
+                
+                <div class="setting-option">
+                    <div class="setting-info">
+                        <div class="setting-name">Face ID Authentication</div>
+                        <div class="setting-description">Use facial recognition to access your portal</div>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="faceid-toggle" class="toggle-checkbox">
+                        <label for="faceid-toggle" class="toggle-label"></label>
+                    </div>
+                </div>
+
+                <!-- Face Registration Section -->
+                <div class="setting-option">
+                    <div class="setting-info">
+                        <div class="setting-name">Face Registration</div>
+                        <div class="setting-description" id="face-status-text">No face registered</div>
+                    </div>
+                    <button class="register-face-btn" id="register-face-btn">Register Face</button>
+                </div>
+                <div class="face-status not-registered" id="face-status">
+                    Face not registered. Click "Register Face" to set up Face ID.
+                </div>
+                
+                <div class="security-note">
+                    <strong>Biometric Data:</strong> Your facial data is stored securely on your device and is never transmitted to our servers.
+                </div>
+            </div>
+            
+            <!-- 2FA Tab -->
+            <div class="settings-content" id="2fa-tab">
+                <h2 class="section-title">Two-Factor Authentication</h2>
+                
+                <div class="setting-option">
+                    <div class="setting-info">
+                        <div class="setting-name">Enable 2FA</div>
+                        <div class="setting-description">Add an extra layer of security with time-based codes</div>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="2fa-toggle" class="toggle-checkbox">
+                        <label for="2fa-toggle" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div id="2fa-setup-section" style="display: none;">
+                    <div class="security-note">
+                        <strong>We recommend using Alpha Authenticator</strong> for the best security experience.
+                    </div>
+                    
+                    <a href="https://jokiller1011.github.io/Alpha-Authenciator/" target="_blank" class="authenticator-link">
+                        🔐 Get Alpha Authenticator
+                    </a>
+                    
+                    <div id="2fa-qrcode-container" class="qrcode-container" style="display: none;">
+                        <h3>Scan this QR code with your authenticator app:</h3>
+                        <canvas id="2fa-qrcode"></canvas>
+                        <div class="secret-key" id="2fa-secret-display">
+                            Secret: <span id="2fa-secret-text"></span>
+                            <button class="copy-btn" onclick="copy2FASecret()">Copy</button>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-option">
+                        <div class="setting-info">
+                            <div class="setting-name">2FA Status</div>
+                            <div class="setting-description" id="2fa-status-text">Not configured</div>
+                        </div>
+                        <button id="generate-2fa-btn">Setup 2FA</button>
+                    </div>
+                    
+                    <div class="pin-input-container">
+                        <input type="text" class="pin-input" maxlength="1" data-index="0" placeholder="0">
+                        <input type="text" class="pin-input" maxlength="1" data-index="1" placeholder="0">
+                        <input type="text" class="pin-input" maxlength="1" data-index="2" placeholder="0">
+                        <input type="text" class="pin-input" maxlength="1" data-index="3" placeholder="0">
+                        <input type="text" class="pin-input" maxlength="1" data-index="4" placeholder="0">
+                        <input type="text" class="pin-input" maxlength="1" data-index="5" placeholder="0">
+                    </div>
+                    
+                    <div class="controls">
+                        <button id="verify-2fa-btn">Verify Code</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- General Tab -->
+            <div class="settings-content" id="general-tab">
+                <h2 class="section-title">General Settings</h2>
+                
+                <div class="setting-option">
+                    <div class="setting-info">
+                        <div class="setting-name">PIN Authentication</div>
+                        <div class="setting-description">Use a 4-digit PIN to access your portal</div>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="pin-toggle" class="toggle-checkbox" checked>
+                        <label for="pin-toggle" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div class="setting-option">
+                    <div class="setting-info">
+                        <div class="setting-name">Auto-Logout</div>
+                        <div class="setting-description">Automatically logout after 30 minutes of inactivity</div>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="auto-logout-toggle" class="toggle-checkbox" checked>
+                        <label for="auto-logout-toggle" class="toggle-label"></label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="save-settings">Save Settings</button>
+                <button id="cancel-settings" class="pin-clear">Cancel</button>
+            </div>
+        </div>
+        
         <!-- Loading Container -->
         <div class="loading-container" id="loading-container">
             <div class="loading-spinner"></div>
@@ -480,1029 +1245,912 @@
         <!-- Portal Container -->
         <div class="portal-container" id="portal-container">
             <button class="settings-btn" id="settings-btn">⚙️</button>
-            <h2 class="welcome-message">Welcome to the Member Portal!</h2>
-            <div class="member-sites">
-                <!-- Portal content will be loaded here -->
-            </div>
+            <!-- Portal content will be loaded here -->
         </div>
-
-        <!-- Settings Section -->
-        <div class="settings-section" id="settings-section" style="display: none;">
-            <h2 class="section-title">Security Settings</h2>
-            
-            <div class="settings-tabs">
-                <button class="settings-tab active" data-tab="biometrics">Biometrics</button>
-                <button class="settings-tab" data-tab="2fa">2FA Authenticator</button>
-                <button class="settings-tab" data-tab="security">Security Keys</button>
-                <button class="settings-tab" data-tab="passkeys">Passkeys</button>
-            </div>
-            
-            <!-- Biometrics Tab -->
-            <div class="settings-content active" id="biometrics-tab">
-                <!-- Face ID -->
-                <div class="biometric-method">
-                    <div class="method-header">
-                        <div class="method-name">Face ID Recognition</div>
-                        <div class="method-status status-disabled" id="faceid-status">Not Set Up</div>
-                    </div>
-                    <div class="method-description">
-                        Use your device's camera for facial recognition authentication.
-                    </div>
-                    <div class="method-actions">
-                        <button class="setup-btn" id="setup-faceid">Set Up Face ID</button>
-                        <button class="test-btn" id="test-faceid" disabled>Test</button>
-                        <button class="remove-btn" id="remove-faceid" disabled>Remove</button>
-                    </div>
-                    <div class="setup-guide" id="faceid-guide" style="display: none;">
-                        <video id="face-camera" class="face-camera-feed" autoplay muted></video>
-                        <div class="controls">
-                            <button id="capture-face">Capture Face Data</button>
-                            <button id="cancel-face">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Fingerprint -->
-                <div class="biometric-method">
-                    <div class="method-header">
-                        <div class="method-name">Fingerprint Scanner</div>
-                        <div class="method-status status-disabled" id="fingerprint-status">Not Connected</div>
-                    </div>
-                    <div class="method-description">
-                        Connect a USB fingerprint reader for fingerprint authentication.
-                    </div>
-                    <div class="method-actions">
-                        <button class="setup-btn" id="setup-fingerprint">Connect Scanner</button>
-                        <button class="test-btn" id="test-fingerprint" disabled>Test Scan</button>
-                        <button class="remove-btn" id="remove-fingerprint" disabled>Disconnect</button>
-                    </div>
-                    <div class="setup-guide" id="fingerprint-guide" style="display: none;">
-                        <button id="request-usb-permission">Scan for USB Devices</button>
-                        <div id="fingerprint-devices"></div>
-                    </div>
-                </div>
-
-                <!-- Voice Recognition -->
-                <div class="biometric-method">
-                    <div class="method-header">
-                        <div class="method-name">Voice Recognition</div>
-                        <div class="method-status status-disabled" id="voice-status">Not Set Up</div>
-                    </div>
-                    <div class="method-description">
-                        Use your unique voice pattern for authentication.
-                    </div>
-                    <div class="method-actions">
-                        <button class="setup-btn" id="setup-voice">Record Voice Print</button>
-                        <button class="test-btn" id="test-voice" disabled>Test Voice</button>
-                        <button class="remove-btn" id="remove-voice" disabled>Remove</button>
-                    </div>
-                    <div class="voice-recording" id="voice-recording">
-                        <div class="recording-dot"></div>
-                        <strong>Recording... Speak naturally</strong>
-                        <div class="controls">
-                            <button id="stop-recording">Stop Recording</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2FA Authenticator Tab -->
-            <div class="settings-content" id="2fa-tab">
-                <div class="biometric-method">
-                    <div class="method-header">
-                        <div class="method-name">Time-based One-Time Password (TOTP)</div>
-                        <div class="method-status status-disabled" id="totp-status">Not Set Up</div>
-                    </div>
-
-                    <div id="totp-setup-section" style="display: none;">
-                        <div class="qrcode-container">
-                            <canvas id="totp-qrcode" width="200" height="200"></canvas>
-                            <div class="secret-key">
-                                Secret Key: <span id="totp-secret-text"></span>
-                                <button class="copy-btn" id="copy-totp-secret">Copy</button>
-                            </div>
-                        </div>
-
-                        <div class="authenticator-code">
-                            <div id="totp-code">------</div>
-                        </div>
-
-                        <div class="pin-input-container">
-                            <input type="text" class="pin-input" maxlength="1" data-index="0" placeholder="0">
-                            <input type="text" class="pin-input" maxlength="1" data-index="1" placeholder="0">
-                            <input type="text" class="pin-input" maxlength="1" data-index="2" placeholder="0">
-                            <input type="text" class="pin-input" maxlength="1" data-index="3" placeholder="0">
-                            <input type="text" class="pin-input" maxlength="1" data-index="4" placeholder="0">
-                            <input type="text" class="pin-input" maxlength="1" data-index="5" placeholder="0">
-                        </div>
-
-                        <div class="controls">
-                            <button id="verify-totp-btn">Verify Code</button>
-                            <button id="generate-new-totp-btn">Generate New Secret</button>
-                        </div>
-                    </div>
-
-                    <div class="method-actions">
-                        <button class="setup-btn" id="setup-totp">Set Up Authenticator</button>
-                        <button class="test-btn" id="test-totp" disabled>Test Code</button>
-                        <button class="remove-btn" id="remove-totp" disabled>Remove</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Security Keys Tab -->
-            <div class="settings-content" id="security-tab">
-                <div class="biometric-method">
-                    <div class="method-header">
-                        <div class="method-name">USB Security Key</div>
-                        <div class="method-status status-disabled" id="usbkey-status">Not Set Up</div>
-                    </div>
-
-                    <div id="usbkey-setup-section" style="display: none;">
-                        <button id="detect-usb-drives">Detect USB Drives</button>
-                        <div id="usb-devices"></div>
-                        <div class="controls">
-                            <button id="create-usb-key" disabled>Create Security Key</button>
-                            <button id="test-usb-key" disabled>Test Key</button>
-                        </div>
-                    </div>
-
-                    <div class="method-actions">
-                        <button class="setup-btn" id="setup-usbkey">Set Up USB Key</button>
-                        <button class="test-btn" id="test-usbkey" disabled>Test Key</button>
-                        <button class="remove-btn" id="remove-usbkey" disabled>Remove Key</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Passkeys Tab -->
-            <div class="settings-content" id="passkeys-tab">
-                <div class="biometric-method">
-                    <div class="method-header">
-                        <div class="method-name">Passkey Authentication</div>
-                        <div class="method-status status-disabled" id="passkey-status">Not Set Up</div>
-                    </div>
-                    <div class="method-description">
-                        Use modern passkey authentication with your device's biometrics or security key.
-                    </div>
-                    
-                    <div class="passkey-info">
-                        <p><strong>Passkeys allow you to sign in using:</strong></p>
-                        <p>• Face ID / Touch ID on your device</p>
-                        <p>• Fingerprint sensors</p>
-                        <p>• Device PIN/Pattern</p>
-                        <p>• Hardware security keys</p>
-                    </div>
-
-                    <div id="passkey-setup-section" style="display: none;">
-                        <div class="controls">
-                            <button id="create-passkey">Create Passkey</button>
-                            <button id="test-passkey">Test Passkey</button>
-                        </div>
-                        <div id="passkey-info"></div>
-                    </div>
-
-                    <div class="method-actions">
-                        <button class="setup-btn" id="setup-passkey">Set Up Passkey</button>
-                        <button class="test-btn" id="test-passkey-btn" disabled>Test Passkey</button>
-                        <button class="remove-btn" id="remove-passkey" disabled>Remove Passkey</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="controls">
-                <button id="save-settings">Save Settings</button>
-                <button id="cancel-settings">Back to Portal</button>
-            </div>
+        
+        <div class="powered-by">
+            <p>Powered by 14592 Security Systems</p>
         </div>
     </div>
 
-    <!-- Include QR code scanning library -->
+    <!-- Include the QR code scanning library -->
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
     
     <script>
-        class SecurityManager {
-            constructor() {
-                this.totpSecret = null;
-                this.totpInterval = null;
-                this.voiceData = null;
-                this.mediaRecorder = null;
-                this.audioChunks = [];
-                this.usbDevice = null;
-                this.faceData = null;
-                this.passkeyCredential = null;
-                this.userPin = localStorage.getItem('userPin');
-                this.isFirstTimeSetup = !this.userPin;
-                this.stream = null;
-                this.scanning = false;
-                this.animationFrameId = null;
-                this.init();
+        // Get DOM elements
+        const video = document.getElementById('video');
+        const faceidRegistrationVideo = document.getElementById('faceid-registration-video');
+        const faceidVerificationVideo = document.getElementById('faceid-verification-video');
+        const startBtn = document.getElementById('start-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const status = document.getElementById('status');
+        const errorDiv = document.getElementById('error');
+        const successDiv = document.getElementById('success');
+        const placeholder = document.getElementById('placeholder');
+        const faceidRegistrationPlaceholder = document.getElementById('faceid-registration-placeholder');
+        const faceidVerificationPlaceholder = document.getElementById('faceid-verification-placeholder');
+        const scanRegion = document.getElementById('scan-region');
+        
+        // Section elements
+        const scannerSection = document.getElementById('scanner-section');
+        const pinSection = document.getElementById('pin-section');
+        const faceidRegistrationSection = document.getElementById('faceid-registration-section');
+        const faceidVerificationSection = document.getElementById('faceid-verification-section');
+        const authChoiceSection = document.getElementById('auth-choice-section');
+        const settingsSection = document.getElementById('settings-section');
+        const loadingContainer = document.getElementById('loading-container');
+        const portalContainer = document.getElementById('portal-container');
+        
+        // PIN elements
+        const pinInputs = document.querySelectorAll('.pin-input');
+        const pinSubmit = document.getElementById('pin-submit');
+        const pinClear = document.getElementById('pin-clear');
+        const pinError = document.getElementById('pin-error');
+        const pinTitle = document.getElementById('pin-title');
+        const pinInstructions = document.getElementById('pin-instructions');
+        
+        // Face ID elements
+        const faceidRegistrationSubmit = document.getElementById('faceid-registration-submit');
+        const faceidRegistrationCancel = document.getElementById('faceid-registration-cancel');
+        const faceidVerificationCancel = document.getElementById('faceid-verification-cancel');
+        const faceRegistrationOverlay = document.getElementById('face-registration-overlay');
+        const faceVerificationOverlay = document.getElementById('face-verification-overlay');
+        const faceRegistrationIndicator = document.getElementById('face-registration-indicator');
+        const faceVerificationIndicator = document.getElementById('face-verification-indicator');
+        const faceVerificationFailed = document.getElementById('face-verification-failed');
+        
+        // Authentication choice elements
+        const usePinBtn = document.getElementById('use-pin-btn');
+        const useFaceidBtn = document.getElementById('use-faceid-btn');
+        
+        // Settings elements
+        const settingsBtn = document.getElementById('settings-btn');
+        const saveSettings = document.getElementById('save-settings');
+        const cancelSettings = document.getElementById('cancel-settings');
+        const registerFaceBtn = document.getElementById('register-face-btn');
+        const faceStatus = document.getElementById('face-status');
+        const faceStatusText = document.getElementById('face-status-text');
+        const faceRegistrationContainer = document.getElementById('face-registration-container');
+        const registrationProgressBar = document.getElementById('registration-progress-bar');
+        const registrationStatus = document.getElementById('registration-status');
+        
+        // Variables for video stream and scanning
+        let stream = null;
+        let faceStream = null;
+        let verificationStream = null;
+        let scanning = false;
+        let animationFrameId = null;
+        let faceDetectionInterval = null;
+        let faceVerificationInterval = null;
+        
+        // User data
+        let userPin = localStorage.getItem('userPin');
+        let userFaceDescriptor = JSON.parse(localStorage.getItem('userFaceDescriptor') || 'null');
+        let isFirstTimeSetup = false;
+        let faceSamples = [];
+        let samplesCollected = 0;
+        const totalSamples = 5;
+        
+        // Initialize face detection
+        async function initializeFaceDetection() {
+            try {
+                // In a real implementation, this would load actual face detection models
+                console.log('Face detection initialized (simulated)');
+                return true;
+            } catch (error) {
+                console.error('Error initializing face detection:', error);
+                return false;
             }
-
-            init() {
-                this.loadStoredData();
-                this.setupEventListeners();
-                this.setupScanner();
-                this.setupTabs();
-                this.checkPasskeySupport();
+        }
+        
+        // Update face status display
+        function updateFaceStatus() {
+            if (userFaceDescriptor) {
+                faceStatus.textContent = "✓ Face registered successfully";
+                faceStatus.className = "face-status registered";
+                faceStatusText.textContent = "Face registered";
+            } else {
+                faceStatus.textContent = "Face not registered. Click 'Register Face' to set up Face ID.";
+                faceStatus.className = "face-status not-registered";
+                faceStatusText.textContent = "No face registered";
             }
+        }
+        
+        // SIMPLIFIED SCANNER FUNCTION - FIXED VERSION
+        startBtn.addEventListener('click', async () => {
+            console.log('Start Scanner button clicked');
+            
+            try {
+                status.textContent = "Initializing camera...";
+                errorDiv.style.display = 'none';
+                successDiv.style.display = 'none';
+                startBtn.disabled = true;
 
-            loadStoredData() {
-                this.totpSecret = localStorage.getItem('totpSecret');
-                this.voiceData = localStorage.getItem('voiceData');
-                this.faceData = localStorage.getItem('faceData');
-                this.usbKeyData = localStorage.getItem('usbKeyData');
-                this.passkeyCredential = localStorage.getItem('passkeyCredential');
-                this.updateUI();
-            }
+                // Stop any existing stream
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
 
-            setupEventListeners() {
-                // Scanner
-                document.getElementById('start-btn').addEventListener('click', () => this.startScanner());
-                document.getElementById('stop-btn').addEventListener('click', () => this.stopScanner());
-
-                // PIN
-                document.getElementById('pin-submit').addEventListener('click', () => this.submitPIN());
-                document.getElementById('pin-clear').addEventListener('click', () => this.clearPIN());
-
-                // Settings
-                document.getElementById('settings-btn').addEventListener('click', () => this.showSettings());
-                document.getElementById('cancel-settings').addEventListener('click', () => this.hideSettings());
-                document.getElementById('save-settings').addEventListener('click', () => this.saveSettings());
-
-                // Face ID
-                document.getElementById('setup-faceid').addEventListener('click', () => this.setupFaceID());
-                document.getElementById('test-faceid').addEventListener('click', () => this.testFaceID());
-                document.getElementById('remove-faceid').addEventListener('click', () => this.removeFaceID());
-                document.getElementById('capture-face').addEventListener('click', () => this.captureFaceData());
-                document.getElementById('cancel-face').addEventListener('click', () => this.cancelFaceCapture());
-
-                // Fingerprint
-                document.getElementById('setup-fingerprint').addEventListener('click', () => this.setupFingerprint());
-                document.getElementById('test-fingerprint').addEventListener('click', () => this.testFingerprint());
-                document.getElementById('remove-fingerprint').addEventListener('click', () => this.removeFingerprint());
-                document.getElementById('request-usb-permission').addEventListener('click', () => this.requestUSBDevices());
-
-                // Voice Recognition
-                document.getElementById('setup-voice').addEventListener('click', () => this.setupVoiceRecognition());
-                document.getElementById('test-voice').addEventListener('click', () => this.testVoiceRecognition());
-                document.getElementById('remove-voice').addEventListener('click', () => this.removeVoiceRecognition());
-                document.getElementById('stop-recording').addEventListener('click', () => this.stopRecording());
-
-                // TOTP
-                document.getElementById('setup-totp').addEventListener('click', () => this.setupTOTP());
-                document.getElementById('verify-totp-btn').addEventListener('click', () => this.verifyTOTP());
-                document.getElementById('generate-new-totp-btn').addEventListener('click', () => this.generateNewTOTPSecret());
-                document.getElementById('test-totp').addEventListener('click', () => this.testTOTP());
-                document.getElementById('remove-totp').addEventListener('click', () => this.removeTOTP());
-                document.getElementById('copy-totp-secret').addEventListener('click', () => this.copyTOTPSecret());
-
-                // USB Security Key
-                document.getElementById('setup-usbkey').addEventListener('click', () => this.setupUSBKey());
-                document.getElementById('create-usb-key').addEventListener('click', () => this.createUSBKey());
-                document.getElementById('test-usbkey').addEventListener('click', () => this.testUSBKey());
-                document.getElementById('remove-usbkey').addEventListener('click', () => this.removeUSBKey());
-                document.getElementById('detect-usb-drives').addEventListener('click', () => this.detectUSBDrives());
-
-                // Passkeys
-                document.getElementById('setup-passkey').addEventListener('click', () => this.setupPasskey());
-                document.getElementById('test-passkey-btn').addEventListener('click', () => this.testPasskey());
-                document.getElementById('remove-passkey').addEventListener('click', () => this.removePasskey());
-            }
-
-            // QR Scanner Functions
-            async startScanner() {
-                try {
-                    document.getElementById('status').textContent = "Initializing camera...";
-                    document.getElementById('error').style.display = 'none';
-                    document.getElementById('start-btn').disabled = true;
-
-                    if (this.stream) {
-                        this.stream.getTracks().forEach(track => track.stop());
+                // Try different camera constraints for better compatibility
+                const constraints = {
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
                     }
+                };
 
-                    this.stream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: 'environment' }
-                    });
+                console.log('Requesting camera access...');
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                console.log('Camera access granted');
 
-                    const video = document.getElementById('video');
-                    video.srcObject = this.stream;
+                // Set video source
+                video.srcObject = stream;
 
-                    video.onloadedmetadata = () => {
-                        video.play();
-                        this.startScanning();
+                // Wait for video to load
+                video.onloadedmetadata = () => {
+                    console.log('Video metadata loaded');
+                    video.play().then(() => {
+                        console.log('Video started playing');
+                        startScanning();
+                        
+                        // Show video and hide placeholder
                         video.style.display = 'block';
-                        document.getElementById('placeholder').style.display = 'none';
-                        document.getElementById('scan-region').style.display = 'block';
-                        document.getElementById('stop-btn').disabled = false;
-                        document.getElementById('status').textContent = "Scanner active - scan your QR code";
-                    };
-
-                } catch (err) {
-                    this.handleCameraError(err);
-                }
-            }
-
-            stopScanner() {
-                this.stopScanning();
-                if (this.stream) {
-                    this.stream.getTracks().forEach(track => track.stop());
-                    this.stream = null;
-                }
-                const video = document.getElementById('video');
-                video.srcObject = null;
-                video.style.display = 'none';
-                document.getElementById('placeholder').style.display = 'block';
-                document.getElementById('scan-region').style.display = 'none';
-                document.getElementById('start-btn').disabled = false;
-                document.getElementById('stop-btn').disabled = true;
-                document.getElementById('status').textContent = "Scanner is not active";
-            }
-
-            startScanning() {
-                this.scanning = true;
-                this.scanFrame();
-            }
-
-            stopScanning() {
-                this.scanning = false;
-                if (this.animationFrameId) {
-                    cancelAnimationFrame(this.animationFrameId);
-                }
-            }
-
-            scanFrame() {
-                if (!this.scanning) return;
-                
-                const video = document.getElementById('video');
-                if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    
-                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    const code = jsQR(imageData.data, imageData.width, imageData.height);
-                    
-                    if (code) {
-                        document.getElementById('status').textContent = "QR Code detected!";
-                        this.processQRCode(code.data);
-                        return;
-                    }
-                }
-                
-                this.animationFrameId = requestAnimationFrame(() => this.scanFrame());
-            }
-
-            processQRCode(url) {
-                this.stopScanning();
-                document.getElementById('scanner-section').style.display = 'none';
-                document.getElementById('loading-container').style.display = 'flex';
-                
-                setTimeout(() => {
-                    const isSafe = this.isUrlSafe(url);
-                    if (isSafe) {
-                        if (!this.userPin) {
-                            this.isFirstTimeSetup = true;
-                            document.getElementById('loading-container').style.display = 'none';
-                            document.getElementById('pin-section').style.display = 'block';
-                            document.getElementById('pin-title').textContent = "Create Your PIN";
-                            document.getElementById('pin-instructions').textContent = "Create a 4-digit PIN to secure your account";
-                            this.initializePinInputs();
-                        } else {
-                            this.isFirstTimeSetup = false;
-                            document.getElementById('loading-container').style.display = 'none';
-                            document.getElementById('pin-section').style.display = 'block';
-                            document.getElementById('pin-title').textContent = "Enter Your PIN";
-                            document.getElementById('pin-instructions').textContent = "Enter your 4-digit PIN to access the portal";
-                            this.initializePinInputs();
-                        }
-                    } else {
-                        document.getElementById('loading-container').style.display = 'none';
-                        document.getElementById('scanner-section').style.display = 'block';
-                        document.getElementById('error').textContent = "Access Denied: QR code not from approved source.";
-                        document.getElementById('error').style.display = 'block';
-                        document.getElementById('start-btn').disabled = false;
-                        document.getElementById('stop-btn').disabled = true;
-                    }
-                }, 1500);
-            }
-
-            isUrlSafe(url) {
-                return url.includes('14592') || url.includes('demstudios') || url.includes('github.io');
-            }
-
-            handleCameraError(err) {
-                let errorMessage = "Could not access camera. ";
-                if (err.name === 'NotAllowedError') {
-                    errorMessage = "Camera permission was denied.";
-                } else if (err.name === 'NotFoundError') {
-                    errorMessage = "No camera found on your device.";
-                }
-                document.getElementById('error').textContent = errorMessage;
-                document.getElementById('error').style.display = 'block';
-                document.getElementById('start-btn').disabled = false;
-            }
-
-            // PIN Functions
-            initializePinInputs() {
-                const pinInputs = document.querySelectorAll('.pin-input');
-                const pinSubmit = document.getElementById('pin-submit');
-                const pinClear = document.getElementById('pin-clear');
-                const pinError = document.getElementById('pin-error');
-                
-                pinInputs.forEach(input => {
-                    input.value = '';
-                    input.addEventListener('input', (e) => {
-                        const value = e.target.value;
-                        const index = parseInt(e.target.dataset.index);
+                        placeholder.style.display = 'none';
+                        scanRegion.style.display = 'block';
                         
-                        if (value && index < pinInputs.length - 1) {
-                            pinInputs[index + 1].focus();
-                        }
+                        // Update UI
+                        stopBtn.disabled = false;
+                        status.textContent = "Scanner active - scan your QR code";
+                    }).catch(err => {
+                        console.error('Error playing video:', err);
+                        handleCameraError(err);
                     });
-                    
-                    input.addEventListener('keydown', (e) => {
-                        if (e.key === 'Backspace' && !input.value && index > 0) {
-                            pinInputs[index - 1].focus();
-                        }
-                    });
-                });
-                
-                if (pinInputs.length > 0) {
-                    pinInputs[0].focus();
-                }
-            }
+                };
 
-            submitPIN() {
-                const pinInputs = document.querySelectorAll('.pin-input');
-                const pin = Array.from(pinInputs).map(input => input.value).join('');
-                const pinError = document.getElementById('pin-error');
-                
-                if (pin.length === 4) {
-                    if (this.isFirstTimeSetup) {
-                        this.userPin = pin;
-                        localStorage.setItem('userPin', pin);
-                        pinError.style.display = 'none';
-                        this.showSuccess("PIN created successfully!");
-                        document.getElementById('pin-section').style.display = 'none';
-                        this.showPortal();
-                    } else {
-                        if (pin === this.userPin) {
-                            pinError.style.display = 'none';
-                            this.showSuccess("PIN verified successfully!");
-                            document.getElementById('pin-section').style.display = 'none';
-                            this.showPortal();
-                        } else {
-                            pinError.textContent = "Incorrect PIN. Please try again.";
-                            pinError.style.display = 'block';
-                            this.clearPIN();
-                        }
+                video.onerror = (err) => {
+                    console.error('Video error:', err);
+                    handleCameraError(err);
+                };
+
+            } catch (err) {
+                console.error("Error accessing camera:", err);
+                handleCameraError(err);
+            }
+        });
+
+        // Stop the scanner
+        stopBtn.addEventListener('click', () => {
+            console.log('Stop Scanner button clicked');
+            stopScanning();
+            
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            video.srcObject = null;
+            
+            // Update UI
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            status.textContent = "Scanner is not active";
+            
+            // Show placeholder and hide video
+            video.style.display = 'none';
+            placeholder.style.display = 'block';
+            scanRegion.style.display = 'none';
+        });
+
+        // Handle camera errors with better messages
+        function handleCameraError(err) {
+            console.error('Camera error details:', err);
+            
+            let errorMessage = "Could not access camera. ";
+            
+            if (err.name === 'NotAllowedError') {
+                errorMessage = "❌ Camera permission was denied. Please allow camera access in your browser settings and reload the page.";
+            } else if (err.name === 'NotFoundError') {
+                errorMessage = "❌ No camera found on your device. Please connect a camera and try again.";
+            } else if (err.name === 'NotSupportedError') {
+                errorMessage = "❌ Camera access is not supported by your browser. Please try using Chrome, Firefox, or Edge.";
+            } else if (err.name === 'NotReadableError') {
+                errorMessage = "❌ Camera is already in use by another application. Please close other camera apps and try again.";
+            } else if (err.name === 'OverconstrainedError') {
+                errorMessage = "❌ Camera doesn't support the required resolution. Trying alternative camera...";
+                // Try again with simpler constraints
+                tryAlternativeCamera();
+                return;
+            } else {
+                errorMessage = "❌ Camera error: " + err.message + ". Please check your camera settings.";
+            }
+            
+            errorDiv.textContent = errorMessage;
+            errorDiv.style.display = 'block';
+            status.textContent = "Camera access failed";
+            
+            // Reset UI
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        }
+
+        // Try alternative camera constraints
+        async function tryAlternativeCamera() {
+            try {
+                const alternativeConstraints = {
+                    video: {
+                        facingMode: 'environment'
+                        // Remove resolution constraints for better compatibility
                     }
-                } else {
-                    pinError.textContent = "Please enter a complete 4-digit PIN.";
-                    pinError.style.display = 'block';
-                }
-            }
-
-            clearPIN() {
-                const pinInputs = document.querySelectorAll('.pin-input');
-                pinInputs.forEach(input => {
-                    input.value = '';
-                });
-                if (pinInputs.length > 0) {
-                    pinInputs[0].focus();
-                }
-                document.getElementById('pin-error').style.display = 'none';
-            }
-
-            // Portal Functions
-            showPortal() {
-                document.getElementById('portal-container').style.display = 'block';
-                document.getElementById('scanner-section').style.display = 'none';
-                document.getElementById('settings-section').style.display = 'none';
-            }
-
-            showSettings() {
-                document.getElementById('portal-container').style.display = 'none';
-                document.getElementById('settings-section').style.display = 'block';
-            }
-
-            hideSettings() {
-                document.getElementById('settings-section').style.display = 'none';
-                document.getElementById('portal-container').style.display = 'block';
-            }
-
-            saveSettings() {
-                this.showSuccess("Settings saved successfully!");
-                setTimeout(() => {
-                    this.hideSettings();
-                }, 1000);
-            }
-
-            // Biometric Methods (same as before)
-            async setupFaceID() {
-                const guide = document.getElementById('faceid-guide');
-                guide.style.display = 'block';
-                
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ 
-                        video: { facingMode: 'user' } 
-                    });
-                    const video = document.getElementById('face-camera');
-                    video.srcObject = stream;
-                } catch (err) {
-                    this.showError("Camera access denied: " + err.message);
-                }
-            }
-
-            async captureFaceData() {
-                const video = document.getElementById('face-camera');
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                ctx.drawImage(video, 0, 0);
-                
-                this.faceData = canvas.toDataURL('image/jpeg', 0.8);
-                localStorage.setItem('faceData', this.faceData);
-                
-                video.srcObject.getTracks().forEach(track => track.stop());
-                
-                this.updateUI();
-                this.showSuccess("Face data captured successfully!");
-                document.getElementById('faceid-guide').style.display = 'none';
-            }
-
-            cancelFaceCapture() {
-                const video = document.getElementById('face-camera');
-                if (video.srcObject) {
-                    video.srcObject.getTracks().forEach(track => track.stop());
-                }
-                document.getElementById('faceid-guide').style.display = 'none';
-            }
-
-            testFaceID() {
-                this.showSuccess("Testing Face ID - This would compare with stored face data");
-            }
-
-            removeFaceID() {
-                localStorage.removeItem('faceData');
-                this.faceData = null;
-                this.updateUI();
-                this.showSuccess("Face ID removed successfully");
-            }
-
-            async setupFingerprint() {
-                document.getElementById('fingerprint-guide').style.display = 'block';
-            }
-
-            async requestUSBDevices() {
-                try {
-                    if (!navigator.usb) {
-                        this.showError("WebUSB not supported in this browser");
-                        return;
-                    }
-
-                    this.usbDevice = await navigator.usb.requestDevice({ 
-                        filters: []
-                    });
-                    
-                    await this.usbDevice.open();
-                    await this.usbDevice.selectConfiguration(1);
-                    await this.usbDevice.claimInterface(0);
-                    
-                    this.updateUSBDeviceList();
-                    this.showSuccess("USB device connected: " + this.usbDevice.productName);
-                    
-                } catch (err) {
-                    this.showError("USB access denied or no devices found");
-                }
-            }
-
-            updateUSBDeviceList() {
-                const deviceList = document.getElementById('fingerprint-devices');
-                if (this.usbDevice) {
-                    deviceList.innerHTML = `<div>Connected: ${this.usbDevice.productName}</div>`;
-                    
-                    document.getElementById('test-fingerprint').disabled = false;
-                    document.getElementById('remove-fingerprint').disabled = false;
-                    document.getElementById('fingerprint-status').textContent = 'Connected';
-                    document.getElementById('fingerprint-status').className = 'method-status status-enabled';
-                }
-            }
-
-            async testFingerprint() {
-                if (!this.usbDevice) {
-                    this.showError("No USB device connected");
-                    return;
-                }
-                
-                this.showSuccess("Place your finger on the USB fingerprint reader...");
-            }
-
-            async removeFingerprint() {
-                if (this.usbDevice) {
-                    await this.usbDevice.close();
-                    this.usbDevice = null;
-                }
-                this.updateUI();
-                this.showSuccess("Fingerprint scanner disconnected");
-                document.getElementById('fingerprint-guide').style.display = 'none';
-            }
-
-            async setupVoiceRecognition() {
-                document.getElementById('voice-recording').style.display = 'block';
-                
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    this.startRecording(stream);
-                } catch (err) {
-                    this.showError("Microphone access denied: " + err.message);
-                }
-            }
-
-            startRecording(stream) {
-                this.audioChunks = [];
-                this.mediaRecorder = new MediaRecorder(stream);
-                
-                this.mediaRecorder.ondataavailable = (event) => {
-                    this.audioChunks.push(event.data);
                 };
                 
-                this.mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        this.voiceData = reader.result;
-                        localStorage.setItem('voiceData', this.voiceData);
-                        this.updateUI();
-                        this.showSuccess("Voice print recorded successfully!");
-                    };
-                    reader.readAsDataURL(audioBlob);
-                };
+                stream = await navigator.mediaDevices.getUserMedia(alternativeConstraints);
+                video.srcObject = stream;
                 
-                this.mediaRecorder.start();
-            }
-
-            stopRecording() {
-                if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
-                    this.mediaRecorder.stop();
-                    this.mediaRecorder.stream.getTracks().forEach(track => track.stop());
-                }
-                document.getElementById('voice-recording').style.display = 'none';
-            }
-
-            testVoiceRecognition() {
-                this.showSuccess("Voice verification would record and compare with stored voice print");
-            }
-
-            removeVoiceRecognition() {
-                localStorage.removeItem('voiceData');
-                this.voiceData = null;
-                this.updateUI();
-                this.showSuccess("Voice recognition removed successfully");
-            }
-
-            // TOTP Implementation
-            setupTOTP() {
-                if (!this.totpSecret) {
-                    this.generateNewTOTPSecret();
-                } else {
-                    this.showTOTPSetup();
-                }
-            }
-
-            generateNewTOTPSecret() {
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-                let secret = '';
-                for (let i = 0; i < 32; i++) {
-                    secret += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                
-                this.totpSecret = secret;
-                localStorage.setItem('totpSecret', secret);
-                this.showTOTPSetup();
-                this.startTOTPTimer();
-            }
-
-            showTOTPSetup() {
-                document.getElementById('totp-setup-section').style.display = 'block';
-                document.getElementById('totp-secret-text').textContent = this.totpSecret;
-                document.getElementById('test-totp').disabled = false;
-                document.getElementById('remove-totp').disabled = false;
-                document.getElementById('totp-status').textContent = 'Enabled';
-                document.getElementById('totp-status').className = 'method-status status-enabled';
-                
-                this.generateQRCode();
-            }
-
-            generateQRCode() {
-                const canvas = document.getElementById('totp-qrcode');
-                const ctx = canvas.getContext('2d');
-                const secret = this.totpSecret;
-                
-                ctx.fillStyle = 'white';
-                ctx.fillRect(0, 0, 200, 200);
-                ctx.fillStyle = 'black';
-                
-                for (let i = 0; i < 7; i++) {
-                    for (let j = 0; j < 7; j++) {
-                        if ((i === 0 || i === 6 || j === 0 || j === 6) || 
-                            (i === 2 && j === 2) || (i === 2 && j === 4) ||
-                            (i === 4 && j === 2) || (i === 4 && j === 4)) {
-                            ctx.fillRect(20 + i * 25, 20 + j * 25, 20, 20);
-                        }
-                    }
-                }
-            }
-
-            startTOTPTimer() {
-                if (this.totpInterval) clearInterval(this.totpInterval);
-                
-                this.totpInterval = setInterval(() => {
-                    this.updateTOTPCode();
-                }, 1000);
-            }
-
-            updateTOTPCode() {
-                const time = Math.floor(Date.now() / 30000);
-                const code = String(time % 1000000).padStart(6, '0');
-                document.getElementById('totp-code').textContent = code;
-            }
-
-            verifyTOTP() {
-                const inputs = document.querySelectorAll('#2fa-tab .pin-input');
-                const enteredCode = Array.from(inputs).map(input => input.value).join('');
-                const expectedCode = document.getElementById('totp-code').textContent;
-                
-                if (enteredCode === expectedCode) {
-                    this.showSuccess("TOTP code verified successfully!");
-                } else {
-                    this.showError("Invalid TOTP code. Please try again.");
-                }
-            }
-
-            copyTOTPSecret() {
-                navigator.clipboard.writeText(this.totpSecret).then(() => {
-                    this.showSuccess("Secret key copied to clipboard!");
-                });
-            }
-
-            testTOTP() {
-                this.showSuccess("Current TOTP code: " + document.getElementById('totp-code').textContent);
-            }
-
-            removeTOTP() {
-                localStorage.removeItem('totpSecret');
-                this.totpSecret = null;
-                if (this.totpInterval) clearInterval(this.totpInterval);
-                this.updateUI();
-                this.showSuccess("TOTP authenticator removed successfully");
-            }
-
-            // USB Security Key
-            async setupUSBKey() {
-                document.getElementById('usbkey-setup-section').style.display = 'block';
-            }
-
-            async detectUSBDrives() {
-                try {
-                    if (!navigator.usb) {
-                        this.showError("WebUSB not supported in this browser");
-                        return;
-                    }
-
-                    const devices = await navigator.usb.getDevices();
-                    const deviceList = document.getElementById('usb-devices');
-                    
-                    deviceList.innerHTML = '';
-                    devices.forEach(device => {
-                        const deviceElement = document.createElement('div');
-                        deviceElement.innerHTML = `
-                            <div>${device.productName || 'USB Device'}</div>
-                            <button onclick="securityManager.selectUSBDevice(this)">Select</button>
-                        `;
-                        deviceElement.dataset.device = JSON.stringify(device);
-                        deviceList.appendChild(deviceElement);
-                    });
-                    
-                } catch (err) {
-                    this.showError("USB access error: " + err.message);
-                }
-            }
-
-            selectUSBDevice(button) {
-                const deviceElement = button.parentElement;
-                const device = JSON.parse(deviceElement.dataset.device);
-                this.usbDevice = device;
-                document.getElementById('create-usb-key').disabled = false;
-                this.showSuccess("USB device selected: " + device.productName);
-            }
-
-            async createUSBKey() {
-                if (!this.usbDevice) {
-                    this.showError("No USB device selected");
-                    return;
-                }
-
-                const keyData = {
-                    identifier: '14592_SECURITY_KEY',
-                    created: new Date().toISOString(),
-                    key: btoa(Math.random().toString(36).substring(2) + Date.now().toString(36))
-                };
-                
-                localStorage.setItem('usbKeyData', JSON.stringify(keyData));
-                this.updateUI();
-                this.showSuccess("Security key created successfully!");
-            }
-
-            testUSBKey() {
-                this.showSuccess("USB key verification would check for the security file");
-            }
-
-            removeUSBKey() {
-                localStorage.removeItem('usbKeyData');
-                this.usbKeyData = null;
-                this.updateUI();
-                this.showSuccess("USB security key removed successfully");
-            }
-
-            // Passkey Implementation
-            checkPasskeySupport() {
-                if (window.PublicKeyCredential && 
-                    PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) {
-                    PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
-                        .then(available => {
-                            if (available) {
-                                document.getElementById('setup-passkey').disabled = false;
-                            }
-                        });
-                }
-            }
-
-            async setupPasskey() {
-                try {
-                    // Create a new passkey
-                    const publicKeyCredentialCreationOptions = {
-                        challenge: new Uint8Array(32),
-                        rp: {
-                            name: "14592 Studios Portal",
-                            id: window.location.hostname
-                        },
-                        user: {
-                            id: new Uint8Array(16),
-                            name: "user@14592studios.com",
-                            displayName: "14592 Studios User"
-                        },
-                        pubKeyCredParams: [
-                            {
-                                alg: -7, // ES256
-                                type: "public-key"
-                            }
-                        ],
-                        authenticatorSelection: {
-                            authenticatorAttachment: "platform",
-                            userVerification: "required"
-                        },
-                        timeout: 60000,
-                        attestation: "direct"
-                    };
-
-                    const credential = await navigator.credentials.create({
-                        publicKey: publicKeyCredentialCreationOptions
-                    });
-
-                    this.passkeyCredential = {
-                        id: credential.id,
-                        type: credential.type,
-                        rawId: Array.from(new Uint8Array(credential.rawId)),
-                        response: {
-                            clientDataJSON: Array.from(new Uint8Array(credential.response.clientDataJSON)),
-                            attestationObject: Array.from(new Uint8Array(credential.response.attestationObject))
-                        }
-                    };
-
-                    localStorage.setItem('passkeyCredential', JSON.stringify(this.passkeyCredential));
-                    this.updateUI();
-                    this.showSuccess("Passkey created successfully!");
-                    document.getElementById('passkey-setup-section').style.display = 'block';
-
-                } catch (err) {
-                    this.showError("Failed to create passkey: " + err.message);
-                }
-            }
-
-            async testPasskey() {
-                try {
-                    if (!this.passkeyCredential) {
-                        this.showError("No passkey found. Please create one first.");
-                        return;
-                    }
-
-                    const publicKeyCredentialRequestOptions = {
-                        challenge: new Uint8Array(32),
-                        allowCredentials: [{
-                            id: new Uint8Array(this.passkeyCredential.rawId),
-                            type: this.passkeyCredential.type,
-                            transports: ['internal']
-                        }],
-                        timeout: 60000,
-                        userVerification: "required"
-                    };
-
-                    const assertion = await navigator.credentials.get({
-                        publicKey: publicKeyCredentialRequestOptions
-                    });
-
-                    this.showSuccess("Passkey authentication successful!");
-
-                } catch (err) {
-                    this.showError("Passkey authentication failed: " + err.message);
-                }
-            }
-
-            removePasskey() {
-                localStorage.removeItem('passkeyCredential');
-                this.passkeyCredential = null;
-                this.updateUI();
-                this.showSuccess("Passkey removed successfully");
-                document.getElementById('passkey-setup-section').style.display = 'none';
-            }
-
-            // UI Management
-            updateUI() {
-                // Update Face ID status
-                if (this.faceData) {
-                    document.getElementById('faceid-status').textContent = 'Enabled';
-                    document.getElementById('faceid-status').className = 'method-status status-enabled';
-                    document.getElementById('test-faceid').disabled = false;
-                    document.getElementById('remove-faceid').disabled = false;
-                }
-
-                // Update Voice status
-                if (this.voiceData) {
-                    document.getElementById('voice-status').textContent = 'Enabled';
-                    document.getElementById('voice-status').className = 'method-status status-enabled';
-                    document.getElementById('test-voice').disabled = false;
-                    document.getElementById('remove-voice').disabled = false;
-                }
-
-                // Update USB Key status
-                if (this.usbKeyData) {
-                    document.getElementById('usbkey-status').textContent = 'Enabled';
-                    document.getElementById('usbkey-status').className = 'method-status status-enabled';
-                    document.getElementById('test-usbkey').disabled = false;
-                    document.getElementById('remove-usbkey').disabled = false;
-                }
-
-                // Update Passkey status
-                if (this.passkeyCredential) {
-                    document.getElementById('passkey-status').textContent = 'Enabled';
-                    document.getElementById('passkey-status').className = 'method-status status-enabled';
-                    document.getElementById('test-passkey-btn').disabled = false;
-                    document.getElementById('remove-passkey').disabled = false;
-                }
-            }
-
-            setupTabs() {
-                document.querySelectorAll('.settings-tab').forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
-                        document.querySelectorAll('.settings-content').forEach(content => {
-                            content.classList.remove('active');
-                        });
-                        
-                        tab.classList.add('active');
-                        const tabId = tab.getAttribute('data-tab');
-                        document.getElementById(`${tabId}-tab`).classList.add('active');
-                    });
-                });
-            }
-
-            showSuccess(message) {
-                const successDiv = document.getElementById('success');
-                successDiv.textContent = message;
-                successDiv.style.display = 'block';
-                setTimeout(() => {
-                    successDiv.style.display = 'none';
-                }, 3000);
-            }
-
-            showError(message) {
-                const errorDiv = document.getElementById('error');
-                errorDiv.textContent = message;
-                errorDiv.style.display = 'block';
-                setTimeout(() => {
+                video.onloadedmetadata = () => {
+                    video.play();
+                    startScanning();
+                    video.style.display = 'block';
+                    placeholder.style.display = 'none';
+                    scanRegion.style.display = 'block';
+                    stopBtn.disabled = false;
+                    status.textContent = "Scanner active (using alternative camera)";
                     errorDiv.style.display = 'none';
-                }, 5000);
+                };
+            } catch (err) {
+                errorDiv.textContent = "❌ Could not access any camera. Please check your device permissions and try again.";
+                errorDiv.style.display = 'block';
+                startBtn.disabled = false;
             }
         }
 
-        // Initialize the security manager
-        const securityManager = new SecurityManager();
+        // Start scanning for QR codes
+        function startScanning() {
+            scanning = true;
+            scanFrame();
+        }
+
+        // Stop scanning
+        function stopScanning() {
+            scanning = false;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }
+
+        // Scan each video frame for QR codes
+        function scanFrame() {
+            if (!scanning) return;
+            
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                // Create canvas to draw video frame
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas dimensions to match video
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                // Draw video frame to canvas
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Get image data from canvas
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                
+                // Try to decode QR code
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                
+                if (code) {
+                    // QR code found!
+                    console.log('QR Code detected:', code.data);
+                    status.textContent = "QR Code detected!";
+                    
+                    // Process the QR code and check if it's a safe site
+                    processQRCode(code.data);
+                    return;
+                }
+            }
+            
+            // Continue scanning
+            animationFrameId = requestAnimationFrame(scanFrame);
+        }
+
+        // Process QR code and check if it's a safe site
+        function processQRCode(url) {
+            // Stop scanning
+            stopScanning();
+            
+            // Hide scanner and show loading
+            scannerSection.style.display = 'none';
+            loadingContainer.style.display = 'flex';
+            
+            // Simulate verification process
+            setTimeout(() => {
+                // Check if the URL is in the safe sites list
+                const isSafe = isUrlSafe(url);
+                
+                if (isSafe) {
+                    // Site is safe - check if user has authentication set up
+                    if (!userPin && !userFaceDescriptor) {
+                        // First time setup
+                        isFirstTimeSetup = true;
+                        loadingContainer.style.display = 'none';
+                        pinSection.style.display = 'block';
+                        pinTitle.textContent = "Create Your PIN";
+                        pinInstructions.textContent = "Create a 4-digit PIN to secure your account";
+                        initializePinInputs();
+                    } else {
+                        // Existing user - use preferred authentication method
+                        isFirstTimeSetup = false;
+                        handleExistingUserAuth();
+                    }
+                } else {
+                    // Site is not safe - show error
+                    loadingContainer.style.display = 'none';
+                    scannerSection.style.display = 'block';
+                    errorDiv.textContent = `Access Denied: The QR code is not from an approved source.`;
+                    errorDiv.style.display = 'block';
+                    status.textContent = "Verification failed";
+                    
+                    // Reset scanner
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                }
+            }, 1500);
+        }
+
+        // Check if URL is from a safe source
+        function isUrlSafe(url) {
+            // In a real implementation, this would check against a list of approved domains
+            const safeDomains = [
+                'https://popl.co/card/IgRPBGmi/1/dash',
+                'https://matrix.to/#/@jowilke77:matrix.org',
+                'portal.14592studios.com',
+                'members.14592studios.com'
+            ];
+            
+            try {
+                const urlObj = new URL(url);
+                return safeDomains.some(domain => urlObj.hostname.includes(domain));
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Initialize PIN input functionality
+        function initializePinInputs() {
+            pinInputs.forEach((input, index) => {
+                input.value = '';
+                input.addEventListener('input', (e) => {
+                    if (e.target.value.length === 1 && index < pinInputs.length - 1) {
+                        pinInputs[index + 1].focus();
+                    }
+                    checkPinComplete();
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        pinInputs[index - 1].focus();
+                    }
+                });
+            });
+            
+            pinSubmit.addEventListener('click', handlePinSubmit);
+            pinClear.addEventListener('click', clearPinInputs);
+        }
+
+        // Check if PIN is complete
+        function checkPinComplete() {
+            const pinComplete = Array.from(pinInputs).every(input => input.value.length === 1);
+            pinSubmit.disabled = !pinComplete;
+            
+            pinInputs.forEach(input => {
+                if (input.value.length === 1) {
+                    input.classList.add('filled');
+                } else {
+                    input.classList.remove('filled');
+                }
+            });
+        }
+
+        // Clear PIN inputs
+        function clearPinInputs() {
+            pinInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('filled');
+            });
+            pinInputs[0].focus();
+            pinSubmit.disabled = true;
+            pinError.style.display = 'none';
+        }
+
+        // Handle PIN submission
+        function handlePinSubmit() {
+            const pin = Array.from(pinInputs).map(input => input.value).join('');
+            
+            if (isFirstTimeSetup) {
+                // First time setup - save PIN
+                userPin = pin;
+                localStorage.setItem('userPin', userPin);
+                
+                // Show authentication choice
+                pinSection.style.display = 'none';
+                authChoiceSection.style.display = 'block';
+            } else {
+                // Existing user - verify PIN
+                if (pin === userPin) {
+                    // PIN correct - show portal
+                    showPortal();
+                } else {
+                    // PIN incorrect
+                    pinError.textContent = "Incorrect PIN. Please try again.";
+                    pinError.style.display = 'block';
+                    clearPinInputs();
+                }
+            }
+        }
+
+        // Handle existing user authentication
+        function handleExistingUserAuth() {
+            loadingContainer.style.display = 'none';
+            
+            if (userFaceDescriptor) {
+                // User has Face ID registered - show choice
+                authChoiceSection.style.display = 'block';
+            } else {
+                // No Face ID - show PIN
+                pinSection.style.display = 'block';
+                pinTitle.textContent = "Enter Your PIN";
+                pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
+                initializePinInputs();
+            }
+        }
+
+        // Show portal
+        function showPortal() {
+            scannerSection.style.display = 'none';
+            pinSection.style.display = 'none';
+            faceidRegistrationSection.style.display = 'none';
+            faceidVerificationSection.style.display = 'none';
+            authChoiceSection.style.display = 'none';
+            settingsSection.style.display = 'none';
+            loadingContainer.style.display = 'none';
+            portalContainer.style.display = 'block';
+            
+            // Load portal content
+            loadPortalContent();
+        }
+
+        // Load portal content with working links
+        function loadPortalContent() {
+            const portalContent = `
+                <h1 class="welcome-message">Welcome to the Member Portal!</h1>
+                <p style="text-align: center; margin-bottom: 30px;">You have successfully authenticated and can now access member-only resources.</p>
+                
+                <div class="member-sites">
+                    <div class="site-card">
+                        <div class="site-icon">📁</div>
+                        <div class="site-name">Project Files</div>
+                        <div class="site-description">Access shared project files, documents, and resources from both studios.</div>
+                        <a href="https://drive.google.com" target="_blank" class="site-link">Open Files</a>
+                    </div>
+                    
+                    <div class="site-card">
+                        <div class="site-icon">🎨</div>
+                        <div class="site-name">Design Assets</div>
+                        <div class="site-description">Browse and download design assets, templates, and creative resources.</div>
+                        <a href="https://figma.com" target="_blank" class="site-link">View Assets</a>
+                    </div>
+                    
+                    <div class="site-card">
+                        <div class="site-icon">📊</div>
+                        <div class="site-name">Analytics Dashboard</div>
+                        <div class="site-description">View performance metrics, user statistics, and project analytics.</div>
+                        <a href="https://analytics.google.com" target="_blank" class="site-link">View Dashboard</a>
+                    </div>
+                    
+                    <div class="site-card">
+                        <div class="site-icon">👥</div>
+                        <div class="site-name">Team Directory</div>
+                        <div class="site-description">Connect with team members from both studios and view contact information.</div>
+                        <a href="https://linkedin.com" target="_blank" class="site-link">View Directory</a>
+                    </div>
+                    
+                    <div class="site-card">
+                        <div class="site-icon">💬</div>
+                        <div class="site-name">Team Communication</div>
+                        <div class="site-description">Collaborate with team members through our communication platform.</div>
+                        <a href="https://slack.com" target="_blank" class="site-link">Open Chat</a>
+                    </div>
+                    
+                    <div class="site-card">
+                        <div class="site-icon">📅</div>
+                        <div class="site-name">Project Calendar</div>
+                        <div class="site-description">View project timelines, deadlines, and team availability.</div>
+                        <a href="https://calendar.google.com" target="_blank" class="site-link">View Calendar</a>
+                    </div>
+                </div>
+                
+                <button class="logout-btn" id="logout-btn">Logout</button>
+            `;
+            
+            portalContainer.innerHTML = portalContent;
+            
+            // Add logout functionality
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                portalContainer.style.display = 'none';
+                scannerSection.style.display = 'block';
+                clearPinInputs();
+            });
+        }
+
+        // FACE ID REGISTRATION FUNCTIONALITY
+        registerFaceBtn.addEventListener('click', () => {
+            // Show face registration section
+            settingsSection.style.display = 'none';
+            faceidRegistrationSection.style.display = 'block';
+            
+            // Reset registration state
+            faceSamples = [];
+            samplesCollected = 0;
+            registrationProgressBar.style.width = '0%';
+            registrationStatus.textContent = "Position your face in the frame to start";
+            
+            // Reset sample indicators
+            for (let i = 1; i <= totalSamples; i++) {
+                const sample = document.getElementById(`sample-${i}`);
+                sample.className = 'face-sample';
+                sample.innerHTML = '<i>📷</i>';
+            }
+            
+            // Show registration container
+            faceRegistrationContainer.style.display = 'block';
+            
+            // Start face detection
+            startFaceDetection();
+        });
+
+        // Start face detection for registration
+        async function startFaceDetection() {
+            try {
+                // Stop any existing stream
+                if (faceStream) {
+                    faceStream.getTracks().forEach(track => track.stop());
+                }
+
+                // Get camera access
+                faceStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 640 }, 
+                        height: { ideal: 480 } 
+                    } 
+                });
+
+                // Set video source
+                faceidRegistrationVideo.srcObject = faceStream;
+                
+                // Wait for video to load
+                faceidRegistrationVideo.onloadedmetadata = () => {
+                    faceidRegistrationVideo.play();
+                    
+                    // Show video and hide placeholder
+                    faceidRegistrationVideo.style.display = 'block';
+                    faceidRegistrationPlaceholder.style.display = 'none';
+                    
+                    // Start face detection loop
+                    startFaceDetectionLoop();
+                };
+            } catch (error) {
+                console.error('Error accessing camera for face detection:', error);
+                document.getElementById('faceid-registration-error').textContent = 
+                    "Could not access camera. Please check permissions and try again.";
+                document.getElementById('faceid-registration-error').style.display = 'block';
+            }
+        }
+
+        // Face detection loop for registration
+        function startFaceDetectionLoop() {
+            if (faceDetectionInterval) clearInterval(faceDetectionInterval);
+            
+            faceDetectionInterval = setInterval(async () => {
+                if (samplesCollected >= totalSamples) {
+                    clearInterval(faceDetectionInterval);
+                    return;
+                }
+                
+                try {
+                    // Simulate face detection (in a real implementation, this would use face-api.js)
+                    const hasFace = Math.random() > 0.3; // 70% chance of detecting a face
+                    
+                    if (hasFace) {
+                        // Show overlay
+                        faceRegistrationOverlay.style.display = 'block';
+                        faceRegistrationOverlay.style.width = '200px';
+                        faceRegistrationOverlay.style.height = '200px';
+                        faceRegistrationOverlay.style.left = 'calc(50% - 100px)';
+                        faceRegistrationOverlay.style.top = 'calc(50% - 100px)';
+                        
+                        // Enable registration button when face is detected
+                        faceidRegistrationSubmit.disabled = false;
+                        faceRegistrationIndicator.style.display = 'block';
+                        
+                        // Auto-capture samples when face is properly positioned
+                        if (samplesCollected < totalSamples) {
+                            // Add a small delay between captures
+                            setTimeout(() => {
+                                captureFaceSample();
+                            }, samplesCollected * 500);
+                        }
+                    } else {
+                        // No face detected
+                        faceRegistrationOverlay.style.display = 'none';
+                        faceidRegistrationSubmit.disabled = true;
+                        faceRegistrationIndicator.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Face detection error:', error);
+                }
+            }, 500); // Check every 500ms
+        }
+
+        // Capture a face sample
+        function captureFaceSample() {
+            if (samplesCollected >= totalSamples) return;
+            
+            // Simulate capturing a face descriptor
+            const descriptor = Array.from({length: 128}, () => Math.random());
+            faceSamples.push(descriptor);
+            samplesCollected++;
+            
+            // Update progress
+            const progress = (samplesCollected / totalSamples) * 100;
+            registrationProgressBar.style.width = `${progress}%`;
+            
+            // Update sample indicator
+            const sample = document.getElementById(`sample-${samplesCollected}`);
+            sample.className = 'face-sample captured';
+            sample.innerHTML = '✓';
+            
+            // Update status
+            registrationStatus.textContent = `Sample ${samplesCollected} of ${totalSamples} captured`;
+            
+            // Enable registration when all samples are collected
+            if (samplesCollected >= totalSamples) {
+                registrationStatus.textContent = "All samples captured! Click 'Register Face' to complete registration.";
+                faceidRegistrationSubmit.disabled = false;
+            }
+        }
+
+        // Register face
+        faceidRegistrationSubmit.addEventListener('click', () => {
+            if (faceSamples.length === 0) {
+                document.getElementById('faceid-registration-error').textContent = 
+                    "No face samples captured. Please position your face in the frame.";
+                document.getElementById('faceid-registration-error').style.display = 'block';
+                return;
+            }
+            
+            // Calculate average descriptor
+            const descriptorSize = faceSamples[0].length;
+            const avgDescriptor = new Array(descriptorSize).fill(0);
+            
+            for (let i = 0; i < descriptorSize; i++) {
+                let sum = 0;
+                for (const sample of faceSamples) {
+                    sum += sample[i];
+                }
+                avgDescriptor[i] = sum / faceSamples.length;
+            }
+            
+            // Save descriptor
+            userFaceDescriptor = avgDescriptor;
+            localStorage.setItem('userFaceDescriptor', JSON.stringify(userFaceDescriptor));
+            
+            // Show success message
+            document.getElementById('faceid-registration-error').style.display = 'none';
+            successDiv.textContent = "Face ID registered successfully!";
+            successDiv.style.display = 'block';
+            
+            // Update face status
+            updateFaceStatus();
+            
+            // Stop face detection
+            if (faceDetectionInterval) clearInterval(faceDetectionInterval);
+            if (faceStream) {
+                faceStream.getTracks().forEach(track => track.stop());
+                faceStream = null;
+            }
+            
+            // Return to settings
+            setTimeout(() => {
+                faceidRegistrationSection.style.display = 'none';
+                settingsSection.style.display = 'block';
+                successDiv.style.display = 'none';
+            }, 1500);
+        });
+
+        // Cancel face registration
+        faceidRegistrationCancel.addEventListener('click', () => {
+            // Stop face detection
+            if (faceDetectionInterval) clearInterval(faceDetectionInterval);
+            if (faceStream) {
+                faceStream.getTracks().forEach(track => track.stop());
+                faceStream = null;
+            }
+            
+            // Return to settings
+            faceidRegistrationSection.style.display = 'none';
+            settingsSection.style.display = 'block';
+        });
+
+        // Use Face ID for authentication
+        useFaceidBtn.addEventListener('click', () => {
+            authChoiceSection.style.display = 'none';
+            faceidVerificationSection.style.display = 'block';
+            startFaceVerification();
+        });
+
+        // Start face verification
+        async function startFaceVerification() {
+            try {
+                // Stop any existing stream
+                if (verificationStream) {
+                    verificationStream.getTracks().forEach(track => track.stop());
+                }
+
+                // Get camera access
+                verificationStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 640 }, 
+                        height: { ideal: 480 } 
+                    } 
+                });
+
+                // Set video source
+                faceidVerificationVideo.srcObject = verificationStream;
+                
+                // Wait for video to load
+                faceidVerificationVideo.onloadedmetadata = () => {
+                    faceidVerificationVideo.play();
+                    
+                    // Show video and hide placeholder
+                    faceidVerificationVideo.style.display = 'block';
+                    faceidVerificationPlaceholder.style.display = 'none';
+                    
+                    // Start face verification loop
+                    startFaceVerificationLoop();
+                };
+            } catch (error) {
+                console.error('Error accessing camera for face verification:', error);
+                document.getElementById('faceid-verification-error').textContent = 
+                    "Could not access camera. Please check permissions and try again.";
+                document.getElementById('faceid-verification-error').style.display = 'block';
+            }
+        }
+
+        // Face verification loop
+        function startFaceVerificationLoop() {
+            if (faceVerificationInterval) clearInterval(faceVerificationInterval);
+            
+            faceVerificationInterval = setInterval(async () => {
+                try {
+                    // Simulate face detection and verification
+                    const hasFace = Math.random() > 0.3; // 70% chance of detecting a face
+                    
+                    if (hasFace) {
+                        // Show overlay
+                        faceVerificationOverlay.style.display = 'block';
+                        faceVerificationOverlay.style.width = '200px';
+                        faceVerificationOverlay.style.height = '200px';
+                        faceVerificationOverlay.style.left = 'calc(50% - 100px)';
+                        faceVerificationOverlay.style.top = 'calc(50% - 100px)';
+                        
+                        // Calculate similarity with registered face
+                        const similarity = Math.random() * 30 + 70; // 70-100% similarity
+                        
+                        // Update confidence display
+                        document.getElementById('verification-confidence').textContent = `${similarity.toFixed(1)}%`;
+                        document.getElementById('face-verification-stats').style.display = 'block';
+                        
+                        // Check if face matches
+                        if (similarity > 80) { // Threshold for match
+                            // Face verified successfully
+                            clearInterval(faceVerificationInterval);
+                            faceVerificationOverlay.style.borderColor = '#4cd964';
+                            faceVerificationIndicator.style.display = 'block';
+                            faceVerificationFailed.style.display = 'none';
+                            
+                            // Show portal after short delay
+                            setTimeout(() => {
+                                if (verificationStream) {
+                                    verificationStream.getTracks().forEach(track => track.stop());
+                                    verificationStream = null;
+                                }
+                                showPortal();
+                            }, 1000);
+                        } else {
+                            // Face doesn't match
+                            faceVerificationOverlay.style.borderColor = '#ff3b30';
+                            faceVerificationIndicator.style.display = 'none';
+                            faceVerificationFailed.style.display = 'block';
+                        }
+                    } else {
+                        // No face detected
+                        faceVerificationOverlay.style.display = 'none';
+                        faceVerificationIndicator.style.display = 'none';
+                        faceVerificationFailed.style.display = 'none';
+                        document.getElementById('face-verification-stats').style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Face verification error:', error);
+                }
+            }, 500); // Check every 500ms
+        }
+
+        // Cancel face verification
+        faceidVerificationCancel.addEventListener('click', () => {
+            // Stop face verification
+            if (faceVerificationInterval) clearInterval(faceVerificationInterval);
+            if (verificationStream) {
+                verificationStream.getTracks().forEach(track => track.stop());
+                verificationStream = null;
+            }
+            
+            // Show PIN entry
+            faceidVerificationSection.style.display = 'none';
+            pinSection.style.display = 'block';
+            pinTitle.textContent = "Enter Your PIN";
+            pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
+            initializePinInputs();
+        });
+
+        // Use PIN for authentication
+        usePinBtn.addEventListener('click', () => {
+            authChoiceSection.style.display = 'none';
+            pinSection.style.display = 'block';
+            pinTitle.textContent = "Enter Your PIN";
+            pinInstructions.textContent = "Enter your 4-digit PIN to access the portal";
+            initializePinInputs();
+        });
+
+        // Settings functionality
+        settingsBtn.addEventListener('click', () => {
+            portalContainer.style.display = 'none';
+            settingsSection.style.display = 'block';
+            updateFaceStatus();
+        });
+
+        // Cancel settings
+        cancelSettings.addEventListener('click', () => {
+            settingsSection.style.display = 'none';
+            portalContainer.style.display = 'block';
+        });
+
+        // Initialize when page loads
+        window.addEventListener('load', async () => {
+            console.log('Page loaded, initializing...');
+            
+            // Check if browser supports required APIs
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                errorDiv.textContent = "❌ Your browser doesn't support camera access. Please try using Chrome, Firefox, or Edge.";
+                errorDiv.style.display = 'block';
+                startBtn.disabled = true;
+                status.textContent = "Browser not supported";
+            } else {
+                status.textContent = "Ready to scan - click Start Scanner";
+                startBtn.disabled = false;
+            }
+            
+            // Initialize face detection
+            const faceDetectionReady = await initializeFaceDetection();
+            if (!faceDetectionReady) {
+                console.warn('Face detection not available');
+            }
+            
+            // Update face status
+            updateFaceStatus();
+        });
     </script>
 </body>
 </html>
